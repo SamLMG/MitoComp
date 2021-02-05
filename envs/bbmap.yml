@@ -1,0 +1,13 @@
+name: bbmap
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - conda-forge/label/cf201901
+  - bioconda/label/cf201901
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - bbmap=38.79=h516909a_0
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - openjdk=8.0.152=h7b6447c_3
+prefix: /home/lv71312/leeming/miniconda3/envs/bbmap

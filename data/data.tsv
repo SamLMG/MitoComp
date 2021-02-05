@@ -1,0 +1,6 @@
+ID	forward	reverse	seed	SRA	Clade	Code
+Drosophila			seeds/D.ananassae_coxI.fasta	SRR12836360	Arthropoda	5
+Mouse			seeds/M.musculus_coxI.fasta	SRR13326502	Chordata	2
+C.elegans			seeds/C.elegans_coxI.fasta	SRR13374450	Nematoda	5
+Zebrafish			seeds/D.rerio_coxI.fasta	SRR13166697	Vertebrata	2
+Octopus			seeds/O.vulgaris_coxI.fasta	SRR8079591	Mollusca	5
