@@ -126,7 +126,8 @@ rule norgal:
         f = rules.subsample.output.f,
         r = rules.subsample.output.r
     output:
-        directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}")
+        directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}"),
+#        ok = assemblies/{assembler}/{id}/{sub}/{id}_{assembler}/norgal.ok
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -139,6 +140,7 @@ rule norgal:
         module load intel/18 intel-mkl/2018 python/2.7 numpy/1.12.0 matplotlib/2.2.2
         export PATH="/home/lv71312/leeming/mt_assembly/norgal/binaries/linux:$PATH"        
         python /home/lv71312/leeming/mt_assembly/norgal/norgal.py -i {input.f} {input.r} -o {output} --blast -t {threads}
+        touch {output}
         """
 
 
@@ -162,7 +164,8 @@ rule get_organelle:
         f = rules.subsample.output.f,
         r = rules.subsample.output.r
     output:
-        "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta"
+        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
+        ok = "assemblies/{assembler}/{id}/{sub}/get_organelle.ok"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -184,7 +187,8 @@ rule get_organelle:
         #get the path to the one fasta file in the output directory (assumes there is only one)
         final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
         #create a symbolic link between the final fasta file and the output file as specified in the rule above
-        ln -s $final_fasta $(pwd)/{output}
+        ln -s $final_fasta $(pwd)/{output.fasta}
+        touch {output.ok}
         """
 
 rule setup_mitoflex_db:
@@ -239,7 +243,7 @@ rule mitoflex:
 	export HOME="{params.wd}/bin/MitoFlex"
         {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --insert-size 167 --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} 
         touch {params.wd}/{output.ok}
-        touch {params.wd}/{output.fasta}
+        cp $(find ./ -name "*.picked.fa") {output.fasta}
         """
 
 rule NOVOconfig:
@@ -269,7 +273,8 @@ rule NOVOplasty:
        config = rules.NOVOconfig.output,
        ok = rules.subsample.output.f
     output: 
-       "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta"
+       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
+       ok = "assemblies/{assembler}/{id}/{sub}/NOVOplasty.ok"
     params:
        outdir = "assemblies/{assembler}/{id}/{sub}"
     resources:
@@ -287,6 +292,7 @@ rule NOVOplasty:
        """
        scripts/NOVOPlasty4.2.1.pl -c {input.config}
        cp $(find ./ -name "*.fasta") {params.outdir}
+       touch {output.ok}
        """
 
 rule interleave:
@@ -312,7 +318,8 @@ rule MITObim:
     input:
         rules.interleave.output
     output:
-        "assemblies/{assembler}/{id}/{sub}/{id}_{assembler}_coxI.fasta"
+        fasta = "assemblies/{assembler}/{id}/{sub}/{id}_{assembler}_coxI.fasta",
+        ok = "assemblies/{assembler}/{id}/{sub}/MITObim.ok"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -332,16 +339,22 @@ rule MITObim:
     shell:
         """
         MITObim.pl -sample {params.id} -ref {params.id}_coxI -readpool {input} --quick {params.seed} -end 100 --paired --clean --NFS_warn_only &> {log}
-        cp $(find ./ -name "*noIUPAC.fasta") {output}       
+        cp $(find ./ -name "*noIUPAC.fasta") {output.fasta}
+        touch {output.ok}       
         """ 
 
 rule quast:
     input:
         norgal = expand("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}", sub=sub, id = IDS,  assembler = Assembler[0]),
+#        norgal = rules.norgal.output,
         MitoFlex = expand("assemblies/{assembler}/{id}/{sub}/{id}.picked.fa", sub=sub, id = IDS, assembler = Assembler[1]),
+#        Mitoflex = rules.mitoflex.output.fasta,
         GetOrganelle = expand("assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta", sub=sub, id = IDS, assembler = Assembler[2]),
+#        GetOrganelle = rules.get_organelle.output,
         Novoplasty = expand("assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta", sub=sub, id = IDS, assembler = Assembler[3]),
+#        Novoplasty = rules.NOVOplasty.output,
         MITObim = expand("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}_coxI.fasta", sub=sub, id = IDS, assembler = Assembler[4])
+#        MITObim = rules.MITObim.output
     output:
         "QUAST/report.tsv"
     params:
