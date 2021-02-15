@@ -1,1 +1,6 @@
 bin/MitoFlex/
+raw_reads/
+trimmed/
+sub/
+interleave/
+
