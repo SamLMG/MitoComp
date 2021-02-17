@@ -3,4 +3,4 @@ raw_reads/
 trimmed/
 sub/
 interleave/
-
+.snakemake/
