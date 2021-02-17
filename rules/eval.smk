@@ -16,9 +16,10 @@ rule quast:
         "QUAST/report.tsv"
     params:
         outdir = "QUAST/",
-    conda:
-        "envs/quast.yml"
+#    conda:
+#        "envs/quast.yml"
     threads: 1
+    singularity: "docker://reslp/quast:5.0.2"
     shell:
         """
         quast -o {params.outdir} {input}

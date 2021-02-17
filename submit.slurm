@@ -21,4 +21,4 @@ echo "Job: $SLURM_JOB_NAME"
 
 module load go/1.11 singularity/3.4.1
 
-snakemake all -s snake_fly --use-conda --use-singularity --singularity-args "-B $BINFL" --cluster "sbatch -J {resources.name} --qos {resources.qos} --partition {resources.partition} {resources.nnode} --ntasks {threads} --mem {resources.mem} --ntasks-per-core=2" --jobs 1000 -p
+snakemake all --use-conda --use-singularity --singularity-args "-B $BINFL" --cluster "sbatch -J {resources.name} --qos {resources.qos} --partition {resources.partition} {resources.nnode} --ntasks {threads} --mem {resources.mem} --ntasks-per-core=2 --output=$(pwd)/cluster-logs/slurm-{resources.name}-%j.stdout.txt --error=$(pwd)/cluster-logs/slurm-{resources.name}-%j.stderr.txt" --jobs 1000 -p

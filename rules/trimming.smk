@@ -2,12 +2,12 @@ rule trimmomatic:
     input:
         f = rules.fastqdump.output.f,
         r = rules.fastqdump.output.r
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        name="trimmomatic",
-#        nnode="-N 1"
+    resources:
+        qos="normal_binf -C binf",
+        partition="binf",
+        mem="100G",
+        name="trimmomatic",
+        nnode="-N 1"
     output:
         fout = "trimmed/{id}_1P_trim.fastq.gz",
         funp = "trimmed/{id}_1P_unpaired.fastq.gz",

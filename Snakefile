@@ -7,6 +7,7 @@ sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=Fa
 Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] #, "MitoFlex", "GetOrganelle", "Novoplasty", "MITObim"]
 sub = [10000000, 20000000]
 
+
 include: "rules/functions.smk"
 include: "rules/download.smk"
 include: "rules/trimming.smk"

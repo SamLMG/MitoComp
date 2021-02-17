@@ -28,15 +28,15 @@ rule NOVOplasty:
        ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
     params:
        outdir = "assemblies/novoplasty/{id}/{sub}"
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        name="NOVOplasty",
-#        nnode="-N 1"
+    resources:
+        qos="normal_binf -C binf",
+        partition="binf",
+        mem="100G",
+        name="NOVOplasty",
+        nnode="-N 1"
     log: "assemblies/novoplasty/{id}/{sub}/{id}_novoplasty_{sub}.log"
     threads: 24
-    shadow: "shallow"
+#    shadow: "shallow"
     conda:
        "envs/novoplasty.yml"
     shell:

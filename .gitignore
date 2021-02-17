@@ -4,3 +4,4 @@ trimmed/
 sub/
 interleave/
 .snakemake/
+slurm-*

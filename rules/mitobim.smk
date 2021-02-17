@@ -2,12 +2,12 @@ rule interleave:
     input:
         f = rules.subsample.output.f,
         r = rules.subsample.output.r,
-#    resources:
-#        qos="normal_0064",
-#        partition="mem_0064",
-#        mem="10G",
-#        name="interleave",
-#        nnode="-N 1"
+    resources:
+        qos="normal_0064",
+        partition="mem_0064",
+        mem="10G",
+        name="interleave",
+        nnode="-N 1"
     threads: 2
     output:
         "interleave/{sub}/{id}_interleaved.fastq"
@@ -24,12 +24,12 @@ rule MITObim:
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}_{assembler}_coxI.fasta",
         ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok"
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        name="MITObim",
-#        nnode="-N 1"
+    resources:
+        qos="normal_binf -C binf",
+        partition="binf",
+        mem="100G",
+        name="MITObim",
+        nnode="-N 1"
     params:
         id = "{id}",
         seed = get_seed,
@@ -37,7 +37,7 @@ rule MITObim:
     log: "assemblies/mitobim/{id}/{sub}/{id}_mitobim_{sub}.log"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
-    shadow: "shallow"
+#    shadow: "shallow"
     threads: 10
     shell:
         """

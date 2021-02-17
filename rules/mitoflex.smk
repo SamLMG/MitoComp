@@ -31,13 +31,13 @@ rule mitoflex:
         id = "{id}",
         clade = get_clade,
         genetic_code = get_code 
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        ntasks="24",
-#        name="MitoFlex",
-#        nnode="-N 1",
+    resources:
+        qos="normal_binf -C binf",
+        partition="binf",
+        mem="100G",
+        ntasks="24",
+        name="MitoFlex",
+        nnode="-N 1",
     log:
         stdout = "assemblies/mitoflex/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitoflex/{id}/{sub}/stderr.txt"
