@@ -4,7 +4,7 @@ rule NOVOconfig:
     output:
         "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}.txt"
     params:
-        project_name = "{id}",
+        project_name = "{id}_{sub}",
         seed = get_seed,
         log = "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
         f = rules.subsample.output.f,
@@ -42,6 +42,6 @@ rule NOVOplasty:
     shell:
        """
        scripts/NOVOPlasty4.2.1.pl -c {input.config}
-       cp $(find ./ -name "*.fasta") {params.outdir}
+#       cp $(find ./ -name "*.fasta") {params.outdir}
        touch {output.ok}
        """
