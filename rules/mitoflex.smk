@@ -12,7 +12,8 @@ rule setup_mitoflex_db:
         cd bin/MitoFlex/
         export HOME=$(pwd)
         echo $HOME
-        ./ncbi.py n
+	#execute modified ncbi.py script with 'y' or 'n' as additional options (our modification allows for non-interactive use of the script) - 'y' -> download taxdump; 'n' -> use existing taxdump
+        ./ncbi.py y 
         touch {params.wd}/{output.ok}
         """
 
