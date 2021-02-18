@@ -22,8 +22,9 @@ rule MITObim:
     input:
         rules.interleave.output
     output:
-#        fasta = "assemblies/{assembler}/{id}/{sub}/{id}_{assembler}_coxI.fasta",
-        ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok"
+#        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
+        ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok",
+        rundir = "assemblies/mitobim/{id}/{sub}/run"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -41,7 +42,10 @@ rule MITObim:
     threads: 10
     shell:
         """
-        MITObim.pl -sample {params.id} -ref {params.id}_coxI -readpool {input} --quick {params.seed} -end 100 --paired --clean --NFS_warn_only &> {log}
-        touch {output.ok}       
+        WD=$(pwd)
+        mkdir -p {output.rundir}
+        cd {output.rundir}
+        MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only &> $WD/{log}
+        touch $WD/{output.ok}       
+        cp $(find ./ -name "*noIUPAC.fasta") $WD/assemblies/mitobim/{wildcards.id}/{wildcards.sub}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
         """ 
-#        cp $(find ./ -name "*noIUPAC.fasta") {output.fasta}
