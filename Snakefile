@@ -4,7 +4,9 @@ import pandas as pd
 configfile: "data/config.yaml"
 sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=False)
 
-Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] #, "MitoFlex", "GetOrganelle", "Novoplasty", "MITObim"]
+Assembler = ["norgal"] 
+#Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
+
 sub = [10000000, 20000000]
 
 
