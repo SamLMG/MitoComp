@@ -51,5 +51,6 @@ rule mitoflex:
 	export HOME="{params.wd}/bin/MitoFlex"
         {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --insert-size 167 --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} 
         touch {params.wd}/{output.ok}
+        cp $(find ./ -name "*.picked.fa") {params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
         """
 #        cp $(find ./ -name "*.picked.fa") {output.fasta}

@@ -35,7 +35,9 @@ rule MITObim:
         id = "{id}",
         seed = get_seed,
         wd = os.getcwd()
-    log: "assemblies/mitobim/{id}/{sub}/{id}_mitobim_{sub}.log"
+    log: 
+        stdout = "assemblies/mitobim/{id}/{sub}/stdout.txt",
+        stderr = "assemblies/mitobim/{id}/{sub}/stderr.txt"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
 #    shadow: "shallow"
@@ -45,7 +47,7 @@ rule MITObim:
         WD=$(pwd)
         mkdir -p {output.rundir}
         cd {output.rundir}
-        MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only &> $WD/{log}
+        MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr}
         touch $WD/{output.ok}       
         cp $(find ./ -name "*noIUPAC.fasta") $WD/assemblies/mitobim/{wildcards.id}/{wildcards.sub}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
         """ 

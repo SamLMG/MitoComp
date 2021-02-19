@@ -33,14 +33,16 @@ rule get_organelle:
 #    conda:
 #        "envs/getorganelle.yml"
     log:
-        "assemblies/getorganelle/{id}/{sub}/getorganelle_log_{id}_{sub}.log"
+        stdout = "assemblies/getorganelle/{id}/{sub}/stdout.txt",
+        stderr = "assemblies/getorganelle/{id}/{sub}/stderr.txt" 
     threads: 24
     shell:
         """
-        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F animal_mt -t {threads} -R 10 -s {params.seed}
+        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F animal_mt -t {threads} -R 10 -s {params.seed} 1> {log.stdout} 2> {log.stderr}
         #get the path to the one fasta file in the output directory (assumes there is only one)
         final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
         #create a symbolic link between the final fasta file and the output file as specified in the rule above
         touch {output.ok}
+        cp $final_fasta {params.outdir}/{wildcards.id}.getorganelle.{wildcards.sub}.fasta
         """
 #        ln -s $final_fasta $(pwd)/{output.fasta}
