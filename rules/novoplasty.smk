@@ -21,27 +21,30 @@ rule NOVOconfig:
 
 rule NOVOplasty:
     input:
-       config = rules.NOVOconfig.output,
-       ok = rules.subsample.output.f
+        config = rules.NOVOconfig.output,
+        ok = rules.subsample.output.f
     output: 
 #       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
-       ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
+        ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
     params:
-       outdir = "assemblies/novoplasty/{id}/{sub}"
+        outdir = "assemblies/novoplasty/{id}/{sub}"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
         mem="100G",
         name="NOVOplasty",
         nnode="-N 1"
-    log: "assemblies/novoplasty/{id}/{sub}/{id}_novoplasty_{sub}.log"
+    log:
+        stdout = "assemblies/novoplasty/{id}/{sub}/stdout.txt",
+        stderr = "assemblies/novoplasty/{id}/{sub}/stderr.txt"
     threads: 24
 #    shadow: "shallow"
-    conda:
-       "envs/novoplasty.yml"
+#    conda:
+#       "envs/novoplasty.yml"
+    singularity: "docker://reslp/novoplasty:4.2"
     shell:
-       """
-       scripts/NOVOPlasty4.2.1.pl -c {input.config}
-#       cp $(find ./ -name "*.fasta") {params.outdir}
-       touch {output.ok}
-       """
+        """
+        NOVOPlasty4.2.pl -c {input.config} 1> {log.stdout} 2> {log.stderr}
+        touch {output.ok}
+        cp $(find ./ -name "Circularized_assembly*") {params.outdir}/{wildcards.id}.novoplasty.{wildcards.sub}.fasta
+        """
