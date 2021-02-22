@@ -54,7 +54,7 @@ rule mitoflex:
         {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - see above - moving on" 2>> {params.wd}/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - moving on - for details see: {params.wd}/{log.stderr}" 1>> {params.wd}/{log.stdout}
         fi
  
 	#if the expected final assembly exists, get a copy
@@ -62,7 +62,8 @@ rule mitoflex:
         then
             cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
         else
-            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 2>> {params.wd}/{log.stderr} 
+            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 2>> {params.wd}/{log.stderr}
+            touch {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta.missing 
         fi
 
         touch {params.wd}/{output.ok}

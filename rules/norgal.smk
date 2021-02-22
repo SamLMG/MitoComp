@@ -30,15 +30,16 @@ rule norgal:
         norgal.py -i {input.f} {input.r} -o {params.outdir} --blast -t {threads} 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$? 
         if [ $returncode -gt 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tnorgal exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tnorgal exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
 	#if the expected final assembly exists, get a copy
         if [ -f $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/circular.candidate.fa ]
         then
-            cp $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/circular.candidate.fa $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/{wildcards.id}.norgal.{wildcards.sub}.fasta
+            cp $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta
         else
-            echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 2>> $WD/{log.stderr} 
+            echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 1>> $WD/{log.stdout} 
+            touch $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta.missing 
         fi
 
         touch {output.ok}
