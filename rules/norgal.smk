@@ -25,6 +25,6 @@ rule norgal:
 	if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
         norgal.py -i {input.f} {input.r} -o {params.outdir} --blast -t {threads} 1> $WD/{log.stdout} 2> $WD/{log.stderr}
         touch {output.ok}
-        cp $(find ./ -name "*circular.candidate.fa") $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/{wildcards.id}.norgal.{wildcards.sub}.fasta
+        cp $(find assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/ -name "circular.candidate.fa") $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/{wildcards.id}.norgal.{wildcards.sub}.fasta
         """
 
