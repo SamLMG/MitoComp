@@ -28,7 +28,7 @@ rule NOVOplasty:
 #       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
         ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
     params:
-        outdir = "assemblies/novoplasty/{id}/{sub}"
+        outdir = "assemblies/novoplasty/{id}/{sub}/run"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -46,9 +46,31 @@ rule NOVOplasty:
     shell:
         """
         WD=$(pwd)
+	# if novoplasty was run before, remove the previous run
+	if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
         mkdir -p {params.outdir}
         cd {params.outdir}
-        NOVOPlasty4.2.pl -c {input.config} 1> {log.stdout} 2> {log.stderr}
-        touch {output.ok}
-        cp $(find ./ -name "Circularized_assembly*") {params.outdir}/{wildcards.id}.novoplasty.{wildcards.sub}.fasta
+
+	# run novoplasty - capture returncode, so if it fails, the pipeline won't stop
+        NOVOPlasty.pl -c $WD/{input.config} 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
+        if [ $returncode -gt 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tnovoplasty exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+        fi
+
+	# find the expected final assembly file
+        final_fasta=$(find ./ -name "Circularized_assembly*")
+	# check if the search returned only one file and copy if yes
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        then
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/{wildcards.id}.novoplasty.{wildcards.sub}.fasta 
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 2>> $WD/{log.stderr}
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -gt 1 ]
+        then
+            echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 2>> $WD/{log.stderr}
+        fi
+
+        touch $WD/{output.ok}
         """
