@@ -5,19 +5,19 @@ rule NOVOconfig:
         "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}.txt"
     params:
         project_name = "{id}_{sub}",
+        WD = os.getcwd(),
         seed = get_seed,
         log = "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
         f = rules.subsample.output.f,
         r = rules.subsample.output.r
     shell:
         """
-        WD=$(pwd)
         cp {input} {output}
-        sed -i 's?^Project name.*?Project name = $WD/{params.project_name}?g' {output}
-        sed -i 's?^Seed Input.*?Seed Input = $WD/{params.seed}?g' {output}
-        sed -i 's?^Extended log.*?Extended log = $WD/{params.log}?g' {output}
-        sed -i 's?^Forward reads.*?Forward reads = $WD/{params.f}?g' {output}
-        sed -i 's?^Reverse reads.*?Reverse reads = $WD/{params.r}?g' {output}
+        sed -i 's?^Project name.*?Project name = {params.WD}/{params.project_name}?g' {output}
+        sed -i 's?^Seed Input.*?Seed Input = {params.WD}/{params.seed}?g' {output}
+        sed -i 's?^Extended log.*?Extended log = {params.WD}/{params.log}?g' {output}
+        sed -i 's?^Forward reads.*?Forward reads = {params.WD}/{params.f}?g' {output}
+        sed -i 's?^Reverse reads.*?Reverse reads = {params.WD}/{params.r}?g' {output}
         """
 
 rule NOVOplasty:

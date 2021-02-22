@@ -15,7 +15,7 @@ Chloroplast sequence  =
 Dataset 1:
 -----------------------
 Read Length           = 151
-Insert size           = 167
+Insert size           = 
 Platform              = illumina
 Single/Paired         = PE
 Combined reads        = 
