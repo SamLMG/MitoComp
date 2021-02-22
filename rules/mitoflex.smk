@@ -48,9 +48,22 @@ rule mitoflex:
     shell:
         """
         cd {params.outdir}
-	export HOME="{params.wd}/bin/MitoFlex"
-        {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} 
+        export HOME="{params.wd}/bin/MitoFlex"
+
+        # run mitoflex - capture returncode, so if it fails, the pipeline won't stop 
+        {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} && returncode=$? || returncode=$?
+        if [ $returncode -gt 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+        fi
+ 
+	#if the expected final assembly exists, get a copy
+        if [ -f MitoFlex/MitoFlex.result/MitoFlex.picked.fa ]
+        then
+            cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
+        else
+            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 2>> $WD/{log.stderr} 
+        fi
+
         touch {params.wd}/{output.ok}
-        cp $(find ./ -name "*.picked.fa") {params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
         """
-#        cp $(find ./ -name "*.picked.fa") {output.fasta}
