@@ -11,12 +11,13 @@ rule NOVOconfig:
         r = rules.subsample.output.r
     shell:
         """
+        WD=$(pwd)
         cp {input} {output}
-        sed -i 's?^Project name.*?Project name = {params.project_name}?g' {output}
-        sed -i 's?^Seed Input.*?Seed Input = {params.seed}?g' {output}
-        sed -i 's?^Extended log.*?Extended log = {params.log}?g' {output}
-        sed -i 's?^Forward reads.*?Forward reads = {params.f}?g' {output}
-        sed -i 's?^Reverse reads.*?Reverse reads = {params.r}?g' {output}
+        sed -i 's?^Project name.*?Project name = $WD/{params.project_name}?g' {output}
+        sed -i 's?^Seed Input.*?Seed Input = $WD/{params.seed}?g' {output}
+        sed -i 's?^Extended log.*?Extended log = $WD/{params.log}?g' {output}
+        sed -i 's?^Forward reads.*?Forward reads = $WD/{params.f}?g' {output}
+        sed -i 's?^Reverse reads.*?Reverse reads = $WD/{params.r}?g' {output}
         """
 
 rule NOVOplasty:
@@ -44,6 +45,9 @@ rule NOVOplasty:
     singularity: "docker://reslp/novoplasty:4.2"
     shell:
         """
+        WD=$(pwd)
+        mkdir -p {params.outdir}
+        cd {params.outdir}
         NOVOPlasty4.2.pl -c {input.config} 1> {log.stdout} 2> {log.stderr}
         touch {output.ok}
         cp $(find ./ -name "Circularized_assembly*") {params.outdir}/{wildcards.id}.novoplasty.{wildcards.sub}.fasta
