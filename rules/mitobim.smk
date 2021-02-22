@@ -23,8 +23,7 @@ rule MITObim:
         rules.interleave.output
     output:
 #        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
-        ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok",
-        rundir = "assemblies/mitobim/{id}/{sub}/run"
+        ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok"
     resources:
         qos="normal_binf -C binf",
         partition="binf",
@@ -34,7 +33,8 @@ rule MITObim:
     params:
         id = "{id}",
         seed = get_seed,
-        wd = os.getcwd()
+        wd = os.getcwd(),
+        rundir = "assemblies/mitobim/{id}/{sub}/run"
     log: 
         stdout = "assemblies/mitobim/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitobim/{id}/{sub}/stderr.txt"
@@ -45,8 +45,9 @@ rule MITObim:
     shell:
         """
         WD=$(pwd)
-        mkdir -p {output.rundir}
-        cd {output.rundir}
+        if [ -d {params.rundir} ]; then rm -rf {params.rundir}; fi
+        mkdir -p {params.rundir}
+        cd {params.rundir}
         MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr}
         touch $WD/{output.ok}       
         cp $(find ./ -name "*noIUPAC.fasta") $WD/assemblies/mitobim/{wildcards.id}/{wildcards.sub}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
