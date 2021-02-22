@@ -34,7 +34,7 @@ rule MITObim:
         id = "{id}",
         seed = get_seed,
         wd = os.getcwd(),
-        rundir = "assemblies/mitobim/{id}/{sub}/run"
+        outdir = "assemblies/mitobim/{id}/{sub}/run"
     log: 
         stdout = "assemblies/mitobim/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitobim/{id}/{sub}/stderr.txt"
@@ -45,10 +45,27 @@ rule MITObim:
     shell:
         """
         WD=$(pwd)
-        if [ -d {params.rundir} ]; then rm -rf {params.rundir}; fi
-        mkdir -p {params.rundir}
-        cd {params.rundir}
-        MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr}
+        if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
+        mkdir -p {params.outdir}
+        cd {params.outdir}
+	
+        # run mitobim - capture returncode, so if it fails, the pipeline won't stop
+        MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
+        if [ $returncode -gt 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tmitobim exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+        fi
+
+        #if the expected final assembly exists, get a copy
+        final_fasta=$(find ./ -name "*noIUPAC.fasta")
+	# check if the search returned only one file and copy if yes
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        then
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tmitobim has not produced a final assembly - moving on" 2>> $WD/{log.stderr}
+        fi
+
         touch $WD/{output.ok}       
-        cp $(find ./ -name "*noIUPAC.fasta") $WD/assemblies/mitobim/{wildcards.id}/{wildcards.sub}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
-        """ 
+        """
