@@ -13,7 +13,7 @@ rule NOVOconfig:
     shell:
         """
         cp {input} {output}
-        sed -i 's?^Project name.*?Project name = {params.WD}/{params.project_name}?g' {output}
+        sed -i 's?^Project name.*?Project name = {params.project_name}?g' {output}
         sed -i 's?^Seed Input.*?Seed Input = {params.WD}/{params.seed}?g' {output}
         sed -i 's?^Extended log.*?Extended log = {params.WD}/{params.log}?g' {output}
         sed -i 's?^Forward reads.*?Forward reads = {params.WD}/{params.f}?g' {output}
