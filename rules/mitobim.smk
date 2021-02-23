@@ -38,6 +38,7 @@ rule MITObim:
     log: 
         stdout = "assemblies/mitobim/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitobim/{id}/{sub}/stderr.txt"
+    benchmark: "assemblies/mitobim/{id}/{sub}/mitobim.{id}.{sub}.benchmark.txt"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
 #    shadow: "shallow"

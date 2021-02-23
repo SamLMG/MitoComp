@@ -38,6 +38,7 @@ rule NOVOplasty:
     log:
         stdout = "assemblies/novoplasty/{id}/{sub}/stdout.txt",
         stderr = "assemblies/novoplasty/{id}/{sub}/stderr.txt"
+    benchmark: "assemblies/novoplasty/{id}/{sub}/novoplasty.{id}.{sub}.benchmark.txt"
     threads: 24
 #    shadow: "shallow"
 #    conda:

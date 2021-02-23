@@ -35,6 +35,7 @@ rule get_organelle:
     log:
         stdout = "assemblies/getorganelle/{id}/{sub}/stdout.txt",
         stderr = "assemblies/getorganelle/{id}/{sub}/stderr.txt" 
+    benchmark: "assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
     threads: 24
     shell:
         """

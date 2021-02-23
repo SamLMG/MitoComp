@@ -42,6 +42,7 @@ rule mitoflex:
     log:
         stdout = "assemblies/mitoflex/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitoflex/{id}/{sub}/stderr.txt"
+    benchmark: "assemblies/mitoflex/{id}/{sub}/mitoflex.{id}.{sub}.benchmark.txt"
     threads: 24
     singularity: "docker://samlmg/mitoflex:v0.2.9"
 #    shadow: "minimal"
