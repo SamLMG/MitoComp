@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# this script is used to submit batch jobs for indivdiual snakemake rules to SLURM, SGE or TORQUE clusters.
+# written by Philipp Resl
 
 import os
 import sys
@@ -47,33 +49,22 @@ cmdline=[]
 # create list with command line arguments
 if subs == "slurm":
 	cmdline = ["sbatch"]
-	#if "species" in job_properties["wildcards"]:
-        #        job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["species"]
-        #        prefix = job_properties["wildcards"]["species"] + "-" + job_properties["rule"] + "-slurm"
-        #        job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
-        #        job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
-	#elif "busco" in job_properties["wildcards"]:
-        #        job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["busco"]
-        #        prefix = job_properties["wildcards"]["busco"] + "-" + job_properties["rule"] + "-slurm"
-        #        job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
-        #        job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
-	#else:		
-	#	#properly assign job names for rules which don't have a sample wildcard
-	#	job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", job_properties["rule"])
-	#	job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", job_properties["rule"])
 	
-	#determine threads from the Snakemake profile, i.e. as determined in the Snakefile and the main config file respectively
+	# TODO: figure out how to handle threading information more generally:
 	#job_properties["cluster"]["ntasks"] = job_properties["threads"]
 	#job_properties["cluster"]["ntasks-per-node"] = job_properties["threads"]
-	
+
+	# get more informative job name based on wildcard values
 	prefix = "-".join(job_properties["wildcards"].values())
-	job_properties["cluster"]["job-name"] = job_properties["cluster"]["job-name"]+"-"+prefix	
-	# create string for slurm submit options for rule
-	# this accounts for -n (shared jobs) or -N (whole node jobs). -N overrules -n.
+	if prefix:
+		job_properties["cluster"]["job-name"] = job_properties["cluster"]["job-name"]+"-"+prefix	
+	
+	# add additional slurm arguments from cluster config file 
 	slurm_args = ""
 	for element in job_properties["cluster"]:
 		slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])	
-		#slurm_args = "--partition={partition} --time={time} --qos={qos} --ntasks={ntasks} --ntasks-per-node={ntasks-per-node} --hint={hint} --output={output} --error={error} -N {N} -J {J} --mem={mem}".format(**job_properties["cluster"])
+	
+	# add information acquired so far to the sbatch command
 	cmdline.append(slurm_args)
 	
 	# now work on dependencies
