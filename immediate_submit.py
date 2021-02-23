@@ -47,26 +47,30 @@ cmdline=[]
 # create list with command line arguments
 if subs == "slurm":
 	cmdline = ["sbatch"]
-	if "species" in job_properties["wildcards"]:
-                job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["species"]
-                prefix = job_properties["wildcards"]["species"] + "-" + job_properties["rule"] + "-slurm"
-                job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
-                job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
-	elif "busco" in job_properties["wildcards"]:
-                job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["busco"]
-                prefix = job_properties["wildcards"]["busco"] + "-" + job_properties["rule"] + "-slurm"
-                job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
-                job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
-	else:		
-		#properly assign job names for rules which don't have a sample wildcard
-		job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", job_properties["rule"])
-		job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", job_properties["rule"])
+	#if "species" in job_properties["wildcards"]:
+        #        job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["species"]
+        #        prefix = job_properties["wildcards"]["species"] + "-" + job_properties["rule"] + "-slurm"
+        #        job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
+        #        job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
+	#elif "busco" in job_properties["wildcards"]:
+        #        job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+"-"+job_properties["wildcards"]["busco"]
+        #        prefix = job_properties["wildcards"]["busco"] + "-" + job_properties["rule"] + "-slurm"
+        #        job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", prefix)
+        #        job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", prefix)
+	#else:		
+	#	#properly assign job names for rules which don't have a sample wildcard
+	#	job_properties["cluster"]["output"] = job_properties["cluster"]["output"].replace("slurm", job_properties["rule"])
+	#	job_properties["cluster"]["error"] = job_properties["cluster"]["error"].replace("slurm", job_properties["rule"])
 	
 	#determine threads from the Snakemake profile, i.e. as determined in the Snakefile and the main config file respectively
-	job_properties["cluster"]["ntasks"] = job_properties["threads"]
-	job_properties["cluster"]["ntasks-per-node"] = job_properties["threads"]
+	#job_properties["cluster"]["ntasks"] = job_properties["threads"]
+	#job_properties["cluster"]["ntasks-per-node"] = job_properties["threads"]
 	
-	
+	prefix = "-"
+	for wc in job_properties["wildcards"].keys():
+		prefix += job_properties["wildcards"][wc]
+		prefix += "-"
+	job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+prefix	
 	# create string for slurm submit options for rule
 	# this accounts for -n (shared jobs) or -N (whole node jobs). -N overrules -n.
 	slurm_args = ""
