@@ -25,9 +25,9 @@ rule MITObim:
 #        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
         ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok"
     resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
+        qos="normal_0128",
+        partition="mem_0128",
+        mem="60G",
         name="MITObim",
         nnode="-N 1"
     params:
