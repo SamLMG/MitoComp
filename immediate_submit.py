@@ -66,11 +66,8 @@ if subs == "slurm":
 	#job_properties["cluster"]["ntasks"] = job_properties["threads"]
 	#job_properties["cluster"]["ntasks-per-node"] = job_properties["threads"]
 	
-	prefix = "-"
-	for wc in job_properties["wildcards"].keys():
-		prefix += job_properties["wildcards"][wc]
-		prefix += "-"
-	job_properties["cluster"]["J"] = job_properties["cluster"]["J"]+prefix	
+	prefix = "-".join(job_properties["wildcards"].values())
+	job_properties["cluster"]["job-name"] = job_properties["cluster"]["job-name"]+"-"+prefix	
 	# create string for slurm submit options for rule
 	# this accounts for -n (shared jobs) or -N (whole node jobs). -N overrules -n.
 	slurm_args = ""
@@ -209,6 +206,6 @@ cmdline.append(jobscript)
 print("\nSubmission command:", file=sys.stderr)
 print(" ".join(cmdline), file=sys.stderr)
 print
-os.system(" ".join(cmdline))
+#os.system(" ".join(cmdline))
 
 print("---------------------------------------------------------------------", file=sys.stderr)
