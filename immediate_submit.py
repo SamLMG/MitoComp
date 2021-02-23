@@ -69,16 +69,16 @@ if subs == "slurm":
 	
 	# create string for slurm submit options for rule
 	# this accounts for -n (shared jobs) or -N (whole node jobs). -N overrules -n.
-	if "N" in job_properties["cluster"]:
-		slurm_args = "--partition={partition} --time={time} --qos={qos} --ntasks={ntasks} --ntasks-per-node={ntasks-per-node} --hint={hint} --output={output} --error={error} -N {N} -J {J} --mem={mem}".format(**job_properties["cluster"])
-	else:
-		slurm_args = "--partition={partition} --time={time} --qos={qos} --ntasks={ntasks} --ntasks-per-node={ntasks-per-node} --hint={hint} --output={output} --error={error} -n {n} -J {J} --mem={mem}".format(**job_properties["cluster"])
+	slurm_args = ""
+	for element in job_properties["cluster"]:
+		slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])	
+		#slurm_args = "--partition={partition} --time={time} --qos={qos} --ntasks={ntasks} --ntasks-per-node={ntasks-per-node} --hint={hint} --output={output} --error={error} -N {N} -J {J} --mem={mem}".format(**job_properties["cluster"])
 	cmdline.append(slurm_args)
 	
 	# now work on dependencies
 	print("\nDependencies for this job:", file=sys.stderr)
 	if dependencies:
-		cmdline.append("--dependency")
+		cmdline.append(" --dependency")
 		# only keep numbers (which are the jobids) in dependencies list. this is necessary because slurm returns more than the jobid. For other schedulers this could be different!
 		dependencies = [x for x in dependencies if x.isdigit()]
 		cmdline.append("afterok:" + ",".join(dependencies))
