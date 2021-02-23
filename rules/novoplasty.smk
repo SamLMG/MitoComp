@@ -13,7 +13,7 @@ rule NOVOconfig:
     shell:
         """
         cp {input} {output}
-        sed -i 's?^Project name.*?Project name = {params.WD}/{params.project_name}?g' {output}
+        sed -i 's?^Project name.*?Project name = {params.project_name}?g' {output}
         sed -i 's?^Seed Input.*?Seed Input = {params.WD}/{params.seed}?g' {output}
         sed -i 's?^Extended log.*?Extended log = {params.WD}/{params.log}?g' {output}
         sed -i 's?^Forward reads.*?Forward reads = {params.WD}/{params.f}?g' {output}
@@ -55,7 +55,7 @@ rule NOVOplasty:
         NOVOPlasty.pl -c $WD/{input.config} 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tnovoplasty exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tnovoplasty exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
 	# find the expected final assembly file
@@ -63,13 +63,15 @@ rule NOVOplasty:
 	# check if the search returned only one file and copy if yes
         if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then
-            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/{wildcards.id}.novoplasty.{wildcards.sub}.fasta 
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta 
 	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
         elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -gt 1 ]
         then
-            echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
         fi
 
         touch $WD/{output.ok}

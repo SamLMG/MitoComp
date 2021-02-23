@@ -53,7 +53,7 @@ rule MITObim:
         MITObim.pl -sample {params.id} -ref {params.id} -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tmitobim exited with an error - see above - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tmitobim exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
         #if the expected final assembly exists, get a copy
@@ -61,10 +61,11 @@ rule MITObim:
 	# check if the search returned only one file and copy if yes
         if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then
-            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/{wildcards.id}.mitobim.{wildcards.sub}.fasta
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.mitobim.{wildcards.sub}.fasta
 	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
         then
-            echo -e "\\n#### [$(date)]\\tmitobim has not produced a final assembly - moving on" 2>> $WD/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tmitobim has not produced a final assembly - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.mitobim.{wildcards.sub}.fasta.missing
         fi
 
         touch $WD/{output.ok}       

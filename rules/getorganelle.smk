@@ -27,7 +27,7 @@ rule get_organelle:
         name="getorganelle",
         nnode="-N 1"
     params:
-        outdir = "assemblies/getorganelle/{id}/{sub}",
+        outdir = "assemblies/getorganelle/{id}/{sub}/run",
         seed = get_seed
     singularity:"docker://reslp/getorganelle:1.7.1"
 #    conda:
@@ -38,11 +38,24 @@ rule get_organelle:
     threads: 24
     shell:
         """
-        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F animal_mt -t {threads} -R 10 -s {params.seed} 1> {log.stdout} 2> {log.stderr}
-        #get the path to the one fasta file in the output directory (assumes there is only one)
+        # run getorganelle - capture returncode, so if it fails, the pipeline won't stop
+        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F animal_mt -t {threads} -R 10 -s {params.seed} 1> {log.stdout} 2> {log.stderr} && returncode=$? || returncode=$?
+        if [ $returncode -gt 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tgetorganelle exited with an error - moving on - for details see: $(pwd)/{log.stderr}" 1>> {log.stdout}
+        fi
+
+        #if the expected final assembly exists, get a copy
         final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
-        #create a symbolic link between the final fasta file and the output file as specified in the rule above
+	# check if the search returned only one file and copy if yes
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        then
+            cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
+            touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
+        fi
+
         touch {output.ok}
-        cp $final_fasta {params.outdir}/{wildcards.id}.getorganelle.{wildcards.sub}.fasta
         """
-#        ln -s $final_fasta $(pwd)/{output.fasta}
