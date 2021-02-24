@@ -1,0 +1,28 @@
+# this is the cluster config file template for SLURM clusters
+# you can change them according to your own cluster settings.
+# please use the long options for individual flags (eg. use --ntasks instead of -n)
+__default__:
+   time: "72:00:00"
+   ntasks: 1
+   job-name: DEF 
+   mem: 4G
+   partition: mem_0096 
+   qos: mem_0096
+   output: $(pwd)/log/slurm-%j.out
+   error: $(pwd)/log/slurm-%j.err
+fastqdump:
+   job-name: FASTQD
+   mem: 10G
+   ntasks: 4
+norgal:
+   job-name: NORGAL
+   ntasks: 16
+   mem: 90G
+quast:
+   job-name: QUAST
+subsample:
+   job-name: SUB
+trimmomatic:
+   job-name: TRIM
+   ntasks: 16
+   mem: 40G
