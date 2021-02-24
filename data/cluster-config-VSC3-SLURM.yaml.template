@@ -1,0 +1,67 @@
+# this is the cluster config file template for SLURM clusters
+# you can change them according to your own cluster settings.
+# please use the long options for individual flags (eg. use --ntasks instead of -n)
+__default__:
+   time: "72:00:00"
+   ntasks: 1
+   job-name: DEF 
+   mem: 4G
+   partition: mem_0064 
+   qos: normal_0064
+   output: $(pwd)/log/slurm-%j.out
+   error: $(pwd)/log/slurm-%j.err
+fastqdump:
+   job-name: FASTQD
+   mem: 10G
+   ntasks: 2
+get_organelle:
+   qos: "normal_binf -C binf"
+   partition: binf
+   mem: 100G
+   job-name: GETORG
+   ntasks: 24
+setup_mitoflex_db:
+   job-name: sMFDB
+mitoflex:
+   job-name: MITOF
+   partition: binf
+   qos: "normal_binf -C binf"
+   ntasks: 24
+   mem: 100G
+norgal:
+   job-name: NORGAL
+   partition: binf
+   qos: "normal_binf -C binf"
+   ntasks: 24
+   mem: 100G
+NOVOconfig:
+   job-name: NOVOC
+NOVOplasty:
+   job-name: NOVOP
+   partition: binf
+   qos: "normal_binf -C binf"
+   mem: 100G
+quast:
+   job-name: QUAST
+subsample:
+   job-name: SUB
+   partition: binf
+   qos: "normal_binf -C binf"
+   mem: 100G
+   ntasks: 24
+trimmomatic:
+   job-name: TRIM
+   partition: binf
+   qos: "normal_binf -C binf"
+   ntasks: 24
+   mem: 100G
+interleave:
+   job-name: INTER
+   mem: 10G
+   ntasks: 2
+MITObim:
+   qos: normal_0128
+   partition: mem_0128
+   mem: 60G
+   ntasks: 10
+  
