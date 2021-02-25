@@ -61,8 +61,8 @@ while getopts ":vt:c:s:m:i:-:" option;
 if [ $OPTIND -eq 1 ]; then usage; fi
 
 # make sure these directories exist before submission because they are needed as singularity bind points
-if [[ ! -d .usr_tmp ]]; then mkdir -f .usr_tmp; fi 
-if [[ ! -d .conda_pkg_tmp ]]; then mkdir -f .conda_pkg_tmp; fi
+if [[ ! -d .usr_tmp ]]; then mkdir .usr_tmp; fi 
+if [[ ! -d .conda_pkg_tmp ]]; then mkdir .conda_pkg_tmp; fi
 
 if [[ $CLUSTER == "slurm" ]]; then
           export CONDA_PKGS_DIRS="$(pwd)/.conda_pkg_tmp"

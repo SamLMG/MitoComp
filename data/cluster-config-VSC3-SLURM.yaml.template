@@ -2,7 +2,8 @@
 # you can change them according to your own cluster settings.
 # please use the long options for individual flags (eg. use --ntasks instead of -n)
 __default__:
-   time: "72:00:00"
+   nodes: 1
+   time: "24:00:00"
    ntasks: 1
    job-name: DEF 
    mem: 4G
@@ -15,10 +16,10 @@ fastqdump:
    mem: 10G
    ntasks: 2
 get_organelle:
+   job-name: GETORG
    qos: "normal_binf -C binf"
    partition: binf
    mem: 100G
-   job-name: GETORG
    ntasks: 24
 setup_mitoflex_db:
    job-name: sMFDB
@@ -60,8 +61,20 @@ interleave:
    mem: 10G
    ntasks: 2
 MITObim:
+   job-name: BIM 
+   time: "48:00:00"
    qos: normal_0128
    partition: mem_0128
    mem: 60G
    ntasks: 10
-  
+mitos_ref_db:
+   job-name: MITRDB
+mitos:
+   job-name: MITOS
+annotation_stats:
+   job-name: ANNS
+roll:
+   job-name: ROLL
+align:
+   job-name: ALIGN
+ 
