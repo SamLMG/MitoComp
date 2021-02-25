@@ -31,14 +31,8 @@ rule mitoflex:
 	outdir = "assemblies/mitoflex/{id}/{sub}",
         id = "{id}",
         clade = get_clade,
-        genetic_code = get_code 
-    resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
-        ntasks="24",
-        name="MitoFlex",
-        nnode="-N 1",
+        genetic_code = get_code,
+        optional = "--level debug"
     log:
         stdout = "assemblies/mitoflex/{id}/{sub}/stdout.txt",
         stderr = "assemblies/mitoflex/{id}/{sub}/stderr.txt"
@@ -52,7 +46,7 @@ rule mitoflex:
         export HOME="{params.wd}/bin/MitoFlex"
 
         # run mitoflex - capture returncode, so if it fails, the pipeline won't stop 
-        {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} && returncode=$? || returncode=$?
+        {params.wd}/bin/MitoFlex/MitoFlex.py all --workname MitoFlex --threads {threads} --fastq1 {params.wd}/{input.f} --fastq2 {params.wd}/{input.r} --genetic-code {params.genetic_code} --clade {params.clade} {params.optional} 1> {params.wd}/{log.stdout} 2> {params.wd}/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
             echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - moving on - for details see: {params.wd}/{log.stderr}" 1>> {params.wd}/{log.stdout}
@@ -63,7 +57,7 @@ rule mitoflex:
         then
             cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
         else
-            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 2>> {params.wd}/{log.stderr}
+            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 1>> {params.wd}/{log.stdout}
             touch {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta.missing 
         fi
 
