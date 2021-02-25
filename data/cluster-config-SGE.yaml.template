@@ -1,0 +1,52 @@
+# you can change them according to your own cluster settings.
+# this particular file was tested on the SGE cluster sauron of the University of Graz.
+__default__:
+   N: DEF 
+   h_vmem: 4G
+   o: $(pwd)/log/sge-%j.out
+   e: $(pwd)/log/sge-%j.err
+   pe: mpi1node
+   q: mpi
+fastqdump:
+   N: FASTQD
+   h_vmem: 10G
+get_organelle:
+   N: GETORG
+   h_vmem: 4G
+setup_mitoflex_db:
+   N: sMFDB
+mitoflex:
+   N: MITOF
+   h_vmem: 4G
+norgal:
+   N: NORGAL
+   partition: binf
+   h_vmem: 4G
+NOVOconfig:
+   N: NOVOC
+NOVOplasty:
+   N: NOVOP
+   h_vmem: 2G
+quast:
+   N: QUAST
+subsample:
+   N: SUB
+   h_vmem: 4G
+trimmomatic:
+   N: TRIM
+   h_vmem: 4G
+interleave:
+   N: INTER
+   h_vmem: 10G
+MITObim:
+   h_vmem: 10G
+mitos_ref_db:
+   N: MITRDB
+mitos:
+   N: MITOS
+annotation_stats:
+   N: ANNS 
+roll:
+   N: ROLL
+align:
+   N: ALIGN
