@@ -6,3 +6,5 @@ interleave/
 dbs/
 .snakemake/
 slurm-*
+log/
+!log/.gitkeep
