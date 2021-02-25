@@ -3,5 +3,6 @@ raw_reads/
 trimmed/
 sub/
 interleave/
+dbs/
 .snakemake/
 slurm-*

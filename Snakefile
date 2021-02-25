@@ -4,8 +4,8 @@ import pandas as pd
 configfile: "data/config.yaml"
 sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=False)
 
-Assembler = ["norgal"] 
-#Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
+#Assembler = ["norgal"] 
+Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
 
 sub = [10000000, 20000000]
 
@@ -20,8 +20,11 @@ include: "rules/mitoflex.smk"
 include: "rules/novoplasty.smk"
 include: "rules/mitobim.smk"
 include: "rules/eval.smk"
+include: "rules/annotation.smk"
+include: "rules/alignment.smk"
 
 localrules: all, setup_mitoflex_db, NOVOconfig, quast
 rule all:
 	input:
-		expand(rules.quast.output, id=IDS, sub=sub, assembler=Assembler)
+		expand(rules.annotation_stats.output, id=IDS, sub=sub, assembler=Assembler),
+		expand(rules.align.output, id=IDS, sub=sub, assembler=Assembler)
