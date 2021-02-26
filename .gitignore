@@ -8,3 +8,5 @@ dbs/
 slurm-*
 log/
 !log/.gitkeep
+assemblies/
+raw_mt_reads/
