@@ -1,8 +1,9 @@
 Here is a list of things to do for the pipeline:
 
 - Move thread information to the config.yaml so that there is a central place where the user can change this.
-- Switch remaining rules with conda environments to singularity containers.
-- Write comprehensive README file with Installation steps, usage examples, list of used software + version and links
-- Add option to also provide read files locally. This likely a bigger change.
-- Test pipeline on VSC4.
+- Switch remaining rules with conda environments to singularity containers. They should already be available on github.com/reslp/dockerfiles
+- Write comprehensive README file with Installation steps, usage examples, list of used software + version and links.
+- Add option to also provide read files locally. This is likely a bigger change.
+- Test pipeline on VSC4 and adjust cluster config file so that everything works.
+
 
