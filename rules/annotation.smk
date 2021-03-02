@@ -22,6 +22,8 @@ rule mitos:
     params:
         id = "{id}",
         seed = get_seed,
+	sub = "{sub}",
+	assembler = "{assembler}",
         wd = os.getcwd(),
         outdir = "assemblies/{assembler}/{id}/{sub}/annotation"
     log: 
@@ -32,7 +34,11 @@ rule mitos:
     threads: 10
     shell:
         """
-	runmitos.py {input}
+	if [[ ! -d {params.outdir} ]]; then mkdir {params.outdir}; fi
+	if [[ -f "assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta" ]]; then
+		# this command does not work yet:
+		runmitos.py -i assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata --refdir {params.wd} -c 5
+	fi
 	touch {output.done}
 	"""
 
