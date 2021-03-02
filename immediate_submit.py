@@ -80,7 +80,7 @@ if subs == "slurm":
 elif subs == "sge":
 	# get more informative job name based on wildcard values
 	prefix = "-".join(job_properties["wildcards"].values())
-        if prefix:
+	if prefix:
 		job_properties["cluster"]["N"] = job_properties["cluster"]["N"]+"-"+prefix
 		# set name for cluster log files:
 		job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("%j",prefix)
