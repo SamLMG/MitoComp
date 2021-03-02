@@ -80,18 +80,14 @@ if subs == "slurm":
 elif subs == "sge":
 	#print("Job properties:", file=sys.stderr)
 	#print(job_properties["cluster"], file=sys.stderr)
-	# set informative job name:
-	if "species" in job_properties["wildcards"]:
-		name =  job_properties["cluster"]["N"] + "-" + job_properties["wildcards"]["species"]
-	elif "busco" in job_properties["wildcards"]:
-		name =  job_properties["cluster"]["N"] + "-" + job_properties["wildcards"]["busco"]
-	else:
-		name = job_properties["cluster"]["N"]
-	job_properties["cluster"]["N"] = name
-	# set name for cluster log files:
-	prefix = "comparative-" + job_properties["rule"] + "-sge"
-	job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("slurm", prefix).replace("%j",name)
-	job_properties["cluster"]["e"] = job_properties["cluster"]["e"].replace("slurm", prefix).replace("%j",name)
+	# get more informative job name based on wildcard values
+        prefix = "-".join(job_properties["wildcards"].values())
+        if prefix:
+                job_properties["cluster"]["N"] = job_properties["cluster"]["N"]+"-"+prefix
+		# set name for cluster log files:
+		job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("%j",prefix)
+		job_properties["cluster"]["e"] = job_properties["cluster"]["e"].replace("%j",prefix)
+
 	cmdline = ["qsub"]
 	
 	# extract info an requested resources
