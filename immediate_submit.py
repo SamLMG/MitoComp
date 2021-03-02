@@ -78,12 +78,10 @@ if subs == "slurm":
 	else:
 		print("none", file=sys.stderr)	
 elif subs == "sge":
-	#print("Job properties:", file=sys.stderr)
-	#print(job_properties["cluster"], file=sys.stderr)
 	# get more informative job name based on wildcard values
-        prefix = "-".join(job_properties["wildcards"].values())
+	prefix = "-".join(job_properties["wildcards"].values())
         if prefix:
-                job_properties["cluster"]["N"] = job_properties["cluster"]["N"]+"-"+prefix
+		job_properties["cluster"]["N"] = job_properties["cluster"]["N"]+"-"+prefix
 		# set name for cluster log files:
 		job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("%j",prefix)
 		job_properties["cluster"]["e"] = job_properties["cluster"]["e"].replace("%j",prefix)
