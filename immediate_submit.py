@@ -83,8 +83,8 @@ elif subs == "sge":
 	if prefix:
 		job_properties["cluster"]["N"] = job_properties["cluster"]["N"]+"-"+prefix
 		# set name for cluster log files:
-		job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("%j",prefix)
-		job_properties["cluster"]["e"] = job_properties["cluster"]["e"].replace("%j",prefix)
+		job_properties["cluster"]["o"] = job_properties["cluster"]["o"].replace("%j",job_properties["cluster"]["N"])
+		job_properties["cluster"]["e"] = job_properties["cluster"]["e"].replace("%j",job_properties["cluster"]["N"])
 
 	cmdline = ["qsub"]
 	
