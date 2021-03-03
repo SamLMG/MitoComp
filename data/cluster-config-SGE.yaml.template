@@ -20,7 +20,6 @@ mitoflex:
    h_vmem: 4G
 norgal:
    N: NORGAL
-   partition: binf
    h_vmem: 4G
 NOVOconfig:
    N: NOVOC
@@ -39,6 +38,7 @@ interleave:
    N: INTER
    h_vmem: 10G
 MITObim:
+   N: MITOB
    h_vmem: 10G
 mitos_ref_db:
    N: MITRDB
