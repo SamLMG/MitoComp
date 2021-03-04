@@ -1,3 +1,14 @@
 samples: "data/data.tsv"
-
+threads:
+    download: 2
+    trimming: 24
+    subsample: 24
+    interleave: 10
+    norgal: 24
+    getorganelle: 24
+    mitoflex: 24
+    novoplasty: 24
+    mitobim: 10
+    annotation: 10
+    alignment: 10        
 

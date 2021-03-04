@@ -13,9 +13,9 @@ rule subsample:
         nnode="-N 1"
     params: 
         seed=553353,
-    threads: 24
-    conda:
-        "envs/seqtk.yml"
+    threads: config["threads"]["subsample"] 
+    singularity:
+        "docker://reslp/seqtk:1.3"
     shell:
         """
         seqtk sample -s{params.seed} {input.f} {wildcards.sub} | gzip > {output.f}

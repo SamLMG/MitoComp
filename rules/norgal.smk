@@ -17,7 +17,7 @@ rule norgal:
         stdout = "assemblies/norgal/{id}/{sub}/stdout.txt",
         stderr = "assemblies/norgal/{id}/{sub}/stderr.txt"
     benchmark: "assemblies/norgal/{id}/{sub}/norgal.{id}.{sub}.benchmark.txt"
-    threads: 24
+    threads: config["threads"]["norgal"] 
     singularity: "docker://reslp/norgal:1.0"
     shell:
         """

@@ -3,9 +3,11 @@ import pandas as pd
 
 configfile: "data/config.yaml"
 sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=False)
+#threads = pd.read_table(config["threads"], sep="\t").set_index("threads", drop=False)
 
-#Assembler = ["norgal"] 
-Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
+
+Assembler = ["getorganelle"] 
+#Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
 
 sub = [10000000, 20000000]
 

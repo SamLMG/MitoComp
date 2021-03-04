@@ -8,11 +8,11 @@ rule interleave:
         mem="10G",
         name="interleave",
         nnode="-N 1"
-    threads: 2
+    threads: config["threads"]["interleave"]
     output:
         "interleave/{sub}/{id}_interleaved.fastq"
-    conda:
-        "envs/bbmap.yml"
+    singularity:
+        "docker://reslp/bbmap:38.90"
     shell:
         """
 	reformat.sh in1={input.f} in2={input.r} out={output}
@@ -42,7 +42,7 @@ rule MITObim:
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
 #    shadow: "shallow"
-    threads: 10
+    threads: config["threads"]["mitobim"] 
     shell:
         """
         WD=$(pwd)

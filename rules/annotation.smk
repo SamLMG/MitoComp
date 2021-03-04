@@ -16,23 +16,26 @@ rule mitos_ref_db:
 rule mitos:
     input:
         "assemblies/{assembler}/{id}/{sub}/{assembler}.ok",
-	rules.mitos_ref_db.output
+	rules.mitos_ref_db.output,
+        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta"
     output:
         done = "assemblies/{assembler}/{id}/{sub}/mitos.done"
     params:
         id = "{id}",
         seed = get_seed,
+        genetic_code = get_code,
         wd = os.getcwd(),
         outdir = "assemblies/{assembler}/{id}/{sub}/annotation"
     log: 
         stdout = "assemblies/{assembler}/{id}/{sub}/stdout.txt",
         stderr = "assemblies/{assembler}/{id}/{sub}/stderr.txt"
     singularity:
-        "docker://reslp/mitos:2.0.8"
-    threads: 10
+        "docker://reslp/mitos:1.0.5"
+    threads: config["threads"]["annotation"] 
     shell:
         """
-	runmitos.py {input}
+	mkdir {params.outdir}
+        runmitos.py -i {input.fasta} -c {params.genetic_code} -o {params.outdir} -r dbs/mitos/mitos1-refdata/ 
 	touch {output.done}
 	"""
 

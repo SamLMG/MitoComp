@@ -39,7 +39,7 @@ rule NOVOplasty:
         stdout = "assemblies/novoplasty/{id}/{sub}/stdout.txt",
         stderr = "assemblies/novoplasty/{id}/{sub}/stderr.txt"
     benchmark: "assemblies/novoplasty/{id}/{sub}/novoplasty.{id}.{sub}.benchmark.txt"
-    threads: 24
+    threads: config["threads"]["novoplasty"] 
 #    shadow: "shallow"
 #    conda:
 #       "envs/novoplasty.yml"

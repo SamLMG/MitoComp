@@ -36,7 +36,7 @@ rule get_organelle:
         stdout = "assemblies/getorganelle/{id}/{sub}/stdout.txt",
         stderr = "assemblies/getorganelle/{id}/{sub}/stderr.txt" 
     benchmark: "assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
-    threads: 24
+    threads: config["threads"]["getorganelle"] 
     shell:
         """
         # run getorganelle - capture returncode, so if it fails, the pipeline won't stop

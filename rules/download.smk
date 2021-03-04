@@ -10,8 +10,9 @@ rule fastqdump:
 		mem="10G",
 		name="fastq-dump",
 		nnode="-N 1"
-	conda: "envs/sra-tools.yml"
-	threads: 2
+	singularity:
+                "docker://reslp/sra-tools:2.10.9"
+	threads: config["threads"]["download"] 
 	shadow: "minimal"
 	shell:
 		"""
