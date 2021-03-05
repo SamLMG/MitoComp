@@ -17,11 +17,11 @@ rule mitos:
     input:
         "assemblies/{assembler}/{id}/{sub}/{assembler}.ok",
 	rules.mitos_ref_db.output,
-        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta"
     output:
         done = "assemblies/{assembler}/{id}/{sub}/mitos.done"
     params:
         id = "{id}",
+        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta",
         seed = get_seed,
         genetic_code = get_code,
 	sub = "{sub}",
@@ -37,10 +37,11 @@ rule mitos:
     shell:
         """
 	if [[ ! -d {params.outdir} ]]; then mkdir {params.outdir}; fi
-	if [[ -f "assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta" ]]; then
-		# this command does not work yet:
-	runmitos.py -i assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
-	fi
+	if [[ -f {params.fasta} ]]; then
+	runmitos.py -i {params.fasta} -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
+	else
+        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?“ >> {log.stderr}
+        fi
 	touch {output.done}
 	"""
 
