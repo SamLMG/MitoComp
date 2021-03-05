@@ -23,12 +23,9 @@ rule mitos:
     params:
         id = "{id}",
         seed = get_seed,
-<<<<<<< HEAD
         genetic_code = get_code,
-=======
 	sub = "{sub}",
 	assembler = "{assembler}",
->>>>>>> 11b9be71496066f2bc46544a4cbfd38e1c7a9a43
         wd = os.getcwd(),
         outdir = "assemblies/{assembler}/{id}/{sub}/annotation"
     log: 
@@ -39,16 +36,11 @@ rule mitos:
     threads: config["threads"]["annotation"] 
     shell:
         """
-<<<<<<< HEAD
-	mkdir {params.outdir}
-        runmitos.py -i {input.fasta} -c {params.genetic_code} -o {params.outdir} -r dbs/mitos/mitos1-refdata/ 
-=======
 	if [[ ! -d {params.outdir} ]]; then mkdir {params.outdir}; fi
 	if [[ -f "assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta" ]]; then
 		# this command does not work yet:
-		runmitos.py -i assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata --refdir {params.wd} -c 5
+	runmitos.py -i assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
 	fi
->>>>>>> 11b9be71496066f2bc46544a4cbfd38e1c7a9a43
 	touch {output.done}
 	"""
 
