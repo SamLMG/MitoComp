@@ -31,7 +31,7 @@ REPORT=""
 DRY=""
 NJOBS="10001"
 commit=$(git rev-parse --short HEAD)
-STDSMARGS="--notemp --latency-wait 600"
+STDSMARGS="--notemp --latency-wait 60"
 
 while getopts ":vt:c:s:m:i:-:" option;
         do

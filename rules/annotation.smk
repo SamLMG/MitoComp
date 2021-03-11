@@ -40,7 +40,7 @@ rule mitos:
 	if [[ -f {params.fasta} ]]; then
 	runmitos.py -i {params.fasta} -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
 	else
-        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?“ >> {log.stderr}
+        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
 	touch {output.done}
 	"""
