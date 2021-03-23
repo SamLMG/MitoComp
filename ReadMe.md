@@ -1,4 +1,4 @@
-MitoComp – A mitochondrial genome assembley, annotation and comparison pipeline.
+# MitoComp – A mitochondrial genome assembley, annotation and comparison pipeline.
 
 The MitoComp pipeline is designed with two distinct aims. First, to provide a robust and user-friendly approach to assembling mitochondrial genomes from short-read WGS using five third-party, command-line based assembly tools. Second, MitoComp aims to provide an objective comparison of these assembly tools and how they work with different datasets. A rulegraph outlining the steps MitoComp takes is shown below.
 
