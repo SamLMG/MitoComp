@@ -1,4 +1,4 @@
-samples: "data/data_dros.tsv"
+samples: "data/data.tsv"
 threads:
     download: 2
     trimming: 24

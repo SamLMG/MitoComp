@@ -47,10 +47,14 @@ rule mitos:
 
 rule annotation_stats:
     input:
-        expand("assemblies/{assembler}/{{id}}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
+        expand("assemblies/{assembler}/{id}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
     output:
-        "compare/{id}/annotation/mitos/compare.mitos.{id}.done"
+        starts = "compare/start_positions.txt",
+        RC_assemblies = "compare/RC_assemblies.txt",
+        done = "compare/annotation_stats.done"
     shell:
         """
-	touch {output}
+        find ./assemblies/ -name "result.bed" | cat > paths.txt
+        scripts/annotate.py
+        touch {output.done}
         """
