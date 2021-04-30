@@ -10,8 +10,8 @@ def rev_comp(seq):
             header = seq
             return(header)
         else:
-            nucs = "".join(complements.get(nucs, nucs) for nucs in seq)[::-1]
-            RCseq = nucs
+       	    nucs = "".join(complements.get(nucs, nucs) for nucs in seq)[::-1]
+            RCseq = nucs.upper()
             return(RCseq)
 
 
