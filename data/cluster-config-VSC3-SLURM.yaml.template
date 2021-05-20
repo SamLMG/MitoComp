@@ -77,4 +77,9 @@ roll:
    job-name: ROLL
 align:
    job-name: ALIGN
- 
+second_mitos:
+   job-name: SMITOS
+gbk_prep:
+   job-name: GBK
+CGview:
+   job-name: CGVIEW 

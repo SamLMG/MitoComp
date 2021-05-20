@@ -9,7 +9,9 @@ rule NOVOconfig:
         seed = get_seed,
         log = "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
         f = rules.subsample.output.f,
-        r = rules.subsample.output.r
+        r = rules.subsample.output.r,
+        kmer = get_kmer,
+        Read_length = get_readlength
     shell:
         """
         cp {input} {output}
@@ -18,6 +20,8 @@ rule NOVOconfig:
         sed -i 's?^Extended log.*?Extended log = {params.WD}/{params.log}?g' {output}
         sed -i 's?^Forward reads.*?Forward reads = {params.WD}/{params.f}?g' {output}
         sed -i 's?^Reverse reads.*?Reverse reads = {params.WD}/{params.r}?g' {output}
+        sed -i 's?^K-mer.*?K-mer = {params.kmer}?g' {output}
+        sed -i 's?^Read Length.*?Read Length = {params.Read_length}?g' {output}
         """
 
 rule NOVOplasty:

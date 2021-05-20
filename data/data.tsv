@@ -1,6 +1,6 @@
-ID	forward	reverse	seed	SRA	Clade	Code
-D_ananassae			seeds/D.ananassae_coxI.fasta	SRR12836360	Arthropoda	5
-M_musculus			seeds/M.musculus_coxI.fasta	SRR13326502	Chordata	2
-C_elegans			seeds/C.elegans_coxI.fasta	SRR13374450	Nematoda	5
-D_rerio			seeds/D.rerio_coxI.fasta	SRR13166697	Chordata	2
-O_vulgaris			seeds/O.vulgaris_coxI.fasta	SRR8079591	Mollusca	5
+ID	forward	reverse	seed	SRA	Clade	Code	novoplasty_kmer	Read_length	Adapter	Type	GO_Rounds
+D_ananassae			seeds/D.ananassae_coxI.fasta	SRR12836360	Arthropoda	5	39	151	TruSeq3-PE.fa	animal_mt	10
+M_musculus			seeds/M.musculus_coxI.fasta	SRR13326502	Chordata	2	39	151	TruSeq3-PE.fa	animal_mt	10
+C_elegans			seeds/C.elegans_coxI.fasta	SRR13374450	Nematoda	5	39	151	TruSeq3-PE.fa	animal_mt	10
+D_rerio			seeds/D.rerio_coxI.fasta	SRR13166697	Chordata	2	39	151	TruSeq3-PE.fa	animal_mt	10
+O_vulgaris			seeds/O.vulgaris_coxI.fasta	SRR8079591	Mollusca	5	39	151	TruSeq3-PE.fa	animal_mt	10

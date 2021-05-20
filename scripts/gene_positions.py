@@ -24,7 +24,6 @@ Genes.write(header)
 #		assembler = line.split("\t")[]
 
 
-#def extract_Bed_table(fh):
 for assembly in assemblies:
 		bed_file = open(assembly, 'r')
 		for line in bed_file:

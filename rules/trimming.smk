@@ -14,11 +14,21 @@ rule trimmomatic:
         rout = "trimmed/{id}_2P_trim.fastq.gz",
         runp = "trimmed/{id}_2P_unpaired.fastq.gz",
         ok = "trimmed/trim_{id}.ok"
+    params:
+        adapter = get_adapter,
+        minlength = config["trimming"]["minlength"],
+        windowsize = config["trimming"]["windowsize"],
+        stepsize = config["trimming"]["stepsize"],
+        quality = config["trimming"]["quality"],
+        required_quality = config["trimming"]["required_quality"],
+        seed_mismatches = config["trimming"]["seed_mismatches"],
+        palindrome_clip = config["trimming"]["palindrome_clip"],
+        simple_clip = config["trimming"]["simple_clip"]
     threads: config["threads"]["trimming"] 
     singularity: 
         "docker://reslp/trimmomatic:0.38"
     shell:
         """
-        trimmomatic PE -threads {threads} {input.f} {input.r} {output.fout} {output.funp} {output.rout} {output.runp} ILLUMINACLIP:adapterseq/Adapters_PE.fa:2:30:10: LEADING:30 TRAILING:30 SLIDINGWINDOW:4:15 MINLEN:80
+        trimmomatic PE -threads {threads} {input.f} {input.r} {output.fout} {output.funp} {output.rout} {output.runp} ILLUMINACLIP:opt/conda/share/trimmomatic-0.38-0/adapters/{params.adapter}:{params.seed_mismatches}:{params.palindrome_clip}:{params.simple_clip} LEADING:{params.quality} TRAILING:{params.quality} SLIDINGWINDOW:{params.windowsize}:{params.required_quality} MINLEN:{params.minlength}
         touch {output.ok}
         """

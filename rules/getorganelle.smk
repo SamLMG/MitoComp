@@ -28,7 +28,9 @@ rule get_organelle:
         nnode="-N 1"
     params:
         outdir = "assemblies/getorganelle/{id}/{sub}/run",
-        seed = get_seed
+        seed = get_seed,
+        type = get_type,
+        rounds = get_rounds
     singularity:"docker://reslp/getorganelle:1.7.1"
 #    conda:
 #        "envs/getorganelle.yml"
@@ -40,7 +42,7 @@ rule get_organelle:
     shell:
         """
         # run getorganelle - capture returncode, so if it fails, the pipeline won't stop
-        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F animal_mt -t {threads} -R 10 -s {params.seed} 1> {log.stdout} 2> {log.stderr} && returncode=$? || returncode=$?
+        get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F {params.type} -t {threads} -R {params.rounds} -s {params.seed} 1> {log.stdout} 2> {log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
             echo -e "\\n#### [$(date)]\\tgetorganelle exited with an error - moving on - for details see: $(pwd)/{log.stderr}" 1>> {log.stdout}

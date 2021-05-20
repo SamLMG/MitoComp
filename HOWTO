@@ -1,0 +1,20 @@
+#rulegraph
+snakemake --rulegraph | dot -Tsvg > rulegraph.svg
+
+#cancel jobs from x to y
+for f {123123..4234829}; do scancel $f; done
+#or simply
+scancel {9417393..9417408}
+
+#cancel all pending jobs
+scancel -t PENDING -u leeming
+
+#sumbit -c specifies the clusterconfig. Resources for each job will be taken from "default" unless specified in the job 
+./assembly -t slurm -c data/cluster-config-VSC3-SLURM.yaml.template 
+
+#dry run 
+./assembly -t slurm -c data/cluster-config-VSC3-SLURM.yaml.template --dry
+ 
+#use -t serial to run locally - good to test single rule
+./assembly -t serial -c data/cluster-config-VSC3-SLURM.yaml.template -s "--until align -j1"  
+

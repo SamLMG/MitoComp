@@ -12,3 +12,12 @@ threads:
     annotation: 10
     alignment: 10        
 
+trimming:
+    minlength: 80
+    windowsize: 5
+    stepsize: 4
+    quality: 3
+    required_quality: 15
+    seed_mismatches: 2
+    palindrome_clip: 30
+    simple_clip: 10

@@ -19,8 +19,8 @@ Insert size           =
 Platform              = illumina
 Single/Paired         = PE
 Combined reads        = 
-Forward reads         = /home/lv71312/leeming/mt_assembly/trimmed/SRR12836360_1P_trim.fastq
-Reverse reads         = /home/lv71312/leeming/mt_assembly/trimmed/SRR12836360_2P_trim.fastq
+Forward reads         = /path/to/forward/reads
+Reverse reads         = /path/to/reverse/reads
 
 Heteroplasmy:
 -----------------------

@@ -7,9 +7,9 @@ sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=Fa
 
 
 #Assembler = ["getorganelle"] 
-Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
+Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty"]#, "mitobim"] 
 
-#sub = [10000000, 20000000, "all"]
+#sub = [5000000, 10000000, 20000000, "all"]
 sub = [5000000]
 
 include: "rules/functions.smk"
@@ -24,9 +24,17 @@ include: "rules/mitobim.smk"
 include: "rules/eval.smk"
 include: "rules/annotation.smk"
 include: "rules/alignment.smk"
+include: "rules/annotationII.smk"
+include: "rules/CGview.smk"
 
-localrules: all, setup_mitoflex_db, NOVOconfig, quast
+
+localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, gbk_prep, CGview
 rule all:
 	input:
+                expand("trimmed/trim_{id}.ok", id=IDS, sub=sub, assembler=Assembler),
+                expand("assemblies/{assembler}/{id}/{sub}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler),
 		expand(rules.annotation_stats.output, id=IDS, sub=sub, assembler=Assembler),
-		expand(rules.align.output, id=IDS, sub=sub, assembler=Assembler)
+		expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler),
+                expand(rules.align.output, id=IDS, sub=sub, assembler=Assembler),
+                "compare/alignment/mitos2/gene_positions.done",
+                expand("compare/CGview/{id}.{assembler}.{sub}.cgview.done", id=IDS, sub=sub, assembler=Assembler)
