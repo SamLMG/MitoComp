@@ -5,12 +5,12 @@ rule subsample:
     output:
         f = "sub/{sub}/{id}_1.fastq.gz",
         r = "sub/{sub}/{id}_2.fastq.gz"
-    resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
-        name="subsample",
-        nnode="-N 1"
+#    resources:
+#        qos="normal_binf -C binf",
+#        partition="binf",
+#        mem="100G",
+#        name="subsample",
+#        nnode="-N 1"
     params: 
         seed=553353,
         wd = os.getcwd()

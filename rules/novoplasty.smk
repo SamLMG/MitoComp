@@ -33,12 +33,12 @@ rule NOVOplasty:
         ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
     params:
         outdir = "assemblies/novoplasty/{id}/{sub}/run"
-    resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
-        name="NOVOplasty",
-        nnode="-N 1"
+#    resources:
+#        qos="normal_binf -C binf",
+#        partition="binf",
+#        mem="100G",
+#        name="NOVOplasty",
+#        nnode="-N 1"
     log:
         stdout = "assemblies/novoplasty/{id}/{sub}/stdout.txt",
         stderr = "assemblies/novoplasty/{id}/{sub}/stderr.txt"

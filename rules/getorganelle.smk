@@ -20,12 +20,12 @@ rule get_organelle:
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
         ok = "assemblies/getorganelle/{id}/{sub}/getorganelle.ok"
-    resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
-        name="getorganelle",
-        nnode="-N 1"
+#    resources:
+#        qos="normal_binf -C binf",
+#        partition="binf",
+#        mem="100G",
+#        name="getorganelle",
+#        nnode="-N 1"
     params:
         outdir = "assemblies/getorganelle/{id}/{sub}/run",
         seed = get_seed,

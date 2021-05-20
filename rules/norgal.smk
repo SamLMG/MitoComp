@@ -5,12 +5,12 @@ rule norgal:
     output:
 #        outdir = directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}"),
         ok = "assemblies/norgal/{id}/{sub}/norgal.ok"
-    resources:
-        qos="normal_binf -C binf",
-        partition="binf",
-        mem="100G",
-        name="norgal",
-        nnode="-N 1"
+#    resources:
+#        qos="normal_binf -C binf",
+#        partition="binf",
+#        mem="100G",
+#        name="norgal",
+#        nnode="-N 1"
     params:
         outdir = "assemblies/norgal/{id}/{sub}/run"
     log:

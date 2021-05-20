@@ -7,7 +7,7 @@ sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=Fa
 
 
 #Assembler = ["getorganelle"] 
-Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty"]#, "mitobim"] 
+Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
 
 #sub = [5000000, 10000000, 20000000, "all"]
 sub = [5000000]
