@@ -1,0 +1,77 @@
+# this is the cluster config file template for SLURM clusters
+# you can change them according to your own cluster settings.
+# please use the long options for individual flags (eg. use --ntasks instead of -n)
+__default__:
+   time: "72:00:00"
+   ntasks: 1
+   job-name: DEF 
+   mem: 4G
+   partition: mem_0096 
+   qos: mem_0096
+   output: $(pwd)/log/slurm-%j.out
+   error: $(pwd)/log/slurm-%j.err
+fastqdump:
+   job-name: FASTQD
+   mem: 10G
+   ntasks: 2
+get_organelle:
+   mem: 96G
+   partition: mem_0096
+   job-name: GETORG
+   ntasks: 24
+setup_mitoflex_db:
+   job-name: sMFDB
+mitoflex:
+   job-name: MITOF
+   partition: mem_0096
+   ntasks: 24
+   mem: 96G
+norgal:
+   job-name: NORGAL
+   partition: mem_0096
+   ntasks: 24
+   mem: 96G
+NOVOconfig:
+   job-name: NOVOC
+NOVOplasty:
+   job-name: NOVOP
+   mem: 96G
+   partition: mem_0096
+   ntasks: 24
+quast:
+   job-name: QUAST
+subsample:
+   job-name: SUB
+   mem: 96G
+   partition: mem_0096
+   ntasks: 24
+trimmomatic:
+   job-name: TRIM
+   ntasks: 24
+   mem: 96G
+   partition: mem_0096
+interleave:
+   job-name: INTER
+   mem: 10G
+   ntasks: 2
+MITObim:
+   job-name: BIM
+   mem: 96G
+   ntasks: 24
+   partition: mem_0096
+mitos_ref_db:
+   job-name: MITRDB
+mitos:
+   job-name: MITOS
+annotation_stats:
+   job-name: ANNS
+roll:
+   job-name: ROLL
+align:
+   job-name: ALIGN
+second_mitos:
+   job-name: SMITOS
+gbk_prep:
+   job-name: GBK
+CGview:
+   job-name: CGVIEW
