@@ -15,10 +15,16 @@ def get_code(wildcards):
         return sample_data.loc[(wildcards.id), ["Code"]].dropna().values[0]
 
 def get_forward(wildcards):
-        return sample_data.loc[(wildcards.id), ["forward"]].dropna().values[0]
+	if len(sample_data.loc[(wildcards.id), ["forward"]].dropna()) == 0:
+		return
+	else:
+		return sample_data.loc[(wildcards.id), ["forward"]].dropna().values[0]
 
 def get_reverse(wildcards):
-        return sample_data.loc[(wildcards.id), ["reverse"]].dropna().values[0]
+	if len(sample_data.loc[(wildcards.id), ["reverse"]].dropna()) == 0:
+		return
+	else:
+		return sample_data.loc[(wildcards.id), ["reverse"]].dropna().values[0]
 
 def get_kmer(wildcards):
 	return sample_data.loc[(wildcards.id), ["novoplasty_kmer"]].dropna().values[0]
