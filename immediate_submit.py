@@ -62,7 +62,10 @@ if subs == "slurm":
 	# add additional slurm arguments from cluster config file 
 	slurm_args = ""
 	for element in job_properties["cluster"]:
-		slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])	
+		if element == "error" or element == "output":
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element].replace("slurm", "slurm-"+job_properties["cluster"]["job-name"]))
+		else:
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])
 	
 	# add information acquired so far to the sbatch command
 	cmdline.append(slurm_args)
@@ -73,7 +76,7 @@ if subs == "slurm":
 		cmdline.append(" --dependency")
 		# only keep numbers (which are the jobids) in dependencies list. this is necessary because slurm returns more than the jobid. For other schedulers this could be different!
 		dependencies = [x for x in dependencies if x.isdigit()]
-		cmdline.append("afterok:" + ",".join(dependencies))
+		cmdline.append("afterok:" + ":".join(dependencies))
 		print(dependencies, file=sys.stderr)
 	else:
 		print("none", file=sys.stderr)	
@@ -96,7 +99,12 @@ elif subs == "sge":
 
 	for element in job_properties["cluster"]:
 		#print(element, file=sys.stderr)
-		
+			
+		if element == "error" or element == "output":
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element].replace("sge", "sge-"+job_properties["cluster"]["job-name"]))
+		else:
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])
+
 		if element in sge_resources:
 			if "nodes" == element: #special case when nodes are specified, in this case threads are ppns
 				sge_args += " -l %s=%s:ppn=%s" % ("nodes", job_properties["cluster"]["nodes"], job_properties["threads"])
@@ -150,6 +158,11 @@ elif subs == "torque":
 	for element in job_properties["cluster"]:
 		#print(element, file=sys.stderr)
 		
+		if element == "error" or element == "output":
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element].replace("torque", "torque-"+job_properties["cluster"]["job-name"]))
+		else:
+			slurm_args += " --%s=%s" %(element, job_properties["cluster"][element])
+
 		if element in sge_resources:
 			if "nodes" == element: #special case when nodes are specified, in this case threads are ppns
 				sge_args += " -l %s=%s:ppn=%s" % ("nodes", job_properties["cluster"]["nodes"], job_properties["threads"])
