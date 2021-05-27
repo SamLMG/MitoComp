@@ -43,7 +43,7 @@ rule CGview:
         "docker://pstothard/cgview"
     shell:
         """
-        perl /usr/bin/cgview_xml_builder.pl -sequence getorganelle.genbank -gc_content T -gc_skew T -size large-v2 -tick_density 0.05 -draw_divider_rings T -custom showBorder=false title="{params.id}.{params.assembler}.{params.sub} map" titleFontSize="200" -feature_labels T -output {params.id}.{params.assembler}.{params.sub}.map.xml
-        java -jar /usr/bin/cgview.jar -i map.xml -o {params.id}.{params.assembler}.{params.sub}.map.svg
+        perl /usr/bin/cgview_xml_builder.pl -sequence compare/CGview/{params.id}.{params.assembler}.{params.sub}.genbank -gc_content T -gc_skew T -size large-v2 -tick_density 0.05 -draw_divider_rings T -custom showBorder=false title="{params.id}.{params.assembler}.{params.sub} map" titleFontSize="200" -feature_labels T -output compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml
+        java -jar /usr/bin/cgview.jar -i compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml -o compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.svg
         touch {output}
         """  
