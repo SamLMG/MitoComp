@@ -1,4 +1,8 @@
 samples: "data/data.tsv"
+
+Assembler: ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"]
+sub: ["5000000"] #, "10000000", "20000000", "all"]
+
 threads:
     download: 2
     trimming: 24

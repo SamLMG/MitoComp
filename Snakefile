@@ -6,11 +6,11 @@ sample_data = pd.read_table(config["samples"], sep="\t").set_index("ID", drop=Fa
 #threads = pd.read_table(config["threads"], sep="\t").set_index("threads", drop=False)
 
 
-#Assembler = ["getorganelle"] 
-Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
+Assembler = config["Assembler"] 
+#Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
 
 #sub = [5000000, 10000000, 20000000, "all"]
-sub = [5000000]
+sub = config["sub"]
 
 include: "rules/functions.smk"
 include: "rules/download.smk"

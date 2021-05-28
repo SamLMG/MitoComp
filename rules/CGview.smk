@@ -19,7 +19,7 @@ rule gbk_prep:
 #        name="interleave",
 #        nnode="-N 1"
     singularity: 
-        "docker://pegi3s/emboss"
+        "docker://pegi3s/emboss:6.6.0"
     shell:
         """
         seqret -sequence compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
@@ -40,7 +40,7 @@ rule CGview:
         assembler = "{assembler}",
         sub = "{sub}"
     singularity:
-        "docker://pstothard/cgview"
+        "docker://pstothard/cgview:2.0.2"
     shell:
         """
         perl /usr/bin/cgview_xml_builder.pl -sequence compare/CGview/{params.id}.{params.assembler}.{params.sub}.genbank -gc_content T -gc_skew T -size large-v2 -tick_density 0.05 -draw_divider_rings T -custom showBorder=false title="{params.id}.{params.assembler}.{params.sub} map" titleFontSize="200" -feature_labels T -output compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml
