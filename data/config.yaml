@@ -21,3 +21,6 @@ trimming:
     seed_mismatches: 2
     palindrome_clip: 30
     simple_clip: 10
+
+subsample:
+    seed: 553353

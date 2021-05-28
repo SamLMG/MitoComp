@@ -12,7 +12,7 @@ rule subsample:
 #        name="subsample",
 #        nnode="-N 1"
     params: 
-        seed=553353,
+        seed= config["subsample"]["seed"],
         wd = os.getcwd()
     threads: config["threads"]["subsample"] 
     singularity:

@@ -10,11 +10,13 @@ scancel {9417393..9417408}
 scancel -t PENDING -u leeming
 
 #sumbit -c specifies the clusterconfig. Resources for each job will be taken from "default" unless specified in the job 
-./assembly -t slurm -c data/cluster-config-VSC3-SLURM.yaml.template 
+./assembly -t slurm -c data/cluster-config-VSC4-SLURM.yaml.template 
 
 #dry run 
-./assembly -t slurm -c data/cluster-config-VSC3-SLURM.yaml.template --dry
+./assembly -t slurm -c data/cluster-config-VSC4-SLURM.yaml.template --dry
  
 #use -t serial to run locally - good to test single rule
-./assembly -t serial -c data/cluster-config-VSC3-SLURM.yaml.template -s "--until align -j1"  
+./assembly -t serial -c data/cluster-config-VSC4-SLURM.yaml.template -s "--until align -j1"  
 
+#free up space in .singularty directory (always in home so limited space)
+singularity cache clean

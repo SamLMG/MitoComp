@@ -6,6 +6,7 @@ __default__:
    ntasks: 1
    job-name: DEF 
    mem: 4G
+   nodes: 1
    partition: mem_0096 
    qos: mem_0096
    output: $(pwd)/log/slurm-%j.out
@@ -15,54 +16,49 @@ fastqdump:
    mem: 10G
    ntasks: 2
 get_organelle:
-   mem: 96G
-   partition: mem_0096
+   mem: 90G
    job-name: GETORG
    ntasks: 24
 setup_mitoflex_db:
    job-name: sMFDB
 mitoflex:
    job-name: MITOF
-   partition: mem_0096
    ntasks: 24
-   mem: 96G
+   mem: 90G
 norgal:
    job-name: NORGAL
-   partition: mem_0096
    ntasks: 24
-   mem: 96G
+   mem: 90G
 NOVOconfig:
    job-name: NOVOC
 NOVOplasty:
    job-name: NOVOP
-   mem: 96G
-   partition: mem_0096
+   mem: 90G
    ntasks: 24
 quast:
    job-name: QUAST
 subsample:
    job-name: SUB
-   mem: 96G
-   partition: mem_0096
+   mem: 10G
    ntasks: 24
 trimmomatic:
    job-name: TRIM
    ntasks: 24
-   mem: 96G
-   partition: mem_0096
+   mem: 10G
 interleave:
    job-name: INTER
    mem: 10G
    ntasks: 2
 MITObim:
    job-name: BIM
-   mem: 96G
+   mem: 90G
    ntasks: 24
-   partition: mem_0096
 mitos_ref_db:
    job-name: MITRDB
 mitos:
    job-name: MITOS
+gene_positions:
+   job-name: GPOS
 annotation_stats:
    job-name: ANNS
 roll:
@@ -75,3 +71,5 @@ gbk_prep:
    job-name: GBK
 CGview:
    job-name: CGVIEW
+all:
+   job-name: ALL
