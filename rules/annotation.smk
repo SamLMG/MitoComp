@@ -29,8 +29,8 @@ rule mitos:
         wd = os.getcwd(),
         outdir = "assemblies/{assembler}/{id}/{sub}/annotation"
     log: 
-        stdout = "assemblies/{assembler}/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/{assembler}/{id}/{sub}/stderr.txt"
+        stdout = "assemblies/{assembler}/{id}/{sub}/annotation/stdout.txt",
+        stderr = "assemblies/{assembler}/{id}/{sub}/annotation/stderr.txt"
     singularity:
         "docker://reslp/mitos:1.0.5"
     threads: config["threads"]["annotation"] 

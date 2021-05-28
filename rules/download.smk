@@ -19,7 +19,7 @@ rule fastqdump:
 	shadow: "shallow"
 	shell:
 		"""
-		if [[ -f "{params.f}" ]] && [[ -f "{params.r}" ]]; then 
+                if [[ -f "{params.f}" ]] && [[ -f "{params.r}" ]]; then 
                     ln -s ../{params.f} {params.wd}/{output.f}
                     ln -s ../{params.r} {params.wd}/{output.r}
                     echo "using local fastq.gz files"

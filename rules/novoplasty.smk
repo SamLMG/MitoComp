@@ -66,14 +66,14 @@ rule NOVOplasty:
 	# find the expected final assembly file
         final_fasta=$(find ./ -name "Circularized_assembly*")
 	# check if the search returned only one file and copy if yes
-        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 1 ]
         then
             cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta 
-	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 0 ]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
             touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
-        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -gt 1 ]
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
             touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
