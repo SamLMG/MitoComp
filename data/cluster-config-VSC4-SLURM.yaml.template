@@ -71,5 +71,7 @@ gbk_prep:
    job-name: GBK
 CGview:
    job-name: CGVIEW
+CCT:
+   job-name: CCT
 all:
    job-name: ALL

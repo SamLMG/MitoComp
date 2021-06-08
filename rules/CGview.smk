@@ -4,13 +4,13 @@ rule gbk_prep:
 #        fasta = "compare/alignment/clustalo/{id}.{assembler}.{sub}.rolled.12476_RC.fasta",
 #        gff = "compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff"
     output:
-        "compare/CGview/{id}.{assembler}.{sub}.gbk.done"
+        "compare/CCT/{id}.{assembler}.{sub}.gbk.done"
     params:
         id = "{id}",
         assembler = "{assembler}",
         sub = "{sub}",
         gff = "compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff",
-        gbk = "compare/CGview/{id}.{assembler}.{sub}.genbank",
+        gbk = "compare/CCT/{id}.{assembler}.{sub}.genbank",
         outdir = "compare/alignment/mitos2/{id}.{sub}.{assembler}" 
 #    resources:
 #        qos="normal_0064",
@@ -22,28 +22,62 @@ rule gbk_prep:
         "docker://pegi3s/emboss:6.6.0"
     shell:
         """
+        if [ -f compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta ]
+        then
         seqret -sequence compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
+        sed -i '1 a ACCESSION   {params.id}.{params.assembler}.{params.sub}' {params.gbk}
         sed -i 's/gene/CDS/g' {params.gbk}
         sed -i 's/*Name //g' {params.gbk}
         sed -i 's/([^()]*)//g' {params.gbk}
         sed -i '/*/d' {params.gbk}
+        fi
         touch {output}
         """
 
-rule CGview:
+#rule CGview:
+#    input:
+#        rules.gbk_prep.output
+#    output:
+#        "compare/CGview/{id}.{assembler}.{sub}.cgview.done"
+#    params:
+#        id = "{id}",
+#        assembler = "{assembler}",
+#        sub = "{sub}"
+#    singularity:
+#        "docker://pstothard/cgview:2.0.2"
+#    shell:
+#        """
+#        perl /usr/bin/cgview_xml_builder.pl -sequence compare/CGview/{params.id}.{params.assembler}.{params.sub}.genbank -gc_content T -gc_skew T -size large-v2 -tick_density 0.05 -draw_divider_rings T -custom showBorder=false title="{params.id}.{params.assembler}.{params.sub} map" titleFontSize="200" -feature_labels T -output compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml
+#        java -jar /usr/bin/cgview.jar -i compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml -o compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.svg
+#        touch {output}
+#        """  
+
+
+rule CCT:
     input:
-        rules.gbk_prep.output
+        expand("compare/CCT/{{id}}.{assembler}.{sub}.gbk.done", id=IDS, sub=sub, assembler=Assembler)
+        #rules.gbk_prep.output,
+        #gbk =  "compare/CCT/{id}.{assembler}.{sub}.genbank" 
     output:
-        "compare/CGview/{id}.{assembler}.{sub}.cgview.done"
+        "compare/CCT/{id}.{assembler}.{sub}.CCT.done"
     params:
         id = "{id}",
         assembler = "{assembler}",
-        sub = "{sub}"
+        sub = "{sub}",
+        outdir = "compare/CCT",
+        wd = os.getcwd()
     singularity:
-        "docker://pstothard/cgview:2.0.2"
+        "docker://pstothard/cgview_comparison_tool:1.0.1"
     shell:
         """
-        perl /usr/bin/cgview_xml_builder.pl -sequence compare/CGview/{params.id}.{params.assembler}.{params.sub}.genbank -gc_content T -gc_skew T -size large-v2 -tick_density 0.05 -draw_divider_rings T -custom showBorder=false title="{params.id}.{params.assembler}.{params.sub} map" titleFontSize="200" -feature_labels T -output compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml
-        java -jar /usr/bin/cgview.jar -i compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.xml -o compare/CGview/{params.id}.{params.assembler}.{params.sub}.map.svg
-        touch {output}
-        """  
+        if [ -f compare/CCT/{params.id}.{params.assembler}.{params.sub}.genbank ]
+        then
+        cd {params.outdir}
+        build_blast_atlas.sh -i {params.id}.{params.assembler}.{params.sub}.genbank 
+        cp {params.id}*.genbank {params.id}.{params.assembler}.{params.sub}/comparison_genomes/
+        #build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub}
+        build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub} -z medium --custom "arrowheadLength=12 global_label=T legend=T use_opacity=F backboneRadius=900 labelFontSize=60 borderColor=white width=3000 height=3000 gc_content=T backboneThickness=0.01 gcColorNeg=blue gcColorPos=red legendFontSize=30 featureThickness=50 _cct_blast_thickness=25.00000 useInnerLabels=false"
+        cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.png {params.id}.{params.assembler}.{params.sub}.map.png 
+        fi
+        touch {params.wd}/{output}
+        """
