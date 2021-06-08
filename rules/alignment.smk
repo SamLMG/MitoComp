@@ -56,6 +56,6 @@ rule align:
         cp *RC.fasta clustalo/
         cd clustalo
         cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
-        clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa
+        clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
         touch {params.id}.align.done
         """
