@@ -52,7 +52,7 @@ if subs == "slurm":
 	
 	# TODO: figure out how to handle threading information more generally:
 	if job_properties["threads"]:
-		job_properties["cluster"]["ntasks"] = job_properties["threads"]
+		job_properties["cluster"]["cpus-per-task"] = job_properties["threads"]
 	#job_properties["cluster"]["ntasks"] = job_properties["threads"]
 	#job_properties["cluster"]["ntasks-per-node"] = job_properties["threads"]
 
