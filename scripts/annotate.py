@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pandas as pd
 #read file containing paths
-paths = open("paths.txt", "r")
+paths = open("compare/paths.txt", "r")
 #create list called assemblies and append each path
 assemblies = []
 for path in paths:
@@ -12,7 +12,6 @@ print("All paths:", assemblies)
 
 #open all bed files in assemblies list and extract a global list of genes  
 #x = 0 
-Genes = open("compare/Genes.txt", 'w')
 global_gene_list = []
 for assembly in assemblies:
 	assembly_file = open(assembly, 'r') 
@@ -35,7 +34,10 @@ for assembly in assemblies:
 global_gene_set = set(global_gene_list)
 
 #print header line, convert global gene set to list, sort alphabetically and convert to strings separated by tab
-print("Assembler", "Species", "Subsample", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Genes)
+species_genes_dictionary = {}
+species_trnas_dictionary = {}
+
+output_list = []
 for assembly in assemblies:
 	assembly_file = open(assembly, 'r') 
 #	x += 1
@@ -65,14 +67,87 @@ for assembly in assemblies:
 			print(gene, count)
 #df = pd.DataFrame(gene_dict, assemblies)
 #print(df)
-
-#with open("Genes.txt", 'w') as Genes: 
 	gene_counts = ""
 	for gene in sorted(gene_dict.keys()):
 		gene_count = gene_dict[gene]
 		gene_counts += "\t" + str(gene_count) #to check duplicated/split/absent gene names add " + "_" + gene "
-	print('\t'.join(assembly.split("/")[2:5]), gene_counts, sep='\t', file = Genes) #prints assembly with path split into three columns and gene counts to file 
+
+#count total genes and total trnas for each sample - compare to max value for each species	
+	
+	found_genes = [] 
+	found_trnas = []
+	
+	for gene in gene_dict.keys():
+		if "trn" in gene:
+			if gene_dict[gene] == 1:
+				found_trnas.append(gene)
+		elif "rrn" in gene:
+			continue
+		else:
+			if gene_dict[gene] == 1:
+				found_genes.append(gene)
+	if assembly.split("/")[3] in species_genes_dictionary.keys():
+		if species_genes_dictionary[assembly.split("/")[3]] < len(found_genes):
+			species_genes_dictionary[assembly.split("/")[3]] = len(found_genes)
+	else:
+		species_genes_dictionary[assembly.split("/")[3]] = len(found_genes)
+	
+	if assembly.split("/")[3] in species_trnas_dictionary.keys():
+		if species_trnas_dictionary[assembly.split("/")[3]] < len(found_trnas):
+			species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
+	else:
+		species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
+	#for i in gene_list:
+	#	if i.startswith("trn"):
+	#		found_trnas.append(i)
+	#	elif i.startswith("rrn"):
+	#		continue
+	#	else:
+	#		found_genes.append(i) 
+	#print(found_genes, len(found_genes))
+	#print(found_trnas, len(found_trnas))
+#get seq length from fasta - remove newline character present in some assemblies
+	with open ("compare/assembly_paths.txt", 'r') as assembly_paths:
+		seq_length = 0
+		for ap in assembly_paths:
+			ap = ap.strip("\n")
+			if assembly.split("/")[2] in ap and assembly.split("/")[3] in ap and assembly.split("/")[4] in ap:
+				fasta = open(ap, 'r')
+                		#line = AP.readline()
+                		#line = line.strip("\n")
+                		#print(line)
+				for line in fasta:
+                        		#line = line.strip("\n")
+					if line.startswith(">"):
+						continue
+					else:
+						#line += ''.join(line.strip() for line in fasta)
+						seq_length += len(line.strip("\n"))
+						#seq_length.append(len(line.strip("\n")))
+						#print(seq_length)
+						#lengths.append(seq_length)
+				print(" ".join(assembly.split("/")[2:5]), seq_length)
+#len_dict = dict(zip(assemblies, seq_length)) 
+
+	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts)]) #prints assembly with path split into three columns and gene counts to file 
+
+Genes = open("compare/Genes.txt", 'w')
+print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Genes)
+for outline in output_list:
+	outline = "\t".join(outline)
+	outline = outline.replace("MAXGENECOUNT", str(species_genes_dictionary[outline.split("\t")[1]]))	
+	outline = outline.replace("MAXTRNACOUNT", str(species_trnas_dictionary[outline.split("\t")[1]]))
+	print(outline, file=Genes)
 Genes.close()
+
+
+#with open("Genes.txt", 'w') as Genes: 
+#	gene_counts = ""
+#	for gene in sorted(gene_dict.keys()):
+#		gene_count = gene_dict[gene]
+#		gene_counts += "\t" + str(gene_count) #to check duplicated/split/absent gene names add " + "_" + gene "
+#	print('\t'.join(assembly.split("/")[2:5]), seq_length, gene_counts, sep='\t', file = Genes) #prints assembly with path split into three columns and gene counts to file 
+#Genes.close()
 
 print(global_gene_set)
 
@@ -146,6 +221,27 @@ print("rev_stats", rev_starts_dict)
 #print('\t'.join(assembly.split("/")[2:5]), gene_start, sep='\t')#, file = Genes)
 #print(list_of_results)
 
+#get length of assemblies, no. genes and trnas found and add to Stats.txt
+#Genes = open("compare/Genes.txt", 'w')
+#print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "trnAs", sep='\t', file = Genes)
+#with open ("compare/assembly_paths.txt", 'r') as assembly_paths:
+#	for ap in assembly_paths:
+#		ap = ap.strip("\n")
+#		AP = open(ap, 'r')
+#		#line = AP.readline()
+		#line = line.strip("\n")
+#		#print(line)
+#		for line in AP:
+#			#line = line.strip("\n")
+#			if line.startswith(">"):
+#				continue
+#			else:
+#				line = line.rstrip("\n")
+#				seq_length = len(line)
+#				print(seq_length)
+#		print('\t'.join(ap.split("/")[2:5]), seq_length, sep='\t', file = Genes)
+#Genes.close()
+
 
 # write to outfile
 with open("compare/start_positions.txt", 'w') as starts:
@@ -178,4 +274,10 @@ with open("compare/forward_assemblies.txt", 'w') as FA:
 		gene_start = starts_dict[a]
 		print("compare/alignment/", a.split("/")[3],".", a.split("/")[2], ".", a.split("/")[4], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
 FA.close()
+
+
+
+#find "best" assembler for each ID - count no. times '1' is found in Genes.txt
+print(species_genes_dictionary)
+print(species_trnas_dictionary)
 

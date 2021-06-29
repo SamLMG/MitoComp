@@ -45,8 +45,27 @@ rule mitos:
 	touch {output.done}
 	"""
 
+#rule remove_newline:
+#    input:
+#        rules.mitos.output
+#    output:
+#        "assemblies/{assembler}/{id}/{sub}/remove_newline.done"
+#    params:
+#        id = "{id}",
+#        sub = "{sub}",
+#        assembler = "{assembler}"
+#    shell:
+#        """
+#        if [ -f assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta ]
+#        then
+#        sed -i ':a;N;/>/!s/\n//;ta;P;D' assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta
+#        fi
+#        touch {output}
+#        """
+
 rule annotation_stats:
     input:
+        #rules.remove_newline.output
         expand("assemblies/{assembler}/{id}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
     output:
         starts = "compare/start_positions.txt",
@@ -54,7 +73,8 @@ rule annotation_stats:
         done = "compare/annotation_stats.done"
     shell:
         """
-        find ./assemblies/ -name "result.bed" | cat > paths.txt
+        find ./assemblies/ -maxdepth 4 -name "*.fasta" | cat > compare/assembly_paths.txt
+        find ./assemblies/ -name "result.bed" | cat > compare/paths.txt
         scripts/annotate.py
         touch {output.done}
         """

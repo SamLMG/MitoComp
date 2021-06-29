@@ -57,6 +57,8 @@ mitos_ref_db:
    job-name: MITRDB
 mitos:
    job-name: MITOS
+remove_newline:
+   job-name: RN
 gene_positions:
    job-name: GPOS
 annotation_stats:
