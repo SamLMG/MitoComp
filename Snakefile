@@ -28,7 +28,7 @@ include: "rules/annotationII.smk"
 include: "rules/CGview.smk"
 
 
-localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, remove_newline, gbk_prep, CCT, annotation_stats
+localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, gbk_prep, CCT, annotation_stats
 rule all:
 	input:
 ####                expand("trimmed/trim_{id}.ok", id=IDS, sub=sub, assembler=Assembler),
