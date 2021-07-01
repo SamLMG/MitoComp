@@ -19,12 +19,12 @@ MitoComp is primarily designed to run on HPC clusters using either a SGE or SLUR
 1. A singularity installation
 2. A snakemake installation (e.g. this can be done via conda using the following commands)
 
-'''
-**$** mamba create -c conda-forge -c bioconda -n snakemake snakemake
-'''
-'''
-**$** conda activate snakemake
-'''
+```
+$ mamba create -c conda-forge -c bioconda -n snakemake snakemake
+```
+```
+$ conda activate snakemake
+```
 
 The user should first clone this repository to their local PC. To do this use the following command.
 
@@ -57,9 +57,9 @@ Etc.
 
 Furthermore, the level of subsampling can be set in the snakefile by editing the sub list.
 
-For example, the following sub list will subsample the datasets twice: once with 10 million randomly selected reads and again with 20 million randomly selected reads.
+For example, the following sub list will subsample the datasets thrice: with 5, 10 and 20 million randomly selected reads.
 
-sub = [10000000, 20000000]
+sub = [5000000, 10000000, 20000000]
 
 The number of threads given to each rule can be set by the user by editing the data/config.yaml file. For instance,
 
@@ -75,14 +75,18 @@ Finally, we provide users working on a cluster with a template cluster config fi
 
 The following command uses the assembly script to run the pipeline on a SLURM system:
 
-'''
+```
 $ ./assembly -t slurm -c data/cluster-config-SLURM.yaml.template
-'''
+```
 
 Or on an SGE system:
 
-'''
+```
 $ ./assembly -t sge -c data/cluster-config-SGE.yaml.template
-'''
+```
 
 We advise adding the --dry option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
+
+A rulegraph showing the order in which jobs will run is shown below:
+
+![Order of jobs](rulegraph.svg)
