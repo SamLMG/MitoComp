@@ -1,6 +1,6 @@
 rule second_mitos:
     input:
-        rules.reverse_complement.output,
+        rules.align.output,
     output:
         "compare/alignment/mitos2/{id}.{sub}.{assembler}.mitos2.done"
     params:
