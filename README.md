@@ -12,7 +12,7 @@ WGS data is first provided by the user in one of two ways: i) by specifying the 
 
 The user may of course choose to use just one, all or any combination of these assemblers. Furthermore, the user may choose to the level to which the raw data are subsampled or instead choose to skip this step and use the entire dataset. The resulting assemblies are then annotated via MITOS ([https://gitlab.com/Bernt/MITOS](https://gitlab.com/Bernt/MITOS)) and aligned with one another for evaluation of inconsistencies between algorithms and A comparison with regards to speed, CPU usage, quality and annotation completeness is performed. MitoComp uses the pipeline management system Snakemake with all software tools containerized via Docker/Singularity.
 
-[[https://github.com/SamLMG/MitoComp/blob/main/rulegraph.svg]]
+## Obtaining and running MitoComp
 
 MitoComp is primarily designed to run on HPC clusters using either a SGE or SLURM job scheduling system. It may also be run on a desktop computer using Linux but due to the computationally intensive nature of many of the steps involved, this is not optimal. Other than this MitoComp&#39;s only prerequisites are:
 
@@ -32,7 +32,9 @@ The user should first clone this repository to their local PC. To do this use th
 $ git clone --recursive https://github.com/SamLMG/Assembly_pipeline_feb.git
 ```
 
-Next the data/data.tsv file should be edited to correspond to the user&#39;s to the datasets:
+## Setting up the analysis
+
+The `data/data.tsv` file should be edited to correspond to the user&#39;s datasets:
 
 - The ID column may be freely completed by the user but we advise against the use of special characters including &quot;.&quot;
 - If the user wishes to provide their own WGS data, the paths to both forward and reverse reads should be provided in the corresponding columns. These reads should be in fastq.gz format.
@@ -43,15 +45,20 @@ Next the data/data.tsv file should be edited to correspond to the user&#39;s to 
 
 The user may also choose to edit the Snakefile. This allows different combinations of assemblers to be used by removing them from a list. By default, this is set to use all five assemblers:
 
+```
 Assembler = [&quot;norgal&quot;, &quot;getorganelle&quot;, &quot;mitoflex&quot;, &quot;novoplasty&quot;, &quot;mitobim&quot;]
-
+```
 The user may however, only want to use norgal, in which case they would set this to:
 
+```
 Assembler = [&quot;norgal&quot;]
+```
 
 Or they may wish to use both norgal and MITObim:
 
+```
 Assembler = [&quot;norgal&quot;, &quot;mitobim&quot;]
+```
 
 Etc.
 
@@ -59,15 +66,16 @@ Furthermore, the level of subsampling can be set in the snakefile by editing the
 
 For example, the following sub list will subsample the datasets thrice: with 5, 10 and 20 million randomly selected reads.
 
+```
 sub = [5000000, 10000000, 20000000]
-
+```
 The number of threads given to each rule can be set by the user by editing the data/config.yaml file. For instance,
 
+```
 threads:
-
-download: 2
-
-trimming: 24
+   download: 2
+   trimming: 24
+```
 
 will provide 2 threads for the download rule and 24 threads to the trimming rule.
 
@@ -85,7 +93,7 @@ Or on an SGE system:
 $ ./assembly -t sge -c data/cluster-config-SGE.yaml.template
 ```
 
-We advise adding the --dry option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
+We advise adding the `--dry` option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
 
 A rulegraph showing the order in which jobs will run is shown below:
 
