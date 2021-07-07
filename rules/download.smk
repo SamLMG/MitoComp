@@ -19,6 +19,8 @@ rule fastqdump:
 	shadow: "shallow"
 	shell:
 		"""
+		mkdir -p $HOME/.ncbi
+		printf '/LIBS/GUID = "%s"\\n' `uuidgen` > $HOME/.ncbi/user-settings.mkfg
                 if [[ -f "{params.f}" ]] && [[ -f "{params.r}" ]]; then 
                     ln -s ../{params.f} {params.wd}/{output.f}
                     ln -s ../{params.r} {params.wd}/{output.r}
