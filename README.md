@@ -46,18 +46,18 @@ The `data/data.tsv` file should be edited to correspond to the user&#39;s datase
 The user may also choose to edit the Snakefile. This allows different combinations of assemblers to be used by removing them from a list. By default, this is set to use all five assemblers:
 
 ```
-Assembler = [&quot;norgal&quot;, &quot;getorganelle&quot;, &quot;mitoflex&quot;, &quot;novoplasty&quot;, &quot;mitobim&quot;]
+Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"]
 ```
 The user may however, only want to use norgal, in which case they would set this to:
 
 ```
-Assembler = [&quot;norgal&quot;]
+Assembler = ["norgal"]
 ```
 
 Or they may wish to use both norgal and MITObim:
 
 ```
-Assembler = [&quot;norgal&quot;, &quot;mitobim&quot;]
+Assembler = ["norgal", "mitobim"]
 ```
 
 Etc.
