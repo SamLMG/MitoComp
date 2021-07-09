@@ -33,6 +33,6 @@ rule trimmomatic:
 		echo "Adpater file not found. Please check your config files." >&2
 		exit 1
 	fi
-        trimmomatic PE -threads {threads} {input.f} {input.r} {output.fout} {output.funp} {output.rout} {output.runp} ILLUMINACLIP:adapterseq/{params.adapter}:{params.seed_mismatches}:{params.palindrome_clip}:{params.simple_clip} LEADING:{params.quality} TRAILING:{params.quality} SLIDINGWINDOW:{params.windowsize}:{params.required_quality} MINLEN:{params.minlength}
+        trimmomatic PE -threads {threads} {input.f} {input.r} {output.fout} {output.funp} {output.rout} {output.runp} ILLUMINACLIP:{params.adapter}:{params.seed_mismatches}:{params.palindrome_clip}:{params.simple_clip} LEADING:{params.quality} TRAILING:{params.quality} SLIDINGWINDOW:{params.windowsize}:{params.required_quality} MINLEN:{params.minlength}
         touch {output.ok}
         """
