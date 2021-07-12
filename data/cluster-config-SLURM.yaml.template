@@ -48,6 +48,7 @@ interleave:
    mem: 10G
    ntasks: 2
 MITObim:
+   job-name: MITOB
    mem: 60G
    ntasks: 10  
 roll:
