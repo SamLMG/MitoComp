@@ -25,7 +25,7 @@ include: "rules/eval.smk"
 include: "rules/annotation.smk"
 include: "rules/alignment.smk"
 include: "rules/annotationII.smk"
-include: "rules/CGview.smk"
+include: "rules/CCT.smk"
 
 
 localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, gbk_prep, CCT, annotation_stats

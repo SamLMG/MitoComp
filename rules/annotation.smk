@@ -57,7 +57,8 @@ rule annotation_stats:
     shell:
         """
         find ./assemblies/ -maxdepth 4 -name "*.fasta" | cat > compare/assembly_paths.txt
-        find ./assemblies/ -name "result.bed" | cat > compare/paths.txt
-        scripts/annotate.py
+        find ./assemblies/ -name "result.bed" | cat > compare/bed_paths.txt
+        scripts/annotate.py compare/bed_paths.txt compare/assembly_paths.txt compare/Genes.txt
+        scripts/roll_prep.py compare/Genes.txt compare/bed_paths.txt compare/start_positions.txt compare/RC_assemblies.txt compare/forward_assemblies.txt
         touch {output.done}
         """

@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 import pandas as pd
+import sys
 #read file containing paths
-paths = open("compare/paths.txt", "r")
+Bed_paths=sys.argv[1]
+Assembly_paths=sys.argv[2]
+Outfile=sys.argv[3]
+
+Bed_paths = open(Bed_paths, "r")
 #create list called assemblies and append each path
 assemblies = []
-for path in paths:
+for path in Bed_paths:
 	path = path.strip("\n")
 	assemblies.append(path)
-paths.close() 
+Bed_paths.close() 
 print("All paths:", assemblies)
 
 #open all bed files in assemblies list and extract a global list of genes  
@@ -97,57 +102,30 @@ for assembly in assemblies:
 			species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
 	else:
 		species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
-	#for i in gene_list:
-	#	if i.startswith("trn"):
-	#		found_trnas.append(i)
-	#	elif i.startswith("rrn"):
-	#		continue
-	#	else:
-	#		found_genes.append(i) 
-	#print(found_genes, len(found_genes))
-	#print(found_trnas, len(found_trnas))
 #get seq length from fasta - remove newline character present in some assemblies
-	with open ("compare/assembly_paths.txt", 'r') as assembly_paths:
+	with open (Assembly_paths, 'r') as assembly_paths:
 		seq_length = 0
 		for ap in assembly_paths:
 			ap = ap.strip("\n")
 			if assembly.split("/")[2] in ap and assembly.split("/")[3] in ap and assembly.split("/")[4] in ap:
 				fasta = open(ap, 'r')
-                		#line = AP.readline()
-                		#line = line.strip("\n")
-                		#print(line)
 				for line in fasta:
-                        		#line = line.strip("\n")
 					if line.startswith(">"):
 						continue
 					else:
-						#line += ''.join(line.strip() for line in fasta)
 						seq_length += len(line.strip("\n"))
-						#seq_length.append(len(line.strip("\n")))
-						#print(seq_length)
-						#lengths.append(seq_length)
 				print(" ".join(assembly.split("/")[2:5]), seq_length)
-#len_dict = dict(zip(assemblies, seq_length)) 
 
-	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts)]) #prints assembly with path split into three columns and gene counts to file 
+	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts 
 
-Genes = open("compare/Genes.txt", 'w')
-print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Genes)
+Outfile_handle = open(Outfile, 'w')
+print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Outfile_handle)
 for outline in output_list:
 	outline = "\t".join(outline)
 	outline = outline.replace("MAXGENECOUNT", str(species_genes_dictionary[outline.split("\t")[1]]))	
 	outline = outline.replace("MAXTRNACOUNT", str(species_trnas_dictionary[outline.split("\t")[1]]))
-	print(outline, file=Genes)
-Genes.close()
-
-
-#with open("Genes.txt", 'w') as Genes: 
-#	gene_counts = ""
-#	for gene in sorted(gene_dict.keys()):
-#		gene_count = gene_dict[gene]
-#		gene_counts += "\t" + str(gene_count) #to check duplicated/split/absent gene names add " + "_" + gene "
-#	print('\t'.join(assembly.split("/")[2:5]), seq_length, gene_counts, sep='\t', file = Genes) #prints assembly with path split into three columns and gene counts to file 
-#Genes.close()
+	print(outline, file=Outfile_handle)
+Outfile_handle.close()
 
 print(global_gene_set)
 
@@ -165,59 +143,61 @@ print(global_gene_set)
 #		else:
 #			continue
 #print(gene_found)
-gene_found = {}
-Genes = pd.read_table("compare/Genes.txt", sep = '\t')
-gene_list = list(Genes.columns)
-del gene_list[0:3]
-print(gene_list)
+#gene_found = {}
+#Genes = pd.read_table("compare/Genes.txt", sep = '\t')
+#gene_list = list(Genes.columns)
+#del gene_list[0:3]
+#print(gene_list)
 #for gene in gene_list:
 	#count = Genes.query(gene = '1')[gene].sum()
-count = Genes[Genes == 1].sum(axis = 0)
-gene_found[gene] = count
+#count = Genes[Genes == 1].sum(axis = 0)
+#count = count.astype(int)
+#gene_found[gene] = count
 #Genes.close
-print(gene_found)
-#most_found_gene = max(gene_found)
-most_found_gene = max(gene_found, key = gene_found.get)
-print(most_found_gene)
+#print("gene_found", gene_found)
+#most_found_gene = gene_found[max(gene_found, key = gene_found.get)]
+#most_found_gene = max(gene_found.keys(), key = lambda x: gene_found[x])
+#most_found_gene = max(gene_found, key = gene_found.get)
+#print("most found gene", most_found_gene)
 
 #search in bed files for line containing most_found_gene
-starts_dict = {}
-rev_starts_dict = {}
-forward_assemblies = []
-reverse_assemblies = []
-for assembly in assemblies:	
-	line_number = 0
-	#list_of_results = []
-	with open(assembly, 'r') as bed:
-		for line in bed:
-			line_number += 1
-			if most_found_gene in line:
+#starts_dict = {}
+#rev_starts_dict = {}
+#forward_assemblies = []
+#reverse_assemblies = []
+#for assembly in assemblies:	
+#	line_number = 0
+#	#list_of_results = []
+#	with open(assembly, 'r') as bed:
+#		for line in bed:
+#			line_number += 1
+#			if most_found_gene in line:
 				#gene_starts = line.split('\t')[1] #start of gene in second column - but if gene is reversed need to use end position plus 1 
 				#gene_starts.split('/')[2:5]
 				#starts_dict[assembly] = gene_starts
 				#gene_ends = line.split('\t')[2]
 				#gene_ends = gene_ends + 1
 				#check orientation - from -/+ in end column
-				orientation = line.split('\t')[5]
-				#print(orientation)
-				if "+" in orientation: 
-					gene_starts = line.split('\t')[1] #start of gene in second column - but if gene is reversed need to use end position plus 1 
+#				orientation = line.split('\t')[5]
+#				#print(orientation)
+#				if "+" in orientation: 
+#					gene_starts = line.split('\t')[1] #start of gene in second column - but if gene is reversed need to use end position plus 1 
+##					#gene_starts.split('/')[2:5]
+#					starts_dict[assembly] = gene_starts
+#					forward_assemblies.append(assembly)
+#				if "-" in orientation:
+#					gene_starts = line.split('\t')[2]
+#					gene_starts = int(gene_starts) + 1
 					#gene_starts.split('/')[2:5]
-					starts_dict[assembly] = gene_starts
-					forward_assemblies.append(assembly)
-				if "-" in orientation:
-					gene_starts = line.split('\t')[2]
-					gene_starts = int(gene_starts) + 1
-					#gene_starts.split('/')[2:5]
-					starts_dict[assembly] = gene_starts
+#					starts_dict[assembly] = gene_starts
 					#print(assembly)
-					rev_starts_dict[assembly] = gene_starts
-					reverse_assemblies.append(assembly)
-print("Reverse:", reverse_assemblies)
-print("Forward:", forward_assemblies)				
+#					rev_starts_dict[assembly] = gene_starts
+#					reverse_assemblies.append(assembly)
+#p#rint("Reverse:", reverse_assemblies)
+#pr#int("Forward:", forward_assemblies)				
 				#list_of_results.append((assembly.split('/')[2:5], f"Start position of {most_found_gene} is: {gene_start}"))
-print("starts", starts_dict)
-print("rev_stats", rev_starts_dict)
+#print("starts", starts_dict)
+#print("rev_stats", rev_starts_dict)
 #print('\t'.join(assembly.split("/")[2:5]), gene_start, sep='\t')#, file = Genes)
 #print(list_of_results)
 
@@ -244,40 +224,40 @@ print("rev_stats", rev_starts_dict)
 
 
 # write to outfile
-with open("compare/start_positions.txt", 'w') as starts:
+#with open("compare/start_positions.txt", 'w') as starts:
 	#gene_starts = ""
-	for assembly in starts_dict.keys():
-		gene_start = starts_dict[assembly]
+#	for assembly in starts_dict.keys():
+#		gene_start = starts_dict[assembly]
 		#gene_starts += "\t" +str(gene_start)
 		#path = str(assembly.split("/")[1:5],"/", assembly.split("/")[3])#".", assembly.split("/")[2],".", assembly.split("/")[4],".", "fasta"
 		#path += '/'.join(assembly)
 		#print(path, gene_start, sep='', file = starts)  
-		print('/'.join(assembly.split("/")[1:5]),"/", assembly.split("/")[3],".", assembly.split("/")[2],".", assembly.split("/")[4],".", "fasta	", gene_start, sep='', file = starts)
-starts.close()
+#		print('/'.join(assembly.split("/")[1:5]),"/", assembly.split("/")[3],".", assembly.split("/")[2],".", assembly.split("/")[4],".", "fasta	", gene_start, sep='', file = starts)
+#starts.close()
 
 #print list of files that need to be reverse complement 
-i = 0
-with open("compare/RC_assemblies.txt", 'w') as RC:
+#i = 0
+#with open("compare/RC_assemblies.txt", 'w') as RC:
 	#rev_starts_dict = ""
-	for rev in reverse_assemblies:
-		i += 1
-		rev_gene_start = rev_starts_dict[rev]
+#	for rev in reverse_assemblies:
+#		i += 1
+#		rev_gene_start = rev_starts_dict[rev]
 		#rev_gene_starts += "\t" + str(rev_gene_start)
-		print("compare/alignment/", rev.split("/")[3],".", rev.split("/")[2], ".", rev.split("/")[4], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
-RC.close()
+#		print("compare/alignment/", rev.split("/")[3],".", rev.split("/")[2], ".", rev.split("/")[4], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
+#RC.close()
 
 #print list of files already in forward sense
-j = 0
-with open("compare/forward_assemblies.txt", 'w') as FA:
-	for a in forward_assemblies:
-		i += 1
-		gene_start = starts_dict[a]
-		print("compare/alignment/", a.split("/")[3],".", a.split("/")[2], ".", a.split("/")[4], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
-FA.close()
+#j = 0
+#with open("compare/forward_assemblies.txt", 'w') as FA:
+#	for a in forward_assemblies:
+#		i += 1
+#		gene_start = starts_dict[a]
+#		print("compare/alignment/", a.split("/")[3],".", a.split("/")[2], ".", a.split("/")[4], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
+#FA.close()
 
 
 
 #find "best" assembler for each ID - count no. times '1' is found in Genes.txt
-print(species_genes_dictionary)
-print(species_trnas_dictionary)
+#print(species_genes_dictionary)
+#print(species_trnas_dictionary)
 
