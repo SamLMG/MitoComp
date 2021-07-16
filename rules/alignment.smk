@@ -1,9 +1,9 @@
 rule roll:
     input:
 #        mitos = expand("assemblies/{assembler}/{{id}}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler),
-#        "compare/start_positions.txt",
+        #"compare/start_positions.txt",
         rules.annotation_stats.output
-#       fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta"
+        #fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta"
     output:
 #        "compare/{assembler}/{{id}}/{sub}/alignment/muscle/arrange.{assembler}.{{id}}.{sub}.done"
         done = "compare/alignment/roll.done",

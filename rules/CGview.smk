@@ -66,6 +66,9 @@ rule CCT:
         sub = "{sub}",
         outdir = "compare/CCT",
         wd = os.getcwd()
+    log:
+        stdout = "{params.outdir}/{params.id}.{params.assembler}.{params.sub}.stdout.txt",
+        stderr = "{params.outdir}/{params.id}.{params.assembler}.{params.sub}.stderr.txt"  
     singularity:
         "docker://pstothard/cgview_comparison_tool:1.0.1"
     shell:
@@ -76,8 +79,19 @@ rule CCT:
         build_blast_atlas.sh -i {params.id}.{params.assembler}.{params.sub}.genbank 
         cp {params.id}*.genbank {params.id}.{params.assembler}.{params.sub}/comparison_genomes/
         #build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub}
-        build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub} -z medium --custom "arrowheadLength=12 global_label=T legend=T use_opacity=F backboneRadius=900 labelFontSize=60 borderColor=white width=3000 height=3000 gc_content=T backboneThickness=0.01 gcColorNeg=blue gcColorPos=red legendFontSize=30 featureThickness=50 _cct_blast_thickness=25.00000 useInnerLabels=false"
-        cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.png {params.id}.{params.assembler}.{params.sub}.map.png 
+        build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub} -z medium --custom "arrowheadLength=12 blast_divider_ruler=T blastRulerColor=green draw_divider_rings=T backboneColor=green global_label=T legend=T use_opacity=F backboneRadius=900 labelFontSize=60 borderColor=white width=3000 height=3000 gc_content=T backboneThickness=0.01 gcColorNeg=blue gcColorPos=red legendFontSize=30 featureThickness=50 _cct_blast_thickness=25.00000 useInnerLabels=false"
+        redraw_maps.sh -p {params.id}.{params.assembler}.{params.sub} -f svg
+       
+        #if the expected final assembly exists, get a copy
+        if [ -f {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg ]
+        then
+            cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg {params.id}.{params.assembler}.{params.sub}.map.svg
+        else
+            echo -e "\\n#### [$(date)]\\tCCT did not produce an assembly map - this happens if the assembly was less than 1000bp" 1>> {params.outdir}/{log.stdout}
+            touch {params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing
         fi
+ 
+#cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg {params.id}.{params.assembler}.{params.sub}.map.svg 
+        #fi
         touch {params.wd}/{output}
         """
