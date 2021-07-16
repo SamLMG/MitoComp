@@ -108,10 +108,10 @@ for assembly in assemblies:
 		species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
 
 	if assembly.split("/")[3] in species_rrnas_dictionary.keys():
-                if species_rrnas_dictionary[assembly.split("/")[3]] < len(found_rrnas):
-                        species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
-        else:
-                species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
+		if species_rrnas_dictionary[assembly.split("/")[3]] < len(found_rrnas):
+			species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
+	else:
+		species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
 
 
 #get seq length from fasta - remove newline character present in some assemblies
@@ -128,14 +128,14 @@ for assembly in assemblies:
 						seq_length += len(line.strip("\n"))
 				print(" ".join(assembly.split("/")[2:5]), seq_length)
 
-	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT" str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts 
+	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts
 
 Outfile_handle = open(Outfile, 'w')
 print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "rrnAs", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Outfile_handle)
 for outline in output_list:
 	outline = "\t".join(outline)
 	outline = outline.replace("MAXGENECOUNT", str(species_genes_dictionary[outline.split("\t")[1]]))
-	outline = outline.replace("MAXRRNACOUNT", str(species_trnas_dictionary[outline.split("\t")[1]]))	
+	outline = outline.replace("MAXRRNACOUNT", str(species_rrnas_dictionary[outline.split("\t")[1]]))	
 	outline = outline.replace("MAXTRNACOUNT", str(species_trnas_dictionary[outline.split("\t")[1]]))
 	print(outline, file=Outfile_handle)
 Outfile_handle.close()
