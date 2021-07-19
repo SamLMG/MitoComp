@@ -60,3 +60,5 @@ gbk_prep:
    N: GBKPREP
 CCT:
    N: CCT
+report:
+   N: report

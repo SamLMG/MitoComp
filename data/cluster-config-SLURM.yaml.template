@@ -71,3 +71,6 @@ gbk_prep:
    job-name: GBKPREP
 CCT:
    job-name: CCT
+report:
+   job-name: report
+   time: "00:10:00"
