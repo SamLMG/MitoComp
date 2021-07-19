@@ -34,7 +34,7 @@ rule reverse_complement:
 #        "docker://reslp/biopython_plus"
     shell:
         """
-        mkdir compare/alignment/clustalo
+        mkdir -p compare/alignment/clustalo
         scripts/RComp.py
         touch {output}
         """
