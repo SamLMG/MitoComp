@@ -19,7 +19,14 @@ rule second_mitos:
         """
         if [[ ! -d {params.outdir} ]]; then mkdir {params.outdir}; fi
         if [[ $(find compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta) != "" ]]; then
-        runmitos.py -i compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
+                nfiles=$(find compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta | wc -l)
+		if [[ $nfiles -gt 1 ]]; then
+		        echo "Mitos could not be run, there are multiple files to run it on. Please check manually."
+		        touch {output}
+		        exit 0
+		else
+	                runmitos.py -i compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
+		fi
         else
         echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
