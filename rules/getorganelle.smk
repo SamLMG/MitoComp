@@ -49,7 +49,11 @@ rule get_organelle:
         fi
 
         #if the expected final assembly exists, get a copy
-        final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
+        if [[ -d  $(pwd)/{params.outdir} ]]; then #check first of folder exists in case get_organelle exits with the wrong exit code.
+		final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
+	else
+		final_fasta=""
+	fi
 	# check if the search returned only one file and copy if yes
         if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then

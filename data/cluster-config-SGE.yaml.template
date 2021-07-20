@@ -50,3 +50,15 @@ roll:
    N: ROLL
 align:
    N: ALIGN
+reverse_complement:
+   N: REVCOMP
+second_mitos:
+   N: MITOS2
+gene_positions:
+   N: GENPOS
+gbk_prep:
+   N: GBKPREP
+CCT:
+   N: CCT
+report:
+   N: report

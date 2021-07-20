@@ -86,6 +86,7 @@ rule CCT:
         if [ -f {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg ]
         then
             cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg {params.id}.{params.assembler}.{params.sub}.map.svg 
+            cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.png {params.id}.{params.assembler}.{params.sub}.map.png 
         else
             echo -e "\\n#### [$(date)]\\tCCT did not produce an assembly map. Either no assembly was found or it was under 1000bp" 
             touch {params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing

@@ -34,7 +34,7 @@ rule reverse_complement:
 #        "docker://reslp/biopython_plus"
     shell:
         """
-        mkdir compare/alignment/clustalo
+        mkdir -p compare/alignment/clustalo
         scripts/RComp.py
         touch {output}
         """
@@ -53,7 +53,8 @@ rule align:
     shell:
         """
 	cd compare/alignment
-        cp *RC.fasta clustalo/
+	# cp has to fail silently of no RC file is found
+        cp *RC.fasta clustalo/ 2>/dev/null || :
         cd clustalo
         cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
         clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}

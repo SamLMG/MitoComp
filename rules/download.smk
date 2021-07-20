@@ -19,7 +19,15 @@ rule fastqdump:
 	shadow: "shallow"
 	shell:
 		"""
-                if [[ -f "{params.f}" ]] && [[ -f "{params.r}" ]]; then 
+		# configuration of sra-tools is messed up in singularity. This is connected with these issues:
+		# https://github.com/ncbi/sra-tools/issues/291
+		# https://standage.github.io/that-darn-cache-configuring-the-sra-toolkit.html
+		mkdir -p $HOME/.ncbi
+		printf '/LIBS/GUID = "%s"\\n' `uuidgen` > $HOME/.ncbi/user-settings.mkfg
+                mkdir -p $HOME/tmp
+		echo "/repository/user/main/public/root = \'$HOME/tmp\'" >> $HOME/.ncbi/user-settings.mkfg
+
+		if [[ -f "{params.f}" ]] && [[ -f "{params.r}" ]]; then 
                     ln -s ../{params.f} {params.wd}/{output.f}
                     ln -s ../{params.r} {params.wd}/{output.r}
                     echo "using local fastq.gz files"

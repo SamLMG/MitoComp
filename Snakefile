@@ -26,6 +26,7 @@ include: "rules/annotation.smk"
 include: "rules/alignment.smk"
 include: "rules/annotationII.smk"
 include: "rules/CCT.smk"
+include: "rules/report.smk"
 
 
 localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, gbk_prep, CCT, annotation_stats
@@ -37,6 +38,7 @@ rule all:
 ####		expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler),
 ####                expand(rules.align.output, id=IDS, sub=sub, assembler=Assembler),
 ####                "compare/alignment/mitos2/gene_positions.done",
-		expand(rules.CCT.output, id=IDS, sub=sub, assembler=Assembler)
+####		expand(rules.CCT.output, id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CGview/{id}.{assembler}.{sub}.cgview.done", id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CCT/{id}.CCT.done", id=IDS) 
+		"report/report.html"

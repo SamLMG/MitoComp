@@ -12,12 +12,12 @@ WGS data is first provided by the user in one of two ways: i) by specifying the 
 
 The user may of course choose to use just one, all or any combination of these assemblers. Furthermore, the user may choose to the level to which the raw data are subsampled or instead choose to skip this step and use the entire dataset. The resulting assemblies are then annotated via MITOS ([https://gitlab.com/Bernt/MITOS](https://gitlab.com/Bernt/MITOS)) and aligned with one another for evaluation of inconsistencies between algorithms and A comparison with regards to speed, CPU usage, quality and annotation completeness is performed. MitoComp uses the pipeline management system Snakemake with all software tools containerized via Docker/Singularity.
 
-[[https://github.com/SamLMG/MitoComp/blob/main/rulegraph.svg]]
+## Obtaining and running MitoComp
 
 MitoComp is primarily designed to run on HPC clusters using either a SGE or SLURM job scheduling system. It may also be run on a desktop computer using Linux but due to the computationally intensive nature of many of the steps involved, this is not optimal. Other than this MitoComp&#39;s only prerequisites are:
 
-1. A singularity installation
-2. A snakemake installation (e.g. this can be done via conda using the following commands)
+1. A singularity installation (tested with singularity version 3.5.2)
+2. A snakemake installation (tested with snakemake 6.0.2; snakemake can be installed through conda using the following commands)
 
 ```
 $ mamba create -c conda-forge -c bioconda -n snakemake snakemake
@@ -26,32 +26,48 @@ $ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 $ conda activate snakemake
 ```
 
-The user should first clone this repository to their local PC. To do this use the following command.
+The user should first clone this repository to their local computer. To do this use the following command.
 
 ```
 $ git clone --recursive https://github.com/SamLMG/Assembly_pipeline_feb.git
 ```
 
-Next the data/data.tsv file should be edited to correspond to the user&#39;s to the datasets:
+## Setting up the analysis
 
-- The ID column may be freely completed by the user but we advise against the use of special characters including &quot;.&quot;
-- If the user wishes to provide their own WGS data, the paths to both forward and reverse reads should be provided in the corresponding columns. These reads should be in fastq.gz format.
-- For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column.
-- If the user does not wish to use their own data, the accession number of the desried SRA should be provided in the SRA column.
-- Some of the assemblers require the clade (e.g. phylum) of the chosen species which should be entered in the clade column.
-- Some of the assemblers and MITOS require the genetic code of the chosen species which should be entered in the clade column. A list of genetic codes may be found here [https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c)
+The `data/data.tsv` file should be edited to correspond to the user&#39;s datasets. The columns in this file are named as follows:
+
+```
+ID	forward	reverse	seed	SRA	Clade	Code	novoplasty_kmer	Read_length	Adapter	Type	GO_Rounds
+```
+
+- ID: This column reverse to the name of the sample and may be freely completed by the user but we advise against the use of special characters including &quot;.&quot;
+- forward, reverse: If the user wishes to provide their own WGS data, the paths to both forward and reverse reads should be provided in the corresponding columns. These reads should be in fastq format and gzipped.
+- seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column.
+- SRA: MitComp can automatically download read data from NCBI SRA. Enter an SRA accession number here to do so.
+- Clade: Some of the assemblers require the clade (e.g. phylum) of the chosen species which should be entered in the clade column.
+- Code: Some of the assemblers and MITOS require the genetic code of the chosen species which should be entered in the clade column. A list of genetic codes may be found here [https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c)
+- novoplasty_kmer: Novoplasty requires a k-mer length for assembly. Provide an uneven number here.
+- Read_length: Length of the provided reads. This is used for trimming.
+- Adapter: To perform adapter trimming, a relative path to a file with known adapter sequences should be provided here.
+- Type: For novoplasty it is necessary to provide a database type here. Possible values are: 'embplant_pt', 'other_pt', 'embplant_mt', 'embplant_nr', 'animal_mt', 'fungus_mt', 'anonym', or a combination of above split by comma(s)
+- GO_Rounds: XXX?
 
 The user may also choose to edit the Snakefile. This allows different combinations of assemblers to be used by removing them from a list. By default, this is set to use all five assemblers:
 
-Assembler = [&quot;norgal&quot;, &quot;getorganelle&quot;, &quot;mitoflex&quot;, &quot;novoplasty&quot;, &quot;mitobim&quot;]
-
+```
+Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"]
+```
 The user may however, only want to use norgal, in which case they would set this to:
 
-Assembler = [&quot;norgal&quot;]
+```
+Assembler = ["norgal"]
+```
 
 Or they may wish to use both norgal and MITObim:
 
-Assembler = [&quot;norgal&quot;, &quot;mitobim&quot;]
+```
+Assembler = ["norgal", "mitobim"]
+```
 
 Etc.
 
@@ -59,15 +75,16 @@ Furthermore, the level of subsampling can be set in the snakefile by editing the
 
 For example, the following sub list will subsample the datasets thrice: with 5, 10 and 20 million randomly selected reads.
 
+```
 sub = [5000000, 10000000, 20000000]
-
+```
 The number of threads given to each rule can be set by the user by editing the data/config.yaml file. For instance,
 
+```
 threads:
-
-download: 2
-
-trimming: 24
+   download: 2
+   trimming: 24
+```
 
 will provide 2 threads for the download rule and 24 threads to the trimming rule.
 
@@ -85,7 +102,7 @@ Or on an SGE system:
 $ ./assembly -t sge -c data/cluster-config-SGE.yaml.template
 ```
 
-We advise adding the --dry option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
+We advise adding the `--dry` option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
 
 A rulegraph showing the order in which jobs will run is shown below:
 

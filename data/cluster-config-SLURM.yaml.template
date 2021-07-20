@@ -26,7 +26,6 @@ mitoflex:
    mem: 90G
 norgal:
    job-name: NORGAL
-   partition: binf
    ntasks: 24
    mem: 90G
 NOVOconfig:
@@ -49,6 +48,29 @@ interleave:
    mem: 10G
    ntasks: 2
 MITObim:
+   job-name: MITOB
    mem: 60G
-   ntasks: 10
-  
+   ntasks: 10  
+roll:
+   job-name: ROLL
+reverse_complement:
+   job-name: REVCOMP
+align:
+   job-name: ALIGN
+second_mitos:
+   job-name: MITOS2
+gene_positions:
+   job-name: GENPOS
+mitos_ref_db:
+   job-name: MITODB
+mitos:
+   job-name: MITOS
+annotation_stats:
+   job-name: ANNSTAT
+gbk_prep:
+   job-name: GBKPREP
+CCT:
+   job-name: CCT
+report:
+   job-name: report
+   time: "00:10:00"
