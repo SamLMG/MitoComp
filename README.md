@@ -40,19 +40,23 @@ The `data/data.tsv` file should be edited to correspond to the user&#39;s datase
 ID	forward	reverse	seed	SRA	Clade	Code	novoplasty_kmer	Read_length	Adapter	Type	GO_Rounds
 ```
 
-- ID: This column reverse to the name of the sample and may be freely completed by the user but we advise against the use of special characters including &quot;.&quot;
+- ID: This column refers to the name of the sample and may be freely completed by the user but we advise against the use of most special characters including &quot;.&quot; and instead advise users to use &quot;_&quot;
 - forward, reverse: If the user wishes to provide their own WGS data, the paths to both forward and reverse reads should be provided in the corresponding columns. These reads should be in fastq format and gzipped.
-- seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column.
+- seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column. This may be done using entrez-direct (which may be installed via conda) and executing the following command where the -query corresponds to the sequence's accession number and filename is defined by the user.
+
+```
+$ esearch -db nucleotide -query "MF420392.1" | efetch -format fasta > seeds/D.rerio_coxI.fasta
+```
 - SRA: MitComp can automatically download read data from NCBI SRA. Enter an SRA accession number here to do so.
 - Clade: Some of the assemblers require the clade (e.g. phylum) of the chosen species which should be entered in the clade column.
 - Code: Some of the assemblers and MITOS require the genetic code of the chosen species which should be entered in the clade column. A list of genetic codes may be found here [https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c)
 - novoplasty_kmer: Novoplasty requires a k-mer length for assembly. Provide an uneven number here.
 - Read_length: Length of the provided reads. This is used for trimming.
-- Adapter: To perform adapter trimming, a relative path to a file with known adapter sequences should be provided here.
-- Type: For novoplasty it is necessary to provide a database type here. Possible values are: 'embplant_pt', 'other_pt', 'embplant_mt', 'embplant_nr', 'animal_mt', 'fungus_mt', 'anonym', or a combination of above split by comma(s)
-- GO_Rounds: XXX?
+- Adapter: To perform adapter trimming, a relative path to a file with known adapter sequences should be provided here. These may be downloaded from [https://github.com/usadellab/Trimmomatic/tree/main/adapters]
+- Type: For novoplasty and GetOrganelle it is necessary to provide a database type here. Possible values are: 'embplant_pt', 'other_pt', 'embplant_mt', 'embplant_nr', 'animal_mt', 'fungus_mt', 'anonym', or a combination of above split by comma(s). Please note that Mitoflex is primarily designed for animal mitogenome assembly. As a result non-animal datasets will most likely fail to produce an assembly. 
+- GO_Rounds: This indicates the number of rounds of extension GetOrganelle will complete in order to recruit target-associated reads from the dataset. We recommend using 10 but this figure may need to be raised for lower coverage datasets. 
 
-The user may also choose to edit the Snakefile. This allows different combinations of assemblers to be used by removing them from a list. By default, this is set to use all five assemblers:
+The user may also choose to edit the config file (data/config.yaml). This allows different combinations of assemblers to be used by removing them from a list. By default, this is set to use all five assemblers:
 
 ```
 Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"]
@@ -71,14 +75,14 @@ Assembler = ["norgal", "mitobim"]
 
 Etc.
 
-Furthermore, the level of subsampling can be set in the snakefile by editing the sub list.
+Furthermore, the level of subsampling can be set in a similar manner by editing the sub list.
 
 For example, the following sub list will subsample the datasets thrice: with 5, 10 and 20 million randomly selected reads.
 
 ```
 sub = [5000000, 10000000, 20000000]
 ```
-The number of threads given to each rule can be set by the user by editing the data/config.yaml file. For instance,
+The number of threads given to each rule can be set by the user in the config file. For instance,
 
 ```
 threads:
@@ -87,6 +91,8 @@ threads:
 ```
 
 will provide 2 threads for the download rule and 24 threads to the trimming rule.
+
+Some further parameters for the trimming rule are also specified in this file and may be edited by the user
 
 Finally, we provide users working on a cluster with a template cluster config file for clusters using either a SLURM or a SGE submission system. Resources provided to each job as well as the paths to log files may be set here by the user according to their cluster settings.
 
