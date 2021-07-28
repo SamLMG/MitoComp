@@ -4,7 +4,7 @@ rule norgal:
         r = rules.subsample.output.r
     output:
 #        outdir = directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}"),
-        ok = "assemblies/norgal/{id}/{sub}/norgal.ok"
+        ok = "output/assemblies/norgal/{id}/{sub}/norgal.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -12,11 +12,11 @@ rule norgal:
 #        name="norgal",
 #        nnode="-N 1"
     params:
-        outdir = "assemblies/norgal/{id}/{sub}/run"
+        outdir = "output/assemblies/norgal/{id}/{sub}/run"
     log:
-        stdout = "assemblies/norgal/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/norgal/{id}/{sub}/stderr.txt"
-    benchmark: "assemblies/norgal/{id}/{sub}/norgal.{id}.{sub}.benchmark.txt"
+        stdout = "output/assemblies/norgal/{id}/{sub}/stdout.txt",
+        stderr = "output/assemblies/norgal/{id}/{sub}/stderr.txt"
+    benchmark: "output/assemblies/norgal/{id}/{sub}/norgal.{id}.{sub}.benchmark.txt"
     threads: config["threads"]["norgal"] 
     singularity: "docker://reslp/norgal:1.0"
     shell:

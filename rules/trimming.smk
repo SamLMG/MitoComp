@@ -9,11 +9,11 @@ rule trimmomatic:
 #        name="trimmomatic",
 #        nnode="-N 1"
     output:
-        fout = "trimmed/{id}_1P_trim.fastq.gz",
-        funp = "trimmed/{id}_1P_unpaired.fastq.gz",
-        rout = "trimmed/{id}_2P_trim.fastq.gz",
-        runp = "trimmed/{id}_2P_unpaired.fastq.gz",
-        ok = "trimmed/trim_{id}.ok"
+        fout = "reads/trimmed/{id}_1P_trim.fastq.gz",
+        funp = "reads/trimmed/{id}_1P_unpaired.fastq.gz",
+        rout = "reads/trimmed/{id}_2P_trim.fastq.gz",
+        runp = "reads/trimmed/{id}_2P_unpaired.fastq.gz",
+        ok = "reads/trimmed/trim_{id}.ok"
     params:
         adapter = get_adapter,
         minlength = config["trimming"]["minlength"],

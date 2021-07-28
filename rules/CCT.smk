@@ -4,14 +4,14 @@ rule gbk_prep:
 #        fasta = "compare/alignment/clustalo/{id}.{assembler}.{sub}.rolled.12476_RC.fasta",
 #        gff = "compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff"
     output:
-        "compare/CCT/{id}.{assembler}.{sub}.gbk.done"
+        "output/compare/CCT/{id}.{assembler}.{sub}.gbk.done"
     params:
         id = "{id}",
         assembler = "{assembler}",
         sub = "{sub}",
-        gff = "compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff",
-        gbk = "compare/CCT/{id}.{assembler}.{sub}.genbank",
-        outdir = "compare/alignment/mitos2/{id}.{sub}.{assembler}" 
+        gff = "output/compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff",
+        gbk = "output/compare/CCT/{id}.{assembler}.{sub}.genbank",
+        outdir = "output/compare/alignment/mitos2/{id}.{sub}.{assembler}" 
 #    resources:
 #        qos="normal_0064",
 #        partition="mem_0064",
@@ -22,9 +22,9 @@ rule gbk_prep:
         "docker://pegi3s/emboss:6.6.0"
     shell:
         """
-        if [ -f compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta ]
+        if [ -f output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta ]
         then
-        seqret -sequence compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
+        seqret -sequence output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
         sed -i '1 a ACCESSION   {params.id}.{params.assembler}.{params.sub}' {params.gbk}
         sed -i 's/gene/CDS/g' {params.gbk}
         sed -i 's/*Name //g' {params.gbk}
@@ -55,23 +55,23 @@ rule gbk_prep:
 
 rule CCT:
     input:
-        expand("compare/CCT/{{id}}.{assembler}.{sub}.gbk.done", id=IDS, sub=sub, assembler=Assembler),
+        expand("output/compare/CCT/{{id}}.{assembler}.{sub}.gbk.done", id=IDS, sub=sub, assembler=Assembler),
         #rules.gbk_prep.output,
         #gbk =  "compare/CCT/{id}.{assembler}.{sub}.genbank" 
     output:
-        "compare/CCT/{id}.{assembler}.{sub}.CCT.done"
+        "output/compare/CCT/{id}.{assembler}.{sub}.CCT.done"
     params:
         id = "{id}",
         assembler = "{assembler}",
         sub = "{sub}",
-        outdir = "compare/CCT",
+        outdir = "output/compare/CCT",
         wd = os.getcwd()
     singularity:
         "docker://pstothard/cgview_comparison_tool:1.0.1"
     shell:
         """
-        length=$(awk -F'\t' '{{if ($1 == "{params.assembler}" && $2 == "{params.id}" && $3 == "{params.sub}" && $4 > 1000){{print $4;}}}}' compare/Genes.txt)
-        if [ -f compare/CCT/{params.id}.{params.assembler}.{params.sub}.genbank ] && [ $length > 1000 ]
+        length=$(awk -F'\t' '{{if ($1 == "{params.assembler}" && $2 == "{params.id}" && $3 == "{params.sub}" && $4 > 1000){{print $4;}}}}' output/compare/Genes.txt)
+        if [ -f output/compare/CCT/{params.id}.{params.assembler}.{params.sub}.genbank ] && [ $length > 1000 ]
         then
         cd {params.outdir}
         build_blast_atlas.sh -i {params.id}.{params.assembler}.{params.sub}.genbank 

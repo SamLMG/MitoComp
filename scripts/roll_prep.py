@@ -13,7 +13,7 @@ gene_found = {}
 
 Genes_handle = pd.read_table(Genes, sep = '\t')
 gene_list = list(Genes_handle.columns)
-del gene_list[0:6]
+del gene_list[0:7]
 print(gene_list)
 for gene in gene_list:
 	count = sum(Genes_handle[gene].to_list())
@@ -64,7 +64,7 @@ print("rev_stats", rev_starts_dict)
 with open(Start_pos, 'w') as starts:
 	for assembly in starts_dict.keys():
 		gene_start = starts_dict[assembly]
-		print('/'.join(assembly.split("/")[1:5]),"/", assembly.split("/")[3],".", assembly.split("/")[2],".", assembly.split("/")[4],".", "fasta	", gene_start, sep='', file = starts)
+		print('/'.join(assembly.split("/")[1:6]),"/", assembly.split("/")[4],".", assembly.split("/")[3],".", assembly.split("/")[5],".", "fasta	", gene_start, sep='', file = starts)
 starts.close()
 
 #print list of files that need to be reverse complement 
@@ -73,7 +73,7 @@ with open(Reverse, 'w') as RC:
 	for rev in reverse_assemblies:
 		i += 1
 		rev_gene_start = rev_starts_dict[rev]
-		print("compare/alignment/", rev.split("/")[3],".", rev.split("/")[2], ".", rev.split("/")[4], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
+		print("compare/alignment/", rev.split("/")[4],".", rev.split("/")[3], ".", rev.split("/")[5], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
 RC.close()
 
 #print list of files already in forward sense
@@ -82,7 +82,7 @@ with open(Forward, 'w') as FA:
 	for a in forward_assemblies:
 		i += 1
 		gene_start = starts_dict[a]
-		print("compare/alignment/", a.split("/")[3],".", a.split("/")[2], ".", a.split("/")[4], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
+		print("compare/alignment/", a.split("/")[4],".", a.split("/")[3], ".", a.split("/")[5], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
 FA.close()
 
 

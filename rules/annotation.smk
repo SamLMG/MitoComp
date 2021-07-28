@@ -15,22 +15,22 @@ rule mitos_ref_db:
 
 rule mitos:
     input:
-        "assemblies/{assembler}/{id}/{sub}/{assembler}.ok",
+        "output/assemblies/{assembler}/{id}/{sub}/{assembler}.ok",
 	rules.mitos_ref_db.output,
     output:
-        done = "assemblies/{assembler}/{id}/{sub}/mitos.done"
+        done = "output/assemblies/{assembler}/{id}/{sub}/mitos.done"
     params:
         id = "{id}",
-        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta",
+        fasta = "output/assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta",
         seed = get_seed,
         genetic_code = get_code,
 	sub = "{sub}",
 	assembler = "{assembler}",
         wd = os.getcwd(),
-        outdir = "assemblies/{assembler}/{id}/{sub}/annotation"
+        outdir = "output/assemblies/{assembler}/{id}/{sub}/annotation"
     log: 
-        stdout = "assemblies/{assembler}/{id}/{sub}/annotation/stdout.txt",
-        stderr = "assemblies/{assembler}/{id}/{sub}/annotation/stderr.txt"
+        stdout = "output/assemblies/{assembler}/{id}/{sub}/annotation/stdout.txt",
+        stderr = "output/assemblies/{assembler}/{id}/{sub}/annotation/stderr.txt"
     singularity:
         "docker://reslp/mitos:1.0.5"
     threads: config["threads"]["annotation"] 
@@ -49,16 +49,16 @@ rule mitos:
 rule annotation_stats:
     input:
         #rules.remove_newline.output
-        expand("assemblies/{assembler}/{id}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
+        expand("output/assemblies/{assembler}/{id}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
     output:
-        starts = "compare/start_positions.txt",
-        RC_assemblies = "compare/RC_assemblies.txt",
-        done = "compare/annotation_stats.done"
+        starts = "output/compare/start_positions.txt",
+        RC_assemblies = "output/compare/RC_assemblies.txt",
+        done = "output/compare/annotation_stats.done"
     shell:
         """
-        find ./assemblies/ -maxdepth 4 -name "*.fasta" | cat > compare/assembly_paths.txt
-        find ./assemblies/ -name "result.bed" | cat > compare/bed_paths.txt
-        scripts/annotate.py compare/bed_paths.txt compare/assembly_paths.txt compare/Genes.txt
-        scripts/roll_prep.py compare/Genes.txt compare/bed_paths.txt compare/start_positions.txt compare/RC_assemblies.txt compare/forward_assemblies.txt
+        find ./output/assemblies/ -maxdepth 5 -name "*.fasta" | cat > output/compare/assembly_paths.txt
+        find ./output/assemblies/ -name "result.bed" | cat > output/compare/bed_paths.txt
+        scripts/annotate.py output/compare/bed_paths.txt output/compare/assembly_paths.txt output/compare/Genes.txt
+        scripts/roll_prep.py output/compare/Genes.txt output/compare/bed_paths.txt output/compare/start_positions.txt output/compare/RC_assemblies.txt output/compare/forward_assemblies.txt
         touch {output.done}
         """

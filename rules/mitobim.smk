@@ -10,7 +10,7 @@ rule interleave:
 #        nnode="-N 1"
     threads: config["threads"]["interleave"]
     output:
-        "interleave/{sub}/{id}_interleaved.fastq"
+        "reads/interleave/{sub}/{id}_interleaved.fastq"
     singularity:
         "docker://reslp/bbmap:38.90"
     shell:
@@ -23,7 +23,7 @@ rule MITObim:
         rules.interleave.output
     output:
 #        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
-        ok = "assemblies/mitobim/{id}/{sub}/mitobim.ok"
+        ok = "output/assemblies/mitobim/{id}/{sub}/mitobim.ok"
 #    resources:
 #        qos="normal_0128",
 #        partition="mem_0128",
@@ -34,11 +34,11 @@ rule MITObim:
         id = "{id}",
         seed = get_seed,
         wd = os.getcwd(),
-        outdir = "assemblies/mitobim/{id}/{sub}/run"
+        outdir = "output/assemblies/mitobim/{id}/{sub}/run"
     log: 
-        stdout = "assemblies/mitobim/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/mitobim/{id}/{sub}/stderr.txt"
-    benchmark: "assemblies/mitobim/{id}/{sub}/mitobim.{id}.{sub}.benchmark.txt"
+        stdout = "output/assemblies/mitobim/{id}/{sub}/stdout.txt",
+        stderr = "output/assemblies/mitobim/{id}/{sub}/stderr.txt"
+    benchmark: "output/assemblies/mitobim/{id}/{sub}/mitobim.{id}.{sub}.benchmark.txt"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
 #    shadow: "shallow"
@@ -71,3 +71,4 @@ rule MITObim:
 
         touch $WD/{output.ok}       
         """
+

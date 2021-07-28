@@ -3,8 +3,8 @@ rule subsample:
         f = rules.trimmomatic.output.fout,
         r = rules.trimmomatic.output.rout
     output:
-        f = "sub/{sub}/{id}_1.fastq.gz",
-        r = "sub/{sub}/{id}_2.fastq.gz"
+        f = "reads/sub/{sub}/{id}_1.fastq.gz",
+        r = "reads/sub/{sub}/{id}_2.fastq.gz"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",

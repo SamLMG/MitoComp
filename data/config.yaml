@@ -17,7 +17,7 @@ threads:
     alignment: 10        
 
 trimming:
-    minlength: 80
+    minlength: 40 
     windowsize: 5
     stepsize: 4
     quality: 3

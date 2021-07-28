@@ -1,9 +1,14 @@
 #!/usr/bin/env python
+import sys
 
 #read file containing paths
-paths = open("compare/alignment/mitos2/mitos2_paths.txt", "r")
+paths=sys.argv[1] 
+Genes=sys.argv[2]
+
 #create list called assemblies and append the path to each bed file from the second annotation
 assemblies = []
+paths = open(paths, "r")
+
 for path in paths:
         path = path.strip("\n")
         assemblies.append(path)
@@ -11,10 +16,9 @@ paths.close()
 print("All paths:", assemblies)
 
 #open Genes file to write header
-Genes = open("compare/alignment/mitos2/Gene_positions.txt", 'w')
 
 header = "Assembler\tSpecies\tSubsample\tGenes\tStart\tEnd\n"
-
+Genes = open(Genes, "w")
 Genes.write(header)
 
 

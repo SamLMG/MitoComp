@@ -95,23 +95,23 @@ for assembly in assemblies:
 		else:
 			if gene_dict[gene] == 1:
 				found_genes.append(gene)
-	if assembly.split("/")[3] in species_genes_dictionary.keys():
-		if species_genes_dictionary[assembly.split("/")[3]] < len(found_genes):
-			species_genes_dictionary[assembly.split("/")[3]] = len(found_genes)
+	if assembly.split("/")[4] in species_genes_dictionary.keys():
+		if species_genes_dictionary[assembly.split("/")[4]] < len(found_genes):
+			species_genes_dictionary[assembly.split("/")[4]] = len(found_genes)
 	else:
-		species_genes_dictionary[assembly.split("/")[3]] = len(found_genes)
+		species_genes_dictionary[assembly.split("/")[4]] = len(found_genes)
 	
-	if assembly.split("/")[3] in species_trnas_dictionary.keys():
-		if species_trnas_dictionary[assembly.split("/")[3]] < len(found_trnas):
-			species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
+	if assembly.split("/")[4] in species_trnas_dictionary.keys():
+		if species_trnas_dictionary[assembly.split("/")[4]] < len(found_trnas):
+			species_trnas_dictionary[assembly.split("/")[4]] = len(found_trnas)
 	else:
-		species_trnas_dictionary[assembly.split("/")[3]] = len(found_trnas)
+		species_trnas_dictionary[assembly.split("/")[4]] = len(found_trnas)
 
-	if assembly.split("/")[3] in species_rrnas_dictionary.keys():
-		if species_rrnas_dictionary[assembly.split("/")[3]] < len(found_rrnas):
-			species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
+	if assembly.split("/")[4] in species_rrnas_dictionary.keys():
+		if species_rrnas_dictionary[assembly.split("/")[4]] < len(found_rrnas):
+			species_rrnas_dictionary[assembly.split("/")[4]] = len(found_rrnas)
 	else:
-		species_rrnas_dictionary[assembly.split("/")[3]] = len(found_rrnas)
+		species_rrnas_dictionary[assembly.split("/")[4]] = len(found_rrnas)
 
 
 #get seq length from fasta - remove newline character present in some assemblies
@@ -119,16 +119,16 @@ for assembly in assemblies:
 		seq_length = 0
 		for ap in assembly_paths:
 			ap = ap.strip("\n")
-			if assembly.split("/")[2] in ap and assembly.split("/")[3] in ap and assembly.split("/")[4] in ap:
+			if assembly.split("/")[3] in ap and assembly.split("/")[4] in ap and assembly.split("/")[5] in ap:
 				fasta = open(ap, 'r')
 				for line in fasta:
 					if line.startswith(">"):
 						continue
 					else:
 						seq_length += len(line.strip("\n"))
-				print(" ".join(assembly.split("/")[2:5]), seq_length)
+				print(" ".join(assembly.split("/")[3:6]), seq_length)
 
-	output_list.append(['\t'.join(assembly.split("/")[2:5]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts
+	output_list.append(['\t'.join(assembly.split("/")[3:6]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts
 
 Outfile_handle = open(Outfile, 'w')
 print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "rrnAs", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Outfile_handle)

@@ -5,8 +5,8 @@ rule fastqdump:
                 r = get_reverse,
                 wd = os.getcwd()
 	output:
-		f = "raw_mt_reads/{id}_1.fastq.gz",
-		r = "raw_mt_reads/{id}_2.fastq.gz"
+		f = "reads/raw_mt_reads/{id}_1.fastq.gz",
+		r = "reads/raw_mt_reads/{id}_2.fastq.gz"
 #	resources:
 #		qos="normal_0064",
 #		partition="mem_0064",

@@ -19,7 +19,7 @@ rule get_organelle:
         r = rules.subsample.output.r
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
-        ok = "assemblies/getorganelle/{id}/{sub}/getorganelle.ok"
+        ok = "output/assemblies/getorganelle/{id}/{sub}/getorganelle.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -27,7 +27,7 @@ rule get_organelle:
 #        name="getorganelle",
 #        nnode="-N 1"
     params:
-        outdir = "assemblies/getorganelle/{id}/{sub}/run",
+        outdir = "output/assemblies/getorganelle/{id}/{sub}/run",
         seed = get_seed,
         type = get_type,
         rounds = get_rounds
@@ -35,9 +35,9 @@ rule get_organelle:
 #    conda:
 #        "envs/getorganelle.yml"
     log:
-        stdout = "assemblies/getorganelle/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/getorganelle/{id}/{sub}/stderr.txt" 
-    benchmark: "assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
+        stdout = "output/assemblies/getorganelle/{id}/{sub}/stdout.txt",
+        stderr = "output/assemblies/getorganelle/{id}/{sub}/stderr.txt" 
+    benchmark: "output/assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
     threads: config["threads"]["getorganelle"] 
     shell:
         """

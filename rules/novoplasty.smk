@@ -2,12 +2,12 @@ rule NOVOconfig:
     input:
         "bin/NOVOconfig.txt"
     output:
-        "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}.txt"
+        "output/assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}.txt"
     params:
         project_name = "{id}_{sub}",
         WD = os.getcwd(),
         seed = get_seed,
-        log = "assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
+        log = "output/assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
         f = rules.subsample.output.f,
         r = rules.subsample.output.r,
         kmer = get_kmer,
@@ -30,9 +30,9 @@ rule NOVOplasty:
         ok = rules.subsample.output.f
     output: 
 #       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
-        ok = "assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
+        ok = "output/assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
     params:
-        outdir = "assemblies/novoplasty/{id}/{sub}/run"
+        outdir = "output/assemblies/novoplasty/{id}/{sub}/run"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -40,9 +40,9 @@ rule NOVOplasty:
 #        name="NOVOplasty",
 #        nnode="-N 1"
     log:
-        stdout = "assemblies/novoplasty/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/novoplasty/{id}/{sub}/stderr.txt"
-    benchmark: "assemblies/novoplasty/{id}/{sub}/novoplasty.{id}.{sub}.benchmark.txt"
+        stdout = "output/assemblies/novoplasty/{id}/{sub}/stdout.txt",
+        stderr = "output/assemblies/novoplasty/{id}/{sub}/stderr.txt"
+    benchmark: "output/assemblies/novoplasty/{id}/{sub}/novoplasty.{id}.{sub}.benchmark.txt"
     threads: config["threads"]["novoplasty"] 
 #    shadow: "shallow"
 #    conda:

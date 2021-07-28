@@ -24,19 +24,19 @@ rule mitoflex:
         db = rules.setup_mitoflex_db.output
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.picked.fa",
-        ok = "assemblies/mitoflex/{id}/{sub}/mitoflex.ok",
+        ok = "output/assemblies/mitoflex/{id}/{sub}/mitoflex.ok",
 #	run = directory("assemblies/{assembler}/{id}/{sub}/MitoFlex")
     params:
         wd = os.getcwd(),
-	outdir = "assemblies/mitoflex/{id}/{sub}",
+	outdir = "output/assemblies/mitoflex/{id}/{sub}",
         id = "{id}",
         clade = get_clade,
         genetic_code = get_code,
         optional = "--level debug"
     log:
-        stdout = "assemblies/mitoflex/{id}/{sub}/stdout.txt",
-        stderr = "assemblies/mitoflex/{id}/{sub}/stderr.txt"
-    benchmark: "assemblies/mitoflex/{id}/{sub}/mitoflex.{id}.{sub}.benchmark.txt"
+        stdout = "output/assemblies/mitoflex/{id}/{sub}/stdout.txt",
+        stderr = "output/assemblies/mitoflex/{id}/{sub}/stderr.txt"
+    benchmark: "output/assemblies/mitoflex/{id}/{sub}/mitoflex.{id}.{sub}.benchmark.txt"
     threads: config["threads"]["mitoflex"] 
     singularity: "docker://samlmg/mitoflex:v0.2.9"
 #    shadow: "minimal"
