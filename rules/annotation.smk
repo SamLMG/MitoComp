@@ -56,7 +56,7 @@ rule annotation_stats:
         done = "output/compare/annotation_stats.done"
     shell:
         """
-        find ./output/assemblies/ -maxdepth 5 -name "*.fasta" | cat > output/compare/assembly_paths.txt
+        find ./output/assemblies/ -maxdepth 4 -name "*.fasta" | cat > output/compare/assembly_paths.txt
         find ./output/assemblies/ -name "result.bed" | cat > output/compare/bed_paths.txt
         scripts/annotate.py output/compare/bed_paths.txt output/compare/assembly_paths.txt output/compare/Genes.txt
         scripts/roll_prep.py output/compare/Genes.txt output/compare/bed_paths.txt output/compare/start_positions.txt output/compare/RC_assemblies.txt output/compare/forward_assemblies.txt

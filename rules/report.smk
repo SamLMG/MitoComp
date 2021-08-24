@@ -13,16 +13,16 @@ rule report:
 		"""	
 		# gather bedfiles
 		# bedfiles all have the same name, therfore this hack to find, rename and copy the files to a location in the report directory.
-#		mkdir -p report/bedfiles
-#		for bedfile in $(find ./compare/alignment/mitos2/ -name "result.bed"); do
+#		mkdir -p output/compare/report/bedfiles
+#		for bedfile in $(find ./output/compare/alignment/mitos2/ -name "result.bed"); do
 #			name=$(dirname $(echo $bedfile | sed -e 's#^\./compare/alignment/mitos2/##'))
-#			cp $bedfile report/bedfiles/$name.bed
+#			cp $bedfile output/compare/report/bedfiles/$name.bed
 #		done
 	
 		# gather assemblies
-#		assemblies=$(find ./assemblies/*/*/*/*.fasta)
-#		mkdir -p report/assemblies
-#		cp $assemblies report/assemblies 2>/dev/null || :
+#		assemblies=$(find ./output/assemblies/*/*/*/*.fasta)
+#		mkdir -p output/compare/report/assemblies
+#		cp $assemblies output/compare/report/assemblies 2>/dev/null || :
 	
 		# gather maps	
 		maps=$(find ./output/compare/CCT/*.png)
@@ -37,5 +37,5 @@ rule report:
 
 		# clean up
 		mv scripts/report.html output/compare/report/report.html
-		tar -pcf {params.wd}/report.tar -C {params.wd} report
+		tar -pcf {params.wd}/output/compare/report.tar -C {params.wd}/output/compare/ report
 		"""	

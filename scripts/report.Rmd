@@ -7,6 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_knit$set(echo = TRUE)
+#require("knitr")
+#knitr::opts_knit$set(root.dir = '/binfl/lv71312/leeming/MitoComp')
 library(kableExtra)
 library(magrittr)
 ```
@@ -29,12 +32,17 @@ $(document).ready(function(){
 ## Overview
 
 ```{r, echo=F}
+#print(getwd())
 wd <- getwd()
-setwd(paste(wd,"/../report", sep=""))
+#print(wd)
+prefix <- paste0(wd, "/../output/compare/report/")
+#setwd(paste(wd,"/../output/compare/report", sep=""))
+#print(wd)
 
 options(scipen=999)
 
-overview_data_file <- "../report/Genes.txt"
+#overview_data_file <- "/output/compare/report/Genes.txt"
+overview_data_file <- paste0(prefix,"Genes.txt")
 
 overview_data <- read.csv(overview_data_file, sep="\t", header=T, row.names = NULL)
 overview_data <- overview_data[order(overview_data$Species), ]
@@ -83,7 +91,7 @@ get_map_path <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,assembler,subs,"map","png", sep=".")
     filep <- paste("maps/", filep, sep="")
-    if (file.exists(filep) ==T){ 
+    if (file.exists(paste0(prefix, filep)) ==T){ 
       path <- paste("<a href=\'", filep, "\'><img src=\'", filep, "\'></a>", sep="")
       
       paths <- c(paths, path)
@@ -104,7 +112,7 @@ get_map_path_link <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,assembler,subs,"map","png", sep=".")
     filep <- paste("maps/", filep, sep="")
-    if (file.exists(filep) ==T){ 
+    if (file.exists(paste0(prefix,filep)) ==T){ 
       path <- filep
       paths <- c(paths, path)
     } 
@@ -124,7 +132,7 @@ get_assembly_path <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,assembler,subs,"fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
-    if (file.exists(filep) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
+    if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
     
   }
   #print(paths)
@@ -139,7 +147,7 @@ get_assembly_path_hover <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,assembler,subs,"fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
-    if (file.exists(filep) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"assembly not found")}
+    if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"assembly not found")}
     
   }
   #print(paths)
@@ -154,7 +162,7 @@ get_bed_path <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,subs,assembler,"bed", sep=".")
     filep <- paste("bedfiles/", filep, sep="")
-    if (file.exists(filep) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
+    if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
   }
   #print(paths)
   return(paths)
@@ -168,7 +176,7 @@ get_bed_path_hover <- function(x) {
     assembler <- overview_data[i,4]
     filep <-  paste(sp_name,subs,assembler,"bed", sep=".")
     filep <- paste("bedfiles/", filep, sep="")
-    if (file.exists(filep) ==T){ paths <- c(paths, filep)} else { paths <- c(paths," bedfile not found")}
+    if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths," bedfile not found")}
   }
   #print(paths)
   return(paths)
