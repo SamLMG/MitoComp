@@ -16,10 +16,16 @@ gene_list = list(Genes_handle.columns)
 del gene_list[0:7]
 print(gene_list)
 for gene in gene_list:
-	count = sum(Genes_handle[gene].to_list())
-	gene_found[gene] = count
+	count = Genes_handle[gene].to_list()
+	count1 = [item for item in count if item == 1] #count only genes that are found once per assembly 
+	list_length = len(count1) #in how many assemblies are these genes found
+	print(gene, list_length)
+	gene_found[gene] = list_length
+
+
+
 print("gene_found", gene_found)
-most_found_gene = max(gene_found, key = gene_found.get)
+most_found_gene = max(gene_found, key = gene_found.get) #which gene is found (unsplit and unduplicated) in the most assemblies - N.B. this may result in a "tie" in which case the first alphabetically will be selected
 print("most found gene", most_found_gene)
 
 
