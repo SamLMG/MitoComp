@@ -4,9 +4,11 @@ import sys
 
 Genes=sys.argv[1]
 Bed_paths=sys.argv[2]
-Start_pos=sys.argv[3]
-Reverse=sys.argv[4]
-Forward=sys.argv[5]
+MFG=sys.argv[3]
+No_MFG=sys.argv[4]
+Start_pos=sys.argv[5]
+Reverse=sys.argv[6]
+Forward=sys.argv[7]
 #read summary file of annotations in order to select gene most commonly occuring across assemblies - this will be used as the start position in the "roll" rule
 
 gene_found = {}
@@ -38,6 +40,30 @@ for path in paths_handle:
 	assemblies.append(path)
 paths_handle.close() 
 print("All paths:", assemblies)
+
+#make list of assemblies in which the 'most found gene' IS and IS NOT found - print these paths to a .txt file
+MFG_assemblies = []
+for assembly in assemblies:
+	line_number = 0
+	with open(assembly, 'r') as bed:
+		for line in bed:
+			line_number += 1
+			if most_found_gene in line:
+				print("most found gene present in", assembly)
+				MFG_assemblies.append(assembly)
+with open(MFG, 'w') as mfg:
+	print('\n'.join(MFG_assemblies), file = mfg)
+mfg.close		
+
+No_MFG_assemblies = []
+for assembly in assemblies:
+	if assembly not in MFG_assemblies:
+		No_MFG_assemblies.append(assembly)
+		print("most found gene NOT present in", assembly)
+
+with open(No_MFG, 'w') as no_mfg:
+        print('\n'.join(No_MFG_assemblies), file = no_mfg)
+no_mfg.close
 
 #search in bed files to determine which assemblies must be put into reverse complement
 starts_dict = {}
@@ -79,7 +105,7 @@ with open(Reverse, 'w') as RC:
 	for rev in reverse_assemblies:
 		i += 1
 		rev_gene_start = rev_starts_dict[rev]
-		print("compare/alignment/", rev.split("/")[4],".", rev.split("/")[3], ".", rev.split("/")[5], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
+		print("output/compare/alignment/", rev.split("/")[4],".", rev.split("/")[3], ".", rev.split("/")[5], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
 RC.close()
 
 #print list of files already in forward sense
@@ -88,7 +114,7 @@ with open(Forward, 'w') as FA:
 	for a in forward_assemblies:
 		i += 1
 		gene_start = starts_dict[a]
-		print("compare/alignment/", a.split("/")[4],".", a.split("/")[3], ".", a.split("/")[5], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
+		print("output/compare/alignment/", a.split("/")[4],".", a.split("/")[3], ".", a.split("/")[5], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
 FA.close()
 
 
