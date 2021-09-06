@@ -30,13 +30,18 @@ Genes.write(header)
 
 for assembly in assemblies:
 		bed_file = open(assembly, 'r')
+		
+		assembler = assembly.split(".")[3].split("/")[0]
+		#print(assembly)
+		species = assembly.split(".")[1].split("/")[5]
+		#print(assembly.split("."))
+		#print(assembly.split(".")[1].split("/"))
+		#print(species)
+		subsample = assembly.split(".")[2].split("_")[0]
 		for line in bed_file:
 			line = line.rstrip()
 			first = line.split('\t')[0]
 			
-			assembler = first.split(".")[1]
-			species = first.split('.')[0].split("/")[2]
-			subsample = first.split(".")[2].split("_")[0]
 			gene = line.split('\t')[3].rstrip("()actg")
 		
 			orientation = line.split('\t')[5]

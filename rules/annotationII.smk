@@ -36,11 +36,20 @@ rule second_mitos:
         else
         echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
+        if [[ $(find output/assemblies/{params.assembler}/{params.id}/{params.sub}/annotation/result.bed) != "" ]]; then cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/annotation/result.bed {params.outdir}/result.bed
+        awk '{{$1= "output/compare/alignment/mitos2/{params.id}.{params.assembler}.{params.sub}"; print $0}}' output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed > output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/tmp && mv output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/tmp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed
+        sed -i 's/ /\t/g' output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed 
+        mkdir -p output/compare/report/bedfiles
+        cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed
+        mkdir -p output/compare/report/assemblies
+        cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
+        fi
         touch {output}
         """
 
 rule gene_positions:
     input:
+        #rules.second_mitos.output
         expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler) 
         #"compare/alignment/mitos2/mitos2_paths.txt"
     output:
@@ -49,6 +58,7 @@ rule gene_positions:
     shell:
         """
         find ./output/compare/alignment/mitos2/ -name "result.bed" | cat > output/compare/alignment/mitos2/mitos2_paths.txt        
+        #cat output/compare/No_MFG_assemblies.txt >> output/compare/alignment/mitos2/mitos2_paths.txt  #include original annotations for those assemblies with no 'most found gene'
         scripts/gene_positions.py output/compare/alignment/mitos2/mitos2_paths.txt output/compare/alignment/mitos2/Gene_positions.txt
         touch {output}
         """

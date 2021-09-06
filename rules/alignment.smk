@@ -59,7 +59,8 @@ rule align:
     input:
         rules.reverse_complement.output
     output:
-        done = "output/compare/alignment/clustalo/{id}.align.done",
+        id_done = "output/compare/alignment/clustalo/{id}.align.done",
+        #done = "output/compare/alignment/clustalo/align.done"
     params:
         id = "{id}"
     singularity: "docker://reslp/clustalo:1.2.4" 
@@ -68,9 +69,18 @@ rule align:
         """
 	cd output/compare/alignment
 	# cp has to fail silently of no RC file is found
-        cp {params.id}*.fasta clustalo/ 2>/dev/null || :
-        cd clustalo
-	cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
-        clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
-        touch {params.id}.align.done
+        if [[ -f output/compare/alignment/{params.id}.rolled*.fasta ]]; then
+            cp {params.id}*.fasta clustalo/ 2>/dev/null || :
+            #cp *.fasta clustalo/ 2>/dev/null || :
+            cd clustalo
+            cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
+            clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
+            touch {params.id}.align.done
+        else
+            echo "Align could not be run because the input file is missing. This may happen when the assembler did not produce output or when MITOS did not find the most found gene in this assembly?"
+            cd ../../../
+            #touch {params.id}.align.done
+            touch {output}
+        fi
+        #touch {output}
         """
