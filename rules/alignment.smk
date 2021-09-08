@@ -69,8 +69,8 @@ rule align:
         """
 	cd output/compare/alignment
 	# cp has to fail silently of no RC file is found
-        if [[ -f output/compare/alignment/{params.id}.rolled*.fasta ]]; then
-            cp {params.id}*.fasta clustalo/ 2>/dev/null || :
+        if [[ $(find {params.id}.*.rolled*.fasta) ]]; then
+            cp {params.id}.*.rolled*.fasta clustalo/ 2>/dev/null || :
             #cp *.fasta clustalo/ 2>/dev/null || :
             cd clustalo
             cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
