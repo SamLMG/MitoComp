@@ -13,17 +13,19 @@ rule report:
 		"""	
 		# gather bedfiles
 		# bedfiles all have the same name, therfore this hack to find, rename and copy the files to a location in the report directory.
-#		mkdir -p output/compare/report/bedfiles
-#		for bedfile in $(find ./output/compare/alignment/mitos2/ -name "result.bed"); do
-#			name=$(dirname $(echo $bedfile | sed -e 's#^\./compare/alignment/mitos2/##'))
-#			cp $bedfile output/compare/report/bedfiles/$name.bed
-#		done
+		mkdir -p output/compare/report/bedfiles
+		for bedfile in $(find ./output/compare/alignment/mitos2/ -name "result.bed"); do
+			name=$(dirname $(echo $bedfile | sed -e 's#^\./output/compare/alignment/mitos2/##'))
+			cp $bedfile output/compare/report/bedfiles/$name.bed
+		done
 	
 		# gather assemblies
-#		assemblies=$(find ./output/assemblies/*/*/*/*.fasta)
-#		mkdir -p output/compare/report/assemblies
-#		cp $assemblies output/compare/report/assemblies 2>/dev/null || :
-	
+		assemblies=$(find ./output/compare/alignment/*.final.fasta)
+		mkdir -p output/compare/report/assemblies
+		cp $assemblies output/compare/report/assemblies 2>/dev/null || :
+                #sed -i 's/.final//g' output/compare/report/assemblies/*
+                #mv output/compare/report/assemblies/*.final.fasta mv output/compare/report/assemblies/*.fasta
+
 		# gather maps	
 		maps=$(find ./output/compare/CCT/*.png)
 		mkdir -p output/compare/report/maps

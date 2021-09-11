@@ -130,7 +130,7 @@ get_assembly_path <- function(x) {
     sp_name <- overview_data[i,5]
     subs <- overview_data[i,6]
     assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"fasta", sep=".")
+    filep <-  paste(sp_name,assembler,subs,"final","fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
     
@@ -145,7 +145,7 @@ get_assembly_path_hover <- function(x) {
     sp_name <- overview_data[i,5]
     subs <- overview_data[i,6]
     assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"fasta", sep=".")
+    filep <-  paste(sp_name,assembler,subs,"final","fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"assembly not found")}
     

@@ -27,11 +27,12 @@ rule second_mitos:
             else
                 runmitos.py -i output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
                 # copy new bed files to report directory with informative name
-                mkdir -p output/compare/report/bedfiles
-                cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed 
+                #mkdir -p output/compare/report/bedfiles
+                #cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed 
                 # copy rolled + RC assemblies to report directory
-                mkdir -p output/compare/report/assemblies
-                cp output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}*.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
+                #mkdir -p output/compare/report/assemblies
+                #cp output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}*.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
+                cp output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta output/compare/alignment/{params.id}.{params.assembler}.{params.sub}.final.fasta
                 fi
         else
         echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
@@ -39,10 +40,12 @@ rule second_mitos:
         if [[ $(find output/assemblies/{params.assembler}/{params.id}/{params.sub}/annotation/result.bed) != "" ]]; then cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/annotation/result.bed {params.outdir}/result.bed
         awk '{{$1= "output/compare/alignment/mitos2/{params.id}.{params.assembler}.{params.sub}"; print $0}}' output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed > output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/tmp && mv output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/tmp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed
         sed -i 's/ /\t/g' output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed 
-        mkdir -p output/compare/report/bedfiles
-        cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed
-        mkdir -p output/compare/report/assemblies
-        cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
+        cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta output/compare/alignment/{params.id}.{params.assembler}.{params.sub}.final.fasta
+        sed -i 's#^>#output/compare/alignment/{params.id}.{params.assembler}.{params.sub}#g' output/compare/alignment/{params.id}.{params.assembler}.{params.sub}.final.fasta
+        #mkdir -p output/compare/report/bedfiles
+        #cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed
+        #mkdir -p output/compare/report/assemblies
+        #cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
         fi
         touch {output}
         """
