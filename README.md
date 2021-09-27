@@ -20,6 +20,7 @@ MitoComp is primarily designed to run on HPC clusters using either a SGE or SLUR
 2. A snakemake installation (tested with snakemake 6.0.2; snakemake can be installed through conda using the following commands)
 
 ```
+$ conda install -c conda-forge mamba
 $ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 ```
 ```
