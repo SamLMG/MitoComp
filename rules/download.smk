@@ -26,11 +26,11 @@ rule fastqdump:
                 mkdir -p $HOME/tmp
 		echo "/repository/user/main/public/root = \'$HOME/tmp\'" >> $HOME/.ncbi/user-settings.mkfg
 
-                prefetch --max-size 1024000000 {params.accession}
+		prefetch --max-size 1024000000 {params.accession}
 		fastq-dump --split-files --gzip --defline-seq '@$ac-$sn/$ri' {params.accession}
 		mv {params.accession}_1.fastq.gz {output.f}
 		mv {params.accession}_2.fastq.gz {output.r}
-                fi
+		fi
                 """
 rule prep_local_reads:
 	input:
