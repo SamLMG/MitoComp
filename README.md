@@ -33,6 +33,18 @@ The user should first clone this repository to their local computer. To do this 
 $ git clone --recursive https://github.com/SamLMG/MitoComp.git
 ```
 
+## Downloading adapter sequences
+
+The trimming rule of this pipeline removes adapter sequences from raw reads. The relevant adapters should be downloaded from https://github.com/usadellab/Trimmomatic/tree/main/adapters and placed in a directory called &quot;adapterseq&quot; Inside the MitoComp directory. This may be done using the following commands depending on the required adapter. 
+
+```
+mkdir adapterseq
+```
+
+```
+wget https://raw.githubusercontent.com/usadellab/Trimmomatic/main/adapters/TruSeq3-PE.fa
+```
+
 ## Setting up the analysis
 
 The `data/data.tsv` file should be edited to correspond to the user&#39;s datasets. The columns in this file are named as follows:
