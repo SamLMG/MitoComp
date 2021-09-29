@@ -30,8 +30,8 @@ rule fastqdump:
 		fastq-dump --split-files --gzip --defline-seq '@$ac-$sn/$ri' {params.accession}
 		mv {params.accession}_1.fastq.gz {output.f}
 		mv {params.accession}_2.fastq.gz {output.r}
-		fi
                 """
+
 rule prep_local_reads:
 	input:
                 f = get_forward,
