@@ -109,16 +109,16 @@ Some further parameters for the trimming rule are also specified in this file an
 
 We also provide users working on a cluster with a template cluster config file for clusters using either a SLURM or a SGE submission system. Resources provided to each job as well as the paths to log files may be set here by the user according to their cluster settings.
 
-The following command uses the assembly script to run the pipeline on a SLURM system:
+The following command uses the MitoComp script to run the pipeline on a SLURM system:
 
 ```
-$ ./assembly -t slurm -c data/cluster-config-SLURM.yaml.template
+$ ./MitoComp -t slurm -c data/cluster-config-SLURM.yaml.template
 ```
 
 Or on an SGE system:
 
 ```
-$ ./assembly -t sge -c data/cluster-config-SGE.yaml.template
+$ ./MitoComp -t sge -c data/cluster-config-SGE.yaml.template
 ```
 
 We advise adding the `--dry` option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
@@ -126,7 +126,7 @@ We advise adding the `--dry` option to this command first. This will not submit 
 Finally, we provide two runmodes for this pipeline. These are specified via the -m flag. This determines how far the pipeline should run. For assembly and an initial annotation, specify "-m assembly". For a complete run, specify "-m all" or ignore this option. For example the following command will run in assembly mode: 
 
 ```
-$ ./assembly -m assembly -t slurm -c data/cluster-config-SLURM.yaml.template
+$ ./MitoComp -m assembly -t slurm -c data/cluster-config-SLURM.yaml.template
 ```
 
 A rulegraph showing the order in which jobs will run is shown below:
