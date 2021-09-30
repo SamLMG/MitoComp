@@ -3,7 +3,7 @@
 set -e
 
 usage() {
-        echo "Welcome to phylociraptor. Your are using Git commit: $commit"
+        echo "Welcome to MitoComp. Your are using Git commit: $commit"
         echo
         echo "Usage: $0 [-v] [-t <submission_system>] [-c <cluster_config_file>] [-s <snakemke_args>]"
         echo
