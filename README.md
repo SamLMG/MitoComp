@@ -47,10 +47,10 @@ wget https://raw.githubusercontent.com/usadellab/Trimmomatic/main/adapters/TruSe
 
 ## Setting up the analysis
 
-The `data/data.tsv` file should be edited to correspond to the user&#39;s datasets. The columns in this file are named as follows:
+The `data/data.csv` file should be edited to correspond to the user&#39;s datasets. The columns in this file are named as follows:
 
 ```
-ID	forward	reverse	seed	SRA	Clade	Code	novoplasty_kmer	Read_length	Adapter	Type	GO_Rounds
+ID,forward,reverse,seed,SRA,Clade,Code,novoplasty_kmer,Read_length,Adapter,Type,GO_Rounds
 ```
 
 - ID: This column refers to the name of the sample and may be freely completed by the user but we advise against the use of most special characters including &quot;.&quot; and instead advise users to use &quot;_&quot;

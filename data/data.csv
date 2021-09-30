@@ -1,0 +1,2 @@
+ID,forward,reverse,seed,SRA,Clade,Code,novoplasty_kmer,Read_length,Adapter,Type,GO_Rounds
+D_rerio,,,seeds/D.rerio_coxI.fasta,SRR13166697,Chordata,2,39,151,adapterseq/TruSeq3-PE.fa,animal_mt,10
