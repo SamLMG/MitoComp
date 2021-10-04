@@ -20,17 +20,17 @@ MitoComp is primarily designed to run on HPC clusters using either a SGE or SLUR
 2. A snakemake installation (tested with snakemake 6.0.2; snakemake can be installed through conda using the following commands)
 
 ```
-$ conda install -c conda-forge mamba
-$ mamba create -c conda-forge -c bioconda -n snakemake snakemake
+conda install -c conda-forge mamba
+mamba create -c conda-forge -c bioconda -n snakemake snakemake
 ```
 ```
-$ conda activate snakemake
+conda activate snakemake
 ```
 
 The user should first clone this repository to their local computer. To do this use the following command.
 
 ```
-$ git clone --recursive https://github.com/SamLMG/MitoComp.git
+git clone --recursive https://github.com/SamLMG/MitoComp.git
 ```
 
 ## Downloading adapter sequences
@@ -58,7 +58,7 @@ ID,forward,reverse,seed,SRA,Clade,Code,novoplasty_kmer,Read_length,Adapter,Type,
 - seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column. This may be done using entrez-direct (which may be installed via conda) and executing the following command where the -query corresponds to the sequence's accession number and filename is defined by the user.
 
 ```
-$ esearch -db nucleotide -query "MF420392.1" | efetch -format fasta > seeds/D.rerio_coxI.fasta
+esearch -db nucleotide -query "MF420392.1" | efetch -format fasta > seeds/D.rerio_coxI.fasta
 ```
 - SRA: MitComp can automatically download read data from NCBI SRA. Enter an SRA accession number here to do so.
 - Clade: Some of the assemblers require the clade (e.g. phylum) of the chosen species which should be entered in the clade column.
@@ -112,21 +112,27 @@ We also provide users working on a cluster with a template cluster config file f
 The following command uses the MitoComp script to run the pipeline on a SLURM system:
 
 ```
-$ ./MitoComp -t slurm -c data/cluster-config-SLURM.yaml.template
+./MitoComp -t slurm -c data/cluster-config-SLURM.yaml.template
 ```
 
 Or on an SGE system:
 
 ```
-$ ./MitoComp -t sge -c data/cluster-config-SGE.yaml.template
+./MitoComp -t sge -c data/cluster-config-SGE.yaml.template
 ```
 
 We advise adding the `--dry` option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
 
-Finally, we provide two runmodes for this pipeline. These are specified via the -m flag. This determines how far the pipeline should run. For assembly and an initial annotation, specify "-m assembly". For a complete run, specify "-m all" or ignore this option. For example the following command will run in assembly mode: 
+We provide MitoComp two alternate runmodes. These are specified via the -m flag. This determines how far the pipeline should run. For assembly and an initial annotation, specify "-m assembly". For a complete run, specify "-m all" or ignore this option. For example the following command will run in assembly mode: 
 
 ```
-$ ./MitoComp -m assembly -t slurm -c data/cluster-config-SLURM.yaml.template
+./MitoComp -m assembly -t slurm -c data/cluster-config-SLURM.yaml.template
+```
+
+Finally, it may occur that one step of the pipeline fails causing subsequent jobs to remain in the queuing system indefinately. This may prevent other jobs from running. The following command will kill all jobs that are depend on this specific instance of MitoComp without affecting other jobs running on the cluster:
+
+```
+./MitoComp --reset -t slurm
 ```
 
 A rulegraph showing the order in which jobs will run is shown below:

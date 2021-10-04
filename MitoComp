@@ -15,6 +15,7 @@ usage() {
         echo "  -i \"<singularity_args>\" Additional arguments passed on to singularity (optional)."
 	echo
 	echo "  --dry Invokes a dry-run. Corresponds to: snakemake -n"
+	echo "  --reset. Use this option to cancel all remaining jobs from this snakemake command without cancelling other cluster jobs. This is useful if any jobs fail to produce the desired output."
 	#echo "  --report This creates an overview report of the run."
 	#echo "  --setup Will download the genomes and prepare the pipeline to run."
 	#echo "  --remove Resets the pipeline. Will delete all results, logs and checkpoints."
@@ -30,6 +31,7 @@ CLUSTER_CONFIg=""
 SETUP=""
 REPORT=""
 DRY=""
+RESET="FALSE"
 RUNMODE="all"
 NJOBS="10001"
 commit=$(git rev-parse --short HEAD)
@@ -52,6 +54,7 @@ while getopts ":vt:c:s:m:i:-:" option;
 					remove) REMOVE="TRUE" ;;
 					report) REPORT="TRUE" ;;
 					dry) DRY="-n" ;;
+					reset) RESET="TRUE" ;;
 					'' ) break ;;
 					*) echo "Illegal option --$OPTARG" >&2; usage; exit 2 ;;
 				esac ;;	
@@ -65,18 +68,33 @@ if [ $OPTIND -eq 1 ]; then usage; fi
 # make sure these directories exist before submission because they are needed as singularity bind points
 if [[ ! -d .usr_tmp ]]; then mkdir .usr_tmp; fi 
 if [[ ! -d .conda_pkg_tmp ]]; then mkdir .conda_pkg_tmp; fi
+if [[ $RESET == "TRUE" ]]; then
+	grep -o -P 'batch job\K.{1,8}' log/submission.txt > log/sub_ids.txt
+	if [[ $CLUSTER == "slurm" ]]; then
+		cat log/sub_ids.txt | while read line; do scancel $line; done
+	elif [[ $CLUSTER == "sge" ]]; then
+		cat log/sub_ids.txt | while read line; do qdel $line; done
+	elif [[ $CLUSTER == "torque" ]]; then
+		cat log/sub_ids.txt | while read line; do qdel $line; done
+	else
+                echo "reset not valid for serial submission"
+	fi
+exit 0
+fi
+#echo $RESET
+
 if [[ $RUNMODE == "assembly" ]]; then
 	if [[ $CLUSTER == "slurm" ]]; then
 	          export CONDA_PKGS_DIRS="$(pwd)/.conda_pkg_tmp"
 	          mkdir -p .conda_pkg_tmp
-	          snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster '$(pwd)/bin/immediate_submit/immediate_submit.py {dependencies} slurm' --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	          snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster '$(pwd)/bin/immediate_submit/immediate_submit.py {dependencies} slurm' --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	        unset CONDA_PKGS_DIRS
 	  elif [[ $CLUSTER == "sge" ]]; then
-	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' sge" --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' sge" --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	  elif [[ $CLUSTER == "torque" ]]; then
-	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' torque" --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --until assembly_only --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' torque" --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	  elif [[ $CLUSTER == "serial" ]]; then
-	    snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" $STDSMARGS $SM_ARGS $DRY
+	    snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" $STDSMARGS $SM_ARGS $DRY 
 	  else
 	          echo "Submission system not recognized"
 	          exit 1
@@ -85,12 +103,12 @@ elif [[ $RUNMODE == "all" ]]; then
 	if [[ $CLUSTER == "slurm" ]]; then
 	          export CONDA_PKGS_DIRS="$(pwd)/.conda_pkg_tmp"
 	          mkdir -p .conda_pkg_tmp
-	          snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster '$(pwd)/bin/immediate_submit/immediate_submit.py {dependencies} slurm' --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	          snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster '$(pwd)/bin/immediate_submit/immediate_submit.py {dependencies} slurm' --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	        unset CONDA_PKGS_DIRS
 	  elif [[ $CLUSTER == "sge" ]]; then
-	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' sge" --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' sge" --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	  elif [[ $CLUSTER == "torque" ]]; then
-	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' torque" --immediate-submit $STDSMARGS $SM_ARGS $DRY
+	        snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" --jobs $NJOBS --cluster-config $CLUSTER_CONFIG --cluster "$(pwd)/bin/immediate_submit/immediate_submit.py '{dependencies}' torque" --immediate-submit $STDSMARGS $SM_ARGS $DRY 2>&1 | tee log/submission.txt
 	  elif [[ $CLUSTER == "serial" ]]; then
 	    snakemake --use-conda --use-singularity --singularity-args "-B $(pwd)/.usr_tmp:/usertmp $SI_ARGS" $STDSMARGS $SM_ARGS $DRY
 	  else
