@@ -1,7 +1,7 @@
 rule norgal:
     input:
-        ok = rules.subsample.output.ok
-        f = rules.subsample.output.f
+        ok = rules.subsample.output.ok,
+        f = rules.subsample.output.f,
         r = rules.subsample.output.r
     output:
 #        outdir = directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}"),
