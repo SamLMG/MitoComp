@@ -17,29 +17,29 @@ setup_mitoflex_db:
    N: sMFDB
 mitoflex:
    N: MITOF
-   h_vmem: 4G
+   h_vmem: 20G
 norgal:
    N: NORGAL
-   h_vmem: 4G
+   h_vmem: 20G
 NOVOconfig:
    N: NOVOC
 NOVOplasty:
    N: NOVOP
-   h_vmem: 2G
+   h_vmem: 20G
 quast:
    N: QUAST
 subsample:
    N: SUB
-   h_vmem: 4G
+   h_vmem: 20G
 trimmomatic:
    N: TRIM
-   h_vmem: 4G
+   h_vmem: 20G
 interleave:
    N: INTER
    h_vmem: 10G
 MITObim:
    N: MITOB
-   h_vmem: 10G
+   h_vmem: 20G
 mitos_ref_db:
    N: MITRDB
 mitos:

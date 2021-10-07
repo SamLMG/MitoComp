@@ -2,7 +2,7 @@
 # you can change them according to your own cluster settings.
 # please use the long options for individual flags (eg. use --ntasks instead of -n)
 __default__:
-   time: "72:00:00"
+   time: "10:00:00"
    ntasks: 1
    job-name: DEF 
    mem: 4G
@@ -14,45 +14,38 @@ __default__:
 fastqdump:
    job-name: FASTQD
    mem: 10G
-   ntasks: 2
+   time: "15:00:00"
 get_organelle:
-   mem: 90G
+   mem: 20G
    job-name: GETORG
-   ntasks: 24
 setup_mitoflex_db:
    job-name: sMFDB
 mitoflex:
    job-name: MITOF
-   ntasks: 24
-   mem: 90G
+   mem: 20G
 norgal:
    job-name: NORGAL
-   ntasks: 24
-   mem: 90G
+   mem: 20G
 NOVOconfig:
    job-name: NOVOC
 NOVOplasty:
    job-name: NOVOP
-   mem: 90G
-   ntasks: 24
+   mem: 20G
 quast:
    job-name: QUAST
 subsample:
    job-name: SUB
-   mem: 10G
-   ntasks: 24
+   mem: 20G
 trimmomatic:
    job-name: TRIM
-   ntasks: 24
-   mem: 10G
+   mem: 20G
 interleave:
    job-name: INTER
    mem: 10G
    ntasks: 2
 MITObim:
    job-name: BIM
-   mem: 90G
-   ntasks: 24
+   mem: 20G
 mitos_ref_db:
    job-name: MITRDB
 mitos:
@@ -74,5 +67,9 @@ gbk_prep:
    job-name: GBK
 CCT:
    job-name: CCT
+report:
+   job-name: report
+   time: "00:10:00"
 all:
    job-name: ALL
+

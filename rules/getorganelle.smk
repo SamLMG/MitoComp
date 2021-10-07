@@ -15,8 +15,8 @@
 rule get_organelle:
     input:
 #        ok = rules.download_GO_database.output,
-        f = rules.subsample.output.f,
-        r = rules.subsample.output.r
+        rules.subsample.output
+#        r = rules.subsample.output.r
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
         ok = "output/assemblies/getorganelle/{id}/{sub}/getorganelle.ok"

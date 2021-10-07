@@ -1,7 +1,7 @@
 rule interleave:
     input:
-        f = rules.subsample.output.f,
-        r = rules.subsample.output.r,
+        rules.subsample.output
+#        r = rules.subsample.output.r,
 #    resources:
 #        qos="normal_0064",
 #        partition="mem_0064",
