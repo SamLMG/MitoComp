@@ -4,7 +4,7 @@ rule subsample:
         r = rules.trimmomatic.output.rout
     output:
         f = "reads/sub/{sub}/{id}_1.fastq.gz",
-        r = "reads/sub/{sub}/{id}_2.fastq.gz"
+        r = "reads/sub/{sub}/{id}_2.fastq.gz",
         ok = "reads/sub/{sub}/{id}_{sub}.ok"
 #    resources:
 #        qos="normal_binf -C binf",

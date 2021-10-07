@@ -19,8 +19,9 @@ rule setup_mitoflex_db:
 
 rule mitoflex:
     input:
-        rules.subsample.output,
-#        r = rules.subsample.output.r,
+        ok = rules.subsample.output.ok,
+        f = rules.subsample.output.f,
+        r = rules.subsample.output.r,
         db = rules.setup_mitoflex_db.output
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.picked.fa",
