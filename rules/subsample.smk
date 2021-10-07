@@ -3,9 +3,9 @@ rule subsample:
         f = rules.trimmomatic.output.fout,
         r = rules.trimmomatic.output.rout
     output:
-#        f = "reads/sub/{sub}/{id}_1.fastq.gz",
-#        r = "reads/sub/{sub}/{id}_2.fastq.gz"
-         "reads/sub/{sub}/{id}_{sub}.ok"
+        f = "reads/sub/{sub}/{id}_1.fastq.gz",
+        r = "reads/sub/{sub}/{id}_2.fastq.gz"
+        ok = "reads/sub/{sub}/{id}_{sub}.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -26,5 +26,6 @@ rule subsample:
         else 
             seqtk sample -s{params.seed} {input.f} {wildcards.sub} | gzip > {output.f}
             seqtk sample -s{params.seed} {input.r} {wildcards.sub} | gzip > {output.r}
+        touch {output.ok}
         fi
         """

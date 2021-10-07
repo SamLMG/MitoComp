@@ -27,7 +27,7 @@ rule NOVOconfig:
 rule NOVOplasty:
     input:
         config = rules.NOVOconfig.output,
-        ok = rules.subsample.output
+        ok = rules.subsample.output.ok
     output: 
 #       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
         ok = "output/assemblies/novoplasty/{id}/{sub}/novoplasty.ok"

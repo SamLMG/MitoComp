@@ -19,7 +19,7 @@ rule setup_mitoflex_db:
 
 rule mitoflex:
     input:
-        rules.subsample.output
+        rules.subsample.output,
 #        r = rules.subsample.output.r,
         db = rules.setup_mitoflex_db.output
     output:
