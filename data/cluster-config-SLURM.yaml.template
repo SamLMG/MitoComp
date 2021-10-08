@@ -13,7 +13,7 @@ __default__:
 fastqdump:
    job-name: FASTQD
    mem: 10G
-   time: "15:00:00"
+   time: "24:00:00"
 get_organelle:
    mem: 20G
    job-name: GETORG
