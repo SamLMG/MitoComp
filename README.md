@@ -21,6 +21,7 @@ MitoComp is primarily designed to run on HPC clusters using either a SGE or SLUR
 
 ```
 conda install -c conda-forge mamba
+
 mamba create -c conda-forge -c bioconda -n snakemake snakemake
 ```
 ```
