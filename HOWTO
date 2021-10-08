@@ -20,3 +20,7 @@ scancel -t PENDING -u leeming
 
 #free up space in .singularty directory (always in home so limited space)
 singularity cache clean
+
+#add bind point. can access data in sub-directories of another user - avoids copying raw data. N.B. requires permissions
+./MitoComp -t slurm -c data/cluster-config-VSC4-SLURM.yaml.template -i "-B /gpfs/data/fs71312/hahnc/RAW/Monogeniac_Illumina/"
+

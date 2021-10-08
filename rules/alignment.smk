@@ -73,6 +73,9 @@ rule align:
             cp {params.id}.*.rolled*.fasta clustalo/ 2>/dev/null || :
             #cp *.fasta clustalo/ 2>/dev/null || :
             cd clustalo
+	    for file in $(find *_RC.fasta); do 
+		rm -f $(echo $file | sed 's/_RC//')
+	    done
             cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
             clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
             touch {params.id}.align.done
