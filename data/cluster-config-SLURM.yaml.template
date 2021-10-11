@@ -38,6 +38,7 @@ subsample:
 trimmomatic:
    job-name: TRIM
    mem: 20G
+   time: "15:00:00"
 interleave:
    job-name: INTER
    mem: 10G
