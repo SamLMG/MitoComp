@@ -36,9 +36,9 @@ rule norgal:
         fi
 
 	#if the expected final assembly exists, get a copy
-        if [ -f $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/circular.candidate.fa ]
+        if [ -f $WD/{params.outdir}/circular.candidate.fa ]
         then
-            cp $WD/assemblies/norgal/{wildcards.id}/{wildcards.sub}/run/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta
+            cp $WD/{params.outdir}/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta
         else
             echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 1>> $WD/{log.stdout} 
             touch $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta.missing 
