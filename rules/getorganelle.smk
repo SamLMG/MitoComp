@@ -63,6 +63,9 @@ rule get_organelle:
         then
             echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
             touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
+        else 
+            echo -e "\\n#### [$(date)]\\tgetorganelle has produced multiple incomplete assemblies - consider re-running this assembler with more rounds. This can be set by editing the 'GO_Rounds' column in the data/data.csv file"
+            touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
         fi
 
         touch {output.ok}
