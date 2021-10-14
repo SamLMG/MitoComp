@@ -69,13 +69,16 @@ if [ $OPTIND -eq 1 ]; then usage; fi
 if [[ ! -d .usr_tmp ]]; then mkdir .usr_tmp; fi 
 if [[ ! -d .conda_pkg_tmp ]]; then mkdir .conda_pkg_tmp; fi
 if [[ $RESET == "TRUE" ]]; then
-	grep -o -P 'batch job\K.{1,8}' log/submission.txt > log/sub_ids.txt
+        set +e
 	if [[ $CLUSTER == "slurm" ]]; then
+		grep -o -P 'batch job\K.{1,8}' log/submission.txt > log/sub_ids.txt
 		cat log/sub_ids.txt | while read line; do scancel $line; done
 	elif [[ $CLUSTER == "sge" ]]; then
-		cat log/sub_ids.txt | while read line; do qdel $line; done
+		grep "^Submitted job" log/submission.txt | awk '{print $9}' > log/sub_ids.txt
+                for jobid in $(cat log/sub_ids.txt); do qdel $jobid; done
 	elif [[ $CLUSTER == "torque" ]]; then
-		cat log/sub_ids.txt | while read line; do qdel $line; done
+		grep "^Submitted job" log/submission.txt | awk '{print $9}' > log/sub_ids.txt
+                for jobid in $(cat log/sub_ids.txt); do qdel $jobid; done
 	else
                 echo "reset not valid for serial submission"
 	fi
