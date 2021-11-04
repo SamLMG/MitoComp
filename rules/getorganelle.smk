@@ -56,17 +56,18 @@ rule get_organelle:
 		final_fasta=""
 	fi
 	# check if the search returned only one file and copy if yes
-        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        if [ ! -z "$final_fasta" ] && [ "$(echo $final_fasta | tr ' ' '\n' | wc -l)" -eq 1 ]
         then
             cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta
-	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
-        then
-            echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
-            touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
-        else 
-            echo -e "\\n#### [$(date)]\\tgetorganelle has produced multiple incomplete assemblies - consider re-running this assembler with more rounds. This can be set by editing the 'GO_Rounds' column in the data/data.csv file"
-            touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
-        fi
-
+        else
+            touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
+            if [ -z "$final_fasta" ]
+            then
+                echo -e "\\n#### [$(date)]\\tgetorganelle has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
+            elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
+            then
+                echo -e "\\n#### [$(date)]\\tgetorganelle has produced multiple incomplete assemblies - consider re-running this assembler with more rounds. This can be set by editing the 'GO_Rounds' column in the data/data.csv file"
+            fi
+        fi 
         touch {output.ok}
         """
