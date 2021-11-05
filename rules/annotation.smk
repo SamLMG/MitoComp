@@ -22,7 +22,6 @@ rule mitos:
     params:
         id = "{id}",
         fasta = "output/assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta",
-        seed = get_seed,
         genetic_code = get_code,
 	sub = "{sub}",
 	assembler = "{assembler}",
