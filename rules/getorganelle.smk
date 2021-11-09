@@ -60,7 +60,7 @@ rule get_organelle:
         then
             cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta
         else
-            touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
+            touch $(pwd)/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
             if [ -z "$final_fasta" ]
             then
                 echo -e "\\n#### [$(date)]\\tgetorganelle has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
