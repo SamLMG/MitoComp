@@ -26,6 +26,6 @@ rule subsample:
         else 
             seqtk sample -s{params.seed} {input.f} {wildcards.sub} | gzip > {output.f}
             seqtk sample -s{params.seed} {input.r} {wildcards.sub} | gzip > {output.r}
-        touch {output.ok}
         fi
+        touch {output.ok}
         """
