@@ -13,24 +13,51 @@ rule mitos_ref_db:
         touch {output}
         """
 
+if os.environ["RUNMODE"] == "all":
+	rule gather:
+		input:
+			#rules.get_organelle.output,
+			#rules.MITObim.output,
+			#rules.norgal.output,
+			#rules.NOVOplasty.output,
+			#rules.mitoflex.output,
+			expand("output/gathered_assemblies/{id}.{sub}.{assembler}.fasta", id=IDS, sub=sub, assembler=Assembler)
+		output:
+			"output/gathered_assemblies/gather.done" 
+		shell:
+			"""
+                        #cp {input} output/gathered_assemblies/
+			touch {output}
+			"""
+
+elif os.environ["RUNMODE"] == "annotate":
+	rule gather:
+		input:
+			gather_assemblies	
+		output:
+			"output/gathered_assemblies/gather.done"
+		shell:
+			"""
+			touch {output}
+			"""
+
 rule mitos:
     input:
-        "output/assemblies/{assembler}/{id}/{sub}/{assembler}.ok",
+        rules.gather.output,
 	rules.mitos_ref_db.output,
     output:
-        done = "output/assemblies/{assembler}/{id}/{sub}/mitos.done"
+        done = "output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done"
     params:
         id = "{id}",
-        fasta = "output/assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta",
-        seed = get_seed,
+        fasta = "output/gathered_assemblies/{id}.{sub}.{assembler}.fasta",
         genetic_code = get_code,
 	sub = "{sub}",
 	assembler = "{assembler}",
         wd = os.getcwd(),
-        outdir = "output/assemblies/{assembler}/{id}/{sub}/annotation"
+        outdir = "output/{id}/annotation/mitos/{id}.{sub}.{assembler}"
     log: 
-        stdout = "output/assemblies/{assembler}/{id}/{sub}/annotation/stdout.txt",
-        stderr = "output/assemblies/{assembler}/{id}/{sub}/annotation/stderr.txt"
+        stdout = "output/{id}/annotation/mitos/{id}.{sub}.{assembler}/stdout.txt",
+        stderr = "output/{id}/annotation/mitos/{id}.{sub}.{assembler}/stderr.txt"
     singularity:
         "docker://reslp/mitos:1.0.5"
     threads: config["threads"]["annotation"] 
@@ -38,9 +65,9 @@ rule mitos:
         """
 	if [[ ! -d {params.outdir} ]]; then mkdir {params.outdir}; fi
 	if [[ -f {params.fasta} ]]; then
-	runmitos.py -i {params.fasta} -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
+		runmitos.py -i {params.fasta} -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
 	else
-        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
+        	echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
 	touch {output.done}
 	"""
@@ -48,17 +75,16 @@ rule mitos:
 
 rule annotation_stats:
     input:
-        #rules.remove_newline.output
-        expand("output/assemblies/{assembler}/{id}/{sub}/mitos.done", id=IDS, sub=sub, assembler=Assembler)
+        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", id=IDS, sub=sub, assembler=Assembler)
     output:
-        starts = "output/compare/start_positions.txt",
-        RC_assemblies = "output/compare/RC_assemblies.txt",
-        done = "output/compare/annotation_stats.done"
+        starts = "output/stats/start_positions.txt",
+        RC_assemblies = "output/stats/RC_assemblies.txt",
+        done = "output/stats/annotation_stats.done",
     shell:
         """
-        find ./output/assemblies/ -maxdepth 4 -name "*.fasta" | cat > output/compare/assembly_paths.txt
-        find ./output/assemblies/ -name "result.bed" | cat > output/compare/bed_paths.txt
-        scripts/annotate.py output/compare/bed_paths.txt output/compare/assembly_paths.txt output/compare/Genes.txt
-        scripts/roll_prep.py output/compare/Genes.txt output/compare/bed_paths.txt output/compare/MFG_assemblies.txt output/compare/No_MFG_assemblies.txt output/compare/start_positions.txt output/compare/RC_assemblies.txt output/compare/forward_assemblies.txt
+        find ./output/*/assemblies/ -maxdepth 3 -name "*.fasta" | cat > output/stats/assembly_paths.txt
+        find ./output/*/annotation/ -name "result.bed" | cat > output/stats/bed_paths.txt
+        scripts/annotate.py output/stats/bed_paths.txt output/stats/assembly_paths.txt output/stats/Genes.txt
+        scripts/roll_prep.py output/stats/Genes.txt output/stats/bed_paths.txt output/stats/MFG_assemblies.txt output/stats/No_MFG_assemblies.txt output/stats/start_positions.txt output/stats/RC_assemblies.txt output/stats/forward_assemblies.txt
         touch {output.done}
         """

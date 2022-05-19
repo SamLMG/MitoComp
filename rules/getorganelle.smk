@@ -20,7 +20,7 @@ rule get_organelle:
         r = rules.subsample.output.r
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
-        ok = "output/assemblies/getorganelle/{id}/{sub}/getorganelle.ok"
+        ok = "output/{id}/assemblies/{sub}/getorganelle/getorganelle.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -28,7 +28,7 @@ rule get_organelle:
 #        name="getorganelle",
 #        nnode="-N 1"
     params:
-        outdir = "output/assemblies/getorganelle/{id}/{sub}/run",
+        outdir = "output/{id}/assemblies/{sub}/getorganelle/run",
         seed = get_seed,
         type = get_type,
         rounds = get_rounds
@@ -36,9 +36,9 @@ rule get_organelle:
 #    conda:
 #        "envs/getorganelle.yml"
     log:
-        stdout = "output/assemblies/getorganelle/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/getorganelle/{id}/{sub}/stderr.txt" 
-    benchmark: "output/assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/getorganelle/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/getorganelle/stderr.txt" 
+    benchmark: "output/{id}/assemblies/{sub}/getorganelle/{id}.{sub}.getorganelle.benchmark.txt"
     threads: config["threads"]["getorganelle"] 
     shell:
         """
@@ -58,12 +58,13 @@ rule get_organelle:
 	# check if the search returned only one file and copy if yes
         if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then
-            cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta
+            cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+	    cp $final_fasta $(pwd)/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta
 	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
         then
             echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
-            touch $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta.missing
+            touch $(pwd)/{params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
         fi
 
-        touch {output.ok}
+	touch {output.ok}
         """

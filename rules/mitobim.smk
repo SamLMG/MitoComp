@@ -11,7 +11,7 @@ rule interleave:
 #        nnode="-N 1"
     threads: config["threads"]["interleave"]
     output:
-        "reads/interleave/{sub}/{id}_interleaved.fastq"
+        "output/{id}/reads/interleave/{sub}/{id}_interleaved.fastq"
     singularity:
         "docker://reslp/bbmap:38.90"
     shell:
@@ -24,7 +24,7 @@ rule MITObim:
         rules.interleave.output
     output:
 #        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
-        ok = "output/assemblies/mitobim/{id}/{sub}/mitobim.ok"
+        ok = "output/{id}/assemblies/{sub}/mitobim/mitobim.ok"
 #    resources:
 #        qos="normal_0128",
 #        partition="mem_0128",
@@ -35,11 +35,11 @@ rule MITObim:
         id = "{id}",
         seed = get_seed,
         wd = os.getcwd(),
-        outdir = "output/assemblies/mitobim/{id}/{sub}/run"
+        outdir = "output/{id}/assemblies/{sub}/mitobim/run"
     log: 
-        stdout = "output/assemblies/mitobim/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/mitobim/{id}/{sub}/stderr.txt"
-    benchmark: "output/assemblies/mitobim/{id}/{sub}/mitobim.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/mitobim/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/mitobim/stderr.txt"
+    benchmark: "output/{id}/assemblies/{sub}/mitobim/{id}.{sub}.mitobim.benchmark.txt"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
 #    shadow: "shallow"
@@ -63,11 +63,12 @@ rule MITObim:
 	# check if the search returned only one file and copy if yes
         if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then
-            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.mitobim.{wildcards.sub}.fasta
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.mitobim.fasta
+            cp $WD/{params.outdir}/$final_fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitobim.fasta
 	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
         then
             echo -e "\\n#### [$(date)]\\tmitobim has not produced a final assembly - moving on" 1>> $WD/{log.stdout}
-            touch $WD/{params.outdir}/../{wildcards.id}.mitobim.{wildcards.sub}.fasta.missing
+            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.mitobim.fasta.missing
         fi
 
         touch $WD/{output.ok}       

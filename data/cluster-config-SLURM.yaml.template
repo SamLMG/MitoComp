@@ -2,7 +2,7 @@
 # you can change them according to your own cluster settings.
 # please use the long options for individual flags (eg. use --ntasks instead of -n)
 __default__:
-   time: "10:00:00"
+   time: "15:00:00"
    ntasks: 1
    job-name: DEF 
    mem: 4G
@@ -13,7 +13,7 @@ __default__:
 fastqdump:
    job-name: FASTQD
    mem: 10G
-   time: "15:00:00"
+   time: "24:00:00"
 get_organelle:
    mem: 20G
    job-name: GETORG
@@ -25,6 +25,7 @@ mitoflex:
 norgal:
    job-name: NORGAL
    mem: 20G
+   time: "72:00:00"
 NOVOconfig:
    job-name: NOVOC
 NOVOplasty:
@@ -44,6 +45,7 @@ interleave:
 MITObim:
    job-name: MITOB
    mem: 20G
+   time: "24:00:00"
 roll:
    job-name: ROLL
 reverse_complement:

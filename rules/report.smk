@@ -1,11 +1,14 @@
 rule report:
 	input:
-		mitos_done = expand("output/compare/alignment/mitos2/{id}.{sub}.{assembler}.mitos2.done", id=IDS, sub=sub, assembler=Assembler),
-		cct_done = expand("output/compare/CCT/{id}.{assembler}.{sub}.CCT.done", id=IDS, sub=sub, assembler=Assembler),
-		annotation_stats_done = "output/compare/annotation_stats.done" 
+		mitos_done = expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", id=IDS, sub=sub, assembler=Assembler),
+		cct_done = expand("output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done", id=IDS, sub=sub, assembler=Assembler),
+		annotation_stats_done = "output/stats/annotation_stats.done" 
 	output:
-		report = "output/compare/report/report.html"
+		report = "output/report/report.html"
 	params:
+		#id = "{id}",
+		#assembler = "{assembler}",
+		#sub = "{sub}",
 		wd = os.getcwd()
 	singularity:
 		"docker://reslp/rmarkdown:4.0.3"
@@ -13,31 +16,31 @@ rule report:
 		"""	
 		# gather bedfiles
 		# bedfiles all have the same name, therfore this hack to find, rename and copy the files to a location in the report directory.
-		mkdir -p output/compare/report/bedfiles
-		for bedfile in $(find ./output/compare/alignment/mitos2/ -name "result.bed"); do
-			name=$(dirname $(echo $bedfile | sed -e 's#^\./output/compare/alignment/mitos2/##'))
-			cp $bedfile output/compare/report/bedfiles/$name.bed
+		mkdir -p output/report/bedfiles
+		for bedfile in $(find ./output/*/annotation/second_mitos/*/ -name "result.bed"); do
+			name=$(echo $bedfile | awk -F/ '{{print $6}}')
+			cp $bedfile output/report/bedfiles/$name.bed
 		done
 	
 		# gather assemblies
-		assemblies=$(find ./output/compare/alignment/*.final.fasta)
-		mkdir -p output/compare/report/assemblies
-		cp $assemblies output/compare/report/assemblies 2>/dev/null || :
-                #sed -i 's/.final//g' output/compare/report/assemblies/*
+		assemblies=$(find ./output/*/annotation/alignment/*.final.fasta)
+		mkdir -p output/report/assemblies
+		cp $assemblies output/report/assemblies 2>/dev/null || :
+                #sed -i 's/.final//g' output/report/assemblies/*
                 #mv output/compare/report/assemblies/*.final.fasta mv output/compare/report/assemblies/*.fasta
 
 		# gather maps	
-		maps=$(find ./output/compare/CCT/*.png)
-		mkdir -p output/compare/report/maps
-		cp $maps output/compare/report/maps 2>/dev/null || :
+		maps=$(find ./output/*/annotation/compare/CCT/*.png)
+		mkdir -p output/report/maps
+		cp $maps output/report/maps 2>/dev/null || :
 		
 		# copy genes file
-		cp output/compare/Genes.txt output/compare/report/Genes.txt
+		cp output/stats/Genes.txt output/report/Genes.txt
 		
 		# create report
 		Rscript -e 'rmarkdown::render("./scripts/report.Rmd")'
 
 		# clean up
-		mv scripts/report.html output/compare/report/report.html
-		tar -pcf {params.wd}/output/compare/report.tar -C {params.wd}/output/compare/ report
+		mv scripts/report.html output/report/report.html
+		tar -pcf {params.wd}/output/report.tar -C {params.wd}/output/ report
 		"""	

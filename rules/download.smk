@@ -3,8 +3,8 @@ rule fastqdump:
 		accession = get_accession,
                 wd = os.getcwd()
 	output:
-		f = "reads/downloaded_reads/{id}_1.fastq.gz",
-		r = "reads/downloaded_reads/{id}_2.fastq.gz"
+		f = "output/{id}/reads/downloaded_reads/{id}_1.fastq.gz",
+		r = "output/{id}/reads/downloaded_reads/{id}_2.fastq.gz"
 #	resources:
 #		qos="normal_0064",
 #		partition="mem_0064",
@@ -27,7 +27,8 @@ rule fastqdump:
 		echo "/repository/user/main/public/root = \'$HOME/tmp\'" >> $HOME/.ncbi/user-settings.mkfg
 
 		prefetch --max-size 1024000000 {params.accession}
-		fastq-dump --split-files --gzip --defline-seq '@$ac-$sn/$ri' {params.accession}
+		fastq-dump --split-files --gzip --defline-seq '@$ac-$sn/$ri' --defline-qual '+' {params.accession}  
+		rm tmp/sra/{params.accession}.sra
 		mv {params.accession}_1.fastq.gz {output.f}
 		mv {params.accession}_2.fastq.gz {output.r}
                 """
@@ -39,8 +40,8 @@ rule prep_local_reads:
 	params:
                 wd = os.getcwd()
 	output:
-		f = "reads/local_reads/{id}_1.fastq.gz",
-		r = "reads/local_reads/{id}_2.fastq.gz"
+		f = "output/{id}/reads/local_reads/{id}_1.fastq.gz",
+		r = "output/{id}/reads/local_reads/{id}_2.fastq.gz"
 	threads: 1
 	shell:
 		"""

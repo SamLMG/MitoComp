@@ -25,19 +25,19 @@ rule mitoflex:
         db = rules.setup_mitoflex_db.output
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.picked.fa",
-        ok = "output/assemblies/mitoflex/{id}/{sub}/mitoflex.ok",
+        ok = "output/{id}/assemblies/{sub}/mitoflex/mitoflex.ok",
 #	run = directory("assemblies/{assembler}/{id}/{sub}/MitoFlex")
     params:
         wd = os.getcwd(),
-	outdir = "output/assemblies/mitoflex/{id}/{sub}",
+	outdir = "output/{id}/assemblies/{sub}/mitoflex/",
         id = "{id}",
         clade = get_clade,
         genetic_code = get_code,
         optional = "--level debug"
     log:
-        stdout = "output/assemblies/mitoflex/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/mitoflex/{id}/{sub}/stderr.txt"
-    benchmark: "output/assemblies/mitoflex/{id}/{sub}/mitoflex.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/mitoflex/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/mitoflex/stderr.txt"
+    benchmark: "output/{id}/assemblies/{sub}/mitoflex/{id}.{sub}.mitoflex.benchmark.txt"
     threads: config["threads"]["mitoflex"] 
     singularity: "docker://samlmg/mitoflex:v0.2.9"
 #    shadow: "minimal"
@@ -56,11 +56,12 @@ rule mitoflex:
 	#if the expected final assembly exists, get a copy
         if [ -f MitoFlex/MitoFlex.result/MitoFlex.picked.fa ]
         then
-            cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta
+            cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+            cp {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
         else
             echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 1>> {params.wd}/{log.stdout}
-            touch {params.wd}/{params.outdir}/{wildcards.id}.mitoflex.{wildcards.sub}.fasta.missing 
+            touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
         fi
 
-        touch {params.wd}/{output.ok}
+	touch {params.wd}/{output.ok}
         """

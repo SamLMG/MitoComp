@@ -41,7 +41,7 @@ rule all:
 ####		expand(rules.CCT.output, id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CGview/{id}.{assembler}.{sub}.cgview.done", id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CCT/{id}.CCT.done", id=IDS) 
-		"output/compare/report/report.html"
+		"output/report/report.html"
 rule assembly_only:
 	input:
-		expand("output/assemblies/{assembler}/{id}/{sub}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)
+		expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)

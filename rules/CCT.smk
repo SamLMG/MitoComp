@@ -4,15 +4,15 @@ rule gbk_prep:
 #        fasta = "compare/alignment/clustalo/{id}.{assembler}.{sub}.rolled.12476_RC.fasta",
 #        gff = "compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff"
     output:
-        "output/compare/CCT/{id}.{assembler}.{sub}.gbk.done"
+        "output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.gbk.done"
     params:
         id = "{id}",
         assembler = "{assembler}",
         sub = "{sub}",
-        gff = "output/compare/alignment/mitos2/{id}.{sub}.{assembler}/result.gff",
-        gff_NoMFG = "output/assemblies/{assembler}/{id}/{sub}/annotation/result.gff",
-        gbk = "output/compare/CCT/{id}.{assembler}.{sub}.genbank",
-        outdir = "output/compare/alignment/mitos2/{id}.{sub}.{assembler}" 
+        gff = "output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}/result.gff",
+        gff_NoMFG = "output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}/result.gff",
+        gbk = "output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.genbank",
+        outdir = "output/{id}/annotation/compare/CCT/" 
 #    resources:
 #        qos="normal_0064",
 #        partition="mem_0064",
@@ -23,18 +23,18 @@ rule gbk_prep:
         "docker://pegi3s/emboss:6.6.0"
     shell:
         """
-        if [ -f output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta ]
+        if [ -f output/{params.id}/annotation/alignment/clustalo/{params.id}.{params.sub}.{params.assembler}.rolled.*.fasta ]
         then
-        seqret -sequence output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
-        sed -i '1 a ACCESSION   {params.id}.{params.assembler}.{params.sub}' {params.gbk}
+        seqret -sequence output/{params.id}/annotation/alignment/clustalo/{params.id}.{params.sub}.{params.assembler}.rolled.*.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff} -osformat genbank -auto
+        sed -i '1 a ACCESSION   {params.id}.{params.sub}.{params.assembler}' {params.gbk}
         sed -i 's/gene/CDS/g' {params.gbk}
         sed -i 's/*Name //g' {params.gbk}
         sed -i 's/([^()]*)//g' {params.gbk}
         sed -i '/*/d' {params.gbk}
-        elif [ -f output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta ]
+        elif [ -f output/{params.id}/assemblies/{params.sub}/{params.assembler}/{params.id}.{params.sub}.{params.assembler}.fasta ]
         then 
-        seqret -sequence output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff_NoMFG} -osformat genbank -auto
-        sed -i '1 a ACCESSION   {params.id}.{params.assembler}.{params.sub}' {params.gbk}
+        seqret -sequence output/{params.id}/assemblies/{params.sub}/{params.assembler}/{params.id}.{params.sub}.{params.assembler}.fasta -outseq {params.gbk} -feature -fformat gff -fopenfile {params.gff_NoMFG} -osformat genbank -auto
+        sed -i '1 a ACCESSION   {params.id}.{params.sub}.{params.assembler}' {params.gbk}
         sed -i 's/gene/CDS/g' {params.gbk}
         sed -i 's/*Name //g' {params.gbk}
         sed -i 's/([^()]*)//g' {params.gbk}
@@ -66,16 +66,18 @@ rule gbk_prep:
 
 rule CCT:
     input:
-        expand("output/compare/CCT/{{id}}.{assembler}.{sub}.gbk.done", id=IDS, sub=sub, assembler=Assembler),
+        expand("output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.gbk.done", id=IDS, sub=sub, assembler=Assembler),
+        #"output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.gbk.done"
         #rules.gbk_prep.output,
         #gbk =  "compare/CCT/{id}.{assembler}.{sub}.genbank" 
     output:
-        "output/compare/CCT/{id}.{assembler}.{sub}.CCT.done"
+        #expand("output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done", id=IDS, sub=sub, assembler=Assembler)
+        "output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done",
     params:
         id = "{id}",
         assembler = "{assembler}",
         sub = "{sub}",
-        outdir = "output/compare/CCT",
+        outdir = "output/{id}/annotation/compare/CCT",
         wd = os.getcwd()
     singularity:
         "docker://pstothard/cgview_comparison_tool:1.0.1"
@@ -83,42 +85,42 @@ rule CCT:
         """
 	set +o pipefail;
 	#set +u;
-        length=$(awk -F'\t' '{{if ($1 == "{params.assembler}" && $2 == "{params.id}" && $3 == "{params.sub}" && $4 > 1000){{print $4;}}}}' output/compare/Genes.txt)
-        if [ -f output/compare/CCT/{params.id}.{params.assembler}.{params.sub}.genbank ] && [ $length > 1000 ]
+        length=$(awk -F'\t' '{{if ($1 == "{params.id}" && $2 == "{params.sub}" && $3 == "{params.assembler}" && $4 > 1000){{print $4;}}}}' output/stats/Genes.txt)
+        if [ -f output/{params.id}/annotation/compare/CCT/{params.id}.{params.sub}.{params.assembler}.genbank ] && [ $length > 1000 ]
         then
         	cd {params.outdir}
-		build_blast_atlas.sh -i {params.id}.{params.assembler}.{params.sub}.genbank && returncode=$? || returncode=$? #> /dev/null 2>&1 
+		build_blast_atlas.sh -i {params.id}.{params.sub}.{params.assembler}.genbank && returncode=$? || returncode=$? #> /dev/null 2>&1 
 		echo $returncode
         	if [[ $returncode -eq 0 ]]
 		then
-			cp {params.id}*.genbank {params.id}.{params.assembler}.{params.sub}/comparison_genomes/
+			cp {params.id}*.genbank {params.id}.{params.sub}.{params.assembler}/comparison_genomes/
         		#build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub}
         		
-			build_blast_atlas.sh -p {params.id}.{params.assembler}.{params.sub} -z medium --custom "arrowheadLength=12 blast_divider_ruler=T blastRulerColor=green draw_divider_rings=T backboneColor=green global_label=T legend=T use_opacity=F backboneRadius=900 labelFontSize=60 borderColor=white width=3000 height=3000 gc_content=T backboneThickness=0.01 gcColorNeg=blue gcColorPos=red legendFontSize=30 featureThickness=50 _cct_blast_thickness=25.00000 useInnerLabels=false" && returncode=$? || returncode=$? #> /dev/null 2>&1
+			build_blast_atlas.sh -p {params.id}.{params.sub}.{params.assembler} -z medium --custom "arrowheadLength=12 blast_divider_ruler=T blastRulerColor=green draw_divider_rings=T backboneColor=green global_label=T legend=T use_opacity=F backboneRadius=900 labelFontSize=60 borderColor=white width=3000 height=3000 gc_content=T backboneThickness=0.01 gcColorNeg=blue gcColorPos=red legendFontSize=30 featureThickness=50 _cct_blast_thickness=25.00000 useInnerLabels=false" && returncode=$? || returncode=$? #> /dev/null 2>&1
         		echo $returncode
 			if [[ $returncode -eq 0 ]]
 			then
-        			redraw_maps.sh -p {params.id}.{params.assembler}.{params.sub} -f svg
+        			redraw_maps.sh -p {params.id}.{params.sub}.{params.assembler} -f svg
 			else
 				echo "There was an Error in the second CCT command."
-            			touch {params.wd}/{params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing
+            			touch {params.wd}/{params.outdir}/{params.id}.{params.sub}.{params.assembler}.CCTmap.missing
 			fi	
         	else
 			echo "There was an Error in the first CCT command."
-            		touch {params.wd}/{params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing
+            		touch {params.wd}/{params.outdir}/{params.id}.{params.sub}.{params.assembler}.CCTmap.missing
 		fi
 	else
-            touch {params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing
+            touch {params.outdir}/{params.id}.{params.sub}.{params.assembler}.CCTmap.missing
         fi
         #if the expected final assembly exists, get a copy
-        if [ -f {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg ]
+        if [ -f {params.id}.{params.sub}.{params.assembler}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg ]
         then
-            cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg {params.id}.{params.assembler}.{params.sub}.map.svg 
-            cp {params.id}.{params.assembler}.{params.sub}/maps_for_dna_vs_dna/dna_vs_dna_medium.png {params.id}.{params.assembler}.{params.sub}.map.png 
+            cp {params.id}.{params.sub}.{params.assembler}/maps_for_dna_vs_dna/dna_vs_dna_medium.svg {params.id}.{params.sub}.{params.assembler}.map.svg 
+            cp {params.id}.{params.sub}.{params.assembler}/maps_for_dna_vs_dna/dna_vs_dna_medium.png {params.id}.{params.sub}.{params.assembler}.map.png 
         else
             echo -e "\\n#### [$(date)]\\tCCT did not produce an assembly map. Either no assembly was found or it was under 1000bp" 
-            touch {params.wd}/{params.outdir}/{params.id}.{params.assembler}.{params.sub}.CCTmap.missing
+            touch {params.wd}/{params.outdir}/{params.id}.{params.sub}.{params.assembler}.CCTmap.missing
         fi
         #cd ../../
         touch {params.wd}/{output}
-        """
+	"""

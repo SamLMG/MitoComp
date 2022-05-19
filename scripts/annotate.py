@@ -13,7 +13,7 @@ for path in Bed_paths:
 	path = path.strip("\n")
 	assemblies.append(path)
 Bed_paths.close() 
-print("All paths:", assemblies)
+#print("All paths:", assemblies)
 
 #open all bed files in assemblies list and extract a global list of genes  
 #x = 0 
@@ -67,10 +67,10 @@ for assembly in assemblies:
 	for gene in global_gene_set:
 		count = gene_list.count(gene)
 		gene_dict[gene] = count
-		if count == 0:    #if gene not found print to screen
-			print(gene, count)
-		if count > 1:     #if gene split/duplicated print to screen
-			print(gene, count)
+		#if count == 0:    #if gene not found print to screen
+		#	print(gene, count)
+		#if count > 1:     #if gene split/duplicated print to screen
+		#	print(gene, count)
 #df = pd.DataFrame(gene_dict, assemblies)
 #print(df)
 	gene_counts = ""
@@ -95,23 +95,24 @@ for assembly in assemblies:
 		else:
 			if gene_dict[gene] == 1:
 				found_genes.append(gene)
-	if assembly.split("/")[4] in species_genes_dictionary.keys():
-		if species_genes_dictionary[assembly.split("/")[4]] < len(found_genes):
-			species_genes_dictionary[assembly.split("/")[4]] = len(found_genes)
+	sp = assembly.split("/")[2]
+	if sp in species_genes_dictionary.keys():
+		if species_genes_dictionary[sp] < len(found_genes):
+			species_genes_dictionary[sp] = len(found_genes)
 	else:
-		species_genes_dictionary[assembly.split("/")[4]] = len(found_genes)
+		species_genes_dictionary[sp] = len(found_genes)
 	
-	if assembly.split("/")[4] in species_trnas_dictionary.keys():
-		if species_trnas_dictionary[assembly.split("/")[4]] < len(found_trnas):
-			species_trnas_dictionary[assembly.split("/")[4]] = len(found_trnas)
+	if sp in species_trnas_dictionary.keys():
+		if species_trnas_dictionary[sp] < len(found_trnas):
+			species_trnas_dictionary[sp] = len(found_trnas)
 	else:
-		species_trnas_dictionary[assembly.split("/")[4]] = len(found_trnas)
+		species_trnas_dictionary[sp] = len(found_trnas)
 
-	if assembly.split("/")[4] in species_rrnas_dictionary.keys():
-		if species_rrnas_dictionary[assembly.split("/")[4]] < len(found_rrnas):
-			species_rrnas_dictionary[assembly.split("/")[4]] = len(found_rrnas)
+	if sp in species_rrnas_dictionary.keys():
+		if species_rrnas_dictionary[sp] < len(found_rrnas):
+			species_rrnas_dictionary[sp] = len(found_rrnas)
 	else:
-		species_rrnas_dictionary[assembly.split("/")[4]] = len(found_rrnas)
+		species_rrnas_dictionary[sp] = len(found_rrnas)
 
 
 #get seq length from fasta - remove newline character present in some assemblies
@@ -119,28 +120,29 @@ for assembly in assemblies:
 		seq_length = 0
 		for ap in assembly_paths:
 			ap = ap.strip("\n")
-			if assembly.split("/")[3] in ap and assembly.split("/")[4] in ap and assembly.split("/")[5] in ap:
+			if assembly.split("/")[5] in ap:
 				fasta = open(ap, 'r')
 				for line in fasta:
 					if line.startswith(">"):
 						continue
 					else:
 						seq_length += len(line.strip("\n"))
-				print(" ".join(assembly.split("/")[3:6]), seq_length)
+				#print(" ".join(assembly.split("/")[2]), assembly.split("/")[4:5], seq_length)
 
-	output_list.append(['\t'.join(assembly.split("/")[3:6]), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()]) #prints assembly with path split into three columns and gene counts to file - lstrip removes pre-exisiting tab in gene counts
+	output_list.append(["\t".join(assembly.split("/")[5].split(".")), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()])
 
 Outfile_handle = open(Outfile, 'w')
-print("Assembler", "Species", "Subsample", "Squence_length", "Genes", "rrnAs", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Outfile_handle)
+print("Species", "Subsample", "Assembler", "Squence_length", "Genes", "rrnAs", "trnAs", "\t".join(sorted(list(global_gene_set))), sep='\t', file = Outfile_handle)
 for outline in output_list:
 	outline = "\t".join(outline)
-	outline = outline.replace("MAXGENECOUNT", str(species_genes_dictionary[outline.split("\t")[1]]))
-	outline = outline.replace("MAXRRNACOUNT", str(species_rrnas_dictionary[outline.split("\t")[1]]))	
-	outline = outline.replace("MAXTRNACOUNT", str(species_trnas_dictionary[outline.split("\t")[1]]))
+	sp = outline.split("\t")[0] # this is the name of the species
+	outline = outline.replace("MAXGENECOUNT", str(species_genes_dictionary[sp]))
+	outline = outline.replace("MAXRRNACOUNT", str(species_rrnas_dictionary[sp]))	
+	outline = outline.replace("MAXTRNACOUNT", str(species_trnas_dictionary[sp]))
 	print(outline, file=Outfile_handle)
 Outfile_handle.close()
 
-print(global_gene_set)
+#print(global_gene_set)
 
 ##find gene/genes represented once only in most assemblies (i.e. least often missing or duplicated/split)
 

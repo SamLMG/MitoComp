@@ -1,13 +1,13 @@
 def trimin_forward(wildcards):
 	if sample_data.SRA.any():
-		return "reads/downloaded_reads/"+wildcards.id+"_1.fastq.gz"
+		return "output/"+wildcards.id+"/reads/downloaded_reads/"+wildcards.id+"_1.fastq.gz"
 	else:
-		return "reads/local_reads/"+wildcards.id+"_1.fastq.gz"
+		return "output/"+wildcards.id+"/reads/local_reads/"+wildcards.id+"_1.fastq.gz"
 def trimin_reverse(wildcards):
 	if sample_data.SRA.any():
-		return "reads/downloaded_reads/"+wildcards.id+"_2.fastq.gz"
+		return "output/"+wildcards.id+"/reads/downloaded_reads/"+wildcards.id+"_2.fastq.gz"
 	else:
-		return "reads/local_reads/"+wildcards.id+"_2.fastq.gz"
+		return "output/"+wildcards.id+"/reads/local_reads/"+wildcards.id+"_2.fastq.gz"
 
 	
 
@@ -25,11 +25,11 @@ rule trimmomatic:
 #        name="trimmomatic",
 #        nnode="-N 1"
     output:
-        fout = "reads/trimmed/{id}_1P_trim.fastq.gz",
-        funp = "reads/trimmed/{id}_1P_unpaired.fastq.gz",
-        rout = "reads/trimmed/{id}_2P_trim.fastq.gz",
-        runp = "reads/trimmed/{id}_2P_unpaired.fastq.gz",
-        ok = "reads/trimmed/trim_{id}.ok"
+        fout = "output/{id}/reads/trimmed/{id}_1P_trim.fastq.gz",
+        funp = "output/{id}/reads/trimmed/{id}_1P_unpaired.fastq.gz",
+        rout = "output/{id}/reads/trimmed/{id}_2P_trim.fastq.gz",
+        runp = "output/{id}/reads/trimmed/{id}_2P_unpaired.fastq.gz",
+        ok = "output/{id}/reads/trimmed/trim_{id}.ok"
     params:
         adapter = get_adapter,
         minlength = config["trimming"]["minlength"],

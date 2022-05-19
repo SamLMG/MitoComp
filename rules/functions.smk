@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import glob
+
 
 IDS = sample_data.index.values.tolist()
 def get_accession(wildcards):
@@ -40,3 +42,22 @@ def get_type(wildcards):
 
 def get_rounds(wildcards):
         return sample_data.loc[(wildcards.id), ["GO_Rounds"]].dropna().values[0]
+
+def gather_assemblies(wildcards):
+#	fasta_list = []
+	return  glob.glob("output/gathered_assemblies/*.fasta")
+	#for f in glob.glob("output/gathered_assemblies/*.fasta"):	
+#		fasta_list.append(f)
+	#return(fasta_list)
+#	with open("output/gathered_assemblies/gathered_assemblies.txt", "w") as g:
+#		g.write('\n'.join(fasta_list))
+#	g.close()
+
+	#for f in glob.glob("output/assemblies/" + wildcards.assembler + "/" + wildcards.id + "/" + wildcards.sub + "/"  + wildcards.id + "." + wildcards.assembler + "." + wildcards.sub + ".fasta")
+	#print(fasta_list)
+
+#def gather_assemblies(wildcards):
+#	return glob.glob("output/assemblies/*/*/*/*.fasta")	
+
+##return ["output/assemblies/" + wildcards.assembler + "/" + wildcards.id + "/" + wildcards.sub + "/" + wildcards.id + "." + wildcards.assembler + "." + wildcards.sub + ".fasta"]
+
