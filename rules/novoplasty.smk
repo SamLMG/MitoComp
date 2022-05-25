@@ -2,12 +2,12 @@ rule NOVOconfig:
     input:
         "bin/NOVOconfig.txt"
     output:
-        "output/assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}.txt"
+        "output/{id}/assemblies/{sub}/novoplasty/NOVOconfig_{id}_{sub}.txt"
     params:
         project_name = "{id}_{sub}",
         WD = os.getcwd(),
         seed = get_seed,
-        log = "output/assemblies/novoplasty/{id}/{sub}/NOVOconfig_{id}_{sub}_log.txt",
+        log = "output/{id}/assemblies/{sub}/novoplasty/NOVOconfig_{id}_{sub}_log.txt",
         f = rules.subsample.output.f,
         r = rules.subsample.output.r,
         kmer = get_kmer,
@@ -30,9 +30,9 @@ rule NOVOplasty:
         ok = rules.subsample.output.ok
     output: 
 #       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
-        ok = "output/assemblies/novoplasty/{id}/{sub}/novoplasty.ok"
+        ok = "output/{id}/assemblies/{sub}/novoplasty/novoplasty.ok"
     params:
-        outdir = "output/assemblies/novoplasty/{id}/{sub}/run"
+        outdir = "output/{id}/assemblies/{sub}/novoplasty/run"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -40,9 +40,9 @@ rule NOVOplasty:
 #        name="NOVOplasty",
 #        nnode="-N 1"
     log:
-        stdout = "output/assemblies/novoplasty/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/novoplasty/{id}/{sub}/stderr.txt"
-    benchmark: "output/assemblies/novoplasty/{id}/{sub}/novoplasty.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/novoplasty/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/novoplasty/stderr.txt"
+    benchmark: "output/{id}/assemblies/{sub}/novoplasty/{id}.{sub}.novoplasty.benchmark.txt"
     threads: config["threads"]["novoplasty"] 
 #    shadow: "shallow"
 #    conda:
@@ -50,6 +50,7 @@ rule NOVOplasty:
     singularity: "docker://reslp/novoplasty:4.2"
     shell:
         """
+        if [[ ! -d output/gathered_assemblies/ ]]; then mkdir output/gathered_assemblies/; fi
         WD=$(pwd)
 	# if novoplasty was run before, remove the previous run
 	if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
@@ -66,20 +67,19 @@ rule NOVOplasty:
 	# find the expected final assembly file
         final_fasta=$(find ./ -name "Circularized_assembly*")
 	# check if the search returned only one file and copy if yes
-        if [ ! -z "$final_fasta" ] && [ "$(echo $final_fasta | tr ' ' '\n' | wc -l)" -eq 1 ]
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 1 ]
         then
-            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta 
-        else
-            touch $WD/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
-            if [ -z "$final_fasta" ]
-            then
-                echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
-            elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
-            then
-                echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
-            fi
-        
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta 
+            cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.novoplasty.fasta
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
+        then
+            echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
         fi
 
-        touch $WD/{output.ok}
+	touch $WD/{output.ok}
         """
