@@ -124,7 +124,7 @@ Or on an SGE system:
 
 We advise adding the `--dry` option to this command first. This will not submit any jobs but will print jobs to be completed and flag up any errors.
 
-We provide MitoComp two alternate runmodes. These are specified via the -m flag. This determines how far the pipeline should run. For assembly and an initial annotation, specify "-m assembly". For a complete run, specify "-m all" or ignore this option. For example the following command will run in assembly mode: 
+We provide MitoComp three alternate runmodes. These are specified via the -m flag. This determines how far the pipeline should run. For assembly and an initial annotation, specify "-m assembly". To annotate, visualise and compare previously assembled mitochondrial genomes, specify "-m annotate". Restarting the pipeline with this option may be particularly useful in cases where the pipeline fails due to certain assembly jobs reaching wall-time limits. For a complete run, specify "-m all" or ignore this option. For example the following command will run in assembly mode:
 
 ```
 ./MitoComp -m assembly -t slurm -c data/cluster-config-SLURM.yaml.template
