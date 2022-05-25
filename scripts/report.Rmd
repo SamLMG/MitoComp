@@ -35,8 +35,8 @@ $(document).ready(function(){
 #print(getwd())
 wd <- getwd()
 #print(wd)
-prefix <- paste0(wd, "/../output/compare/report/")
-#setwd(paste(wd,"/../output/compare/report", sep=""))
+prefix <- paste0(wd, "/../output/report/")
+#setwd(paste(wd,"/../output/report", sep=""))
 #print(wd)
 
 options(scipen=999)
@@ -49,7 +49,7 @@ overview_data <- overview_data[order(overview_data$Species), ]
 overview_data <- cbind("Genome Map" = "map", overview_data)
 overview_data <- cbind("Bed file" = "bed", overview_data)
 overview_data <- cbind("assembly" = "assembly", overview_data)
-#head(overview_data)
+write.csv(file="test", overview_data)
 
 #kable(overview_data, caption = "Overview of run", booktabs=T)%>% row_spec(0,bold=TRUE, angle=0) %>% kable_styling(latex_options = c("HOLD_position", "repeat_header", "striped"), font_size=7, full_width = F)
 
@@ -86,10 +86,10 @@ overview_data[10:length(colnames(overview_data))] <- lapply(overview_data[10:len
 get_map_path <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"map","png", sep=".")
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
+    filep <-  paste(sp_name,subs,assembler,"map","png", sep=".")
     filep <- paste("maps/", filep, sep="")
     if (file.exists(paste0(prefix, filep)) ==T){ 
       path <- paste("<a href=\'", filep, "\'><img src=\'", filep, "\'></a>", sep="")
@@ -107,10 +107,10 @@ get_map_path <- function(x) {
 get_map_path_link <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"map","png", sep=".")
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
+    filep <-  paste(sp_name,subs,assembler,"map","png", sep=".")
     filep <- paste("maps/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ 
       path <- filep
@@ -127,10 +127,10 @@ get_map_path_link <- function(x) {
 get_assembly_path <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"final","fasta", sep=".")
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
+    filep <-  paste(sp_name,subs,assembler,"final","fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
     
@@ -142,10 +142,10 @@ get_assembly_path <- function(x) {
 get_assembly_path_hover <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
-    filep <-  paste(sp_name,assembler,subs,"final","fasta", sep=".")
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
+    filep <-  paste(sp_name,subs,assembler,"final","fasta", sep=".")
     filep <- paste("assemblies/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"assembly not found")}
     
@@ -157,9 +157,9 @@ get_assembly_path_hover <- function(x) {
 get_bed_path <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
     filep <-  paste(sp_name,subs,assembler,"bed", sep=".")
     filep <- paste("bedfiles/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
@@ -171,9 +171,9 @@ get_bed_path <- function(x) {
 get_bed_path_hover <- function(x) {
   paths <- c()
   for (i in 1:length(x)) {
-    sp_name <- overview_data[i,5]
-    subs <- overview_data[i,6]
-    assembler <- overview_data[i,4]
+    sp_name <- overview_data[i,4]
+    subs <- overview_data[i,5]
+    assembler <- overview_data[i,6]
     filep <-  paste(sp_name,subs,assembler,"bed", sep=".")
     filep <- paste("bedfiles/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths," bedfile not found")}

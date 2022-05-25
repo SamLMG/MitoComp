@@ -17,7 +17,7 @@ print("All paths:", assemblies)
 
 #open Genes file to write header
 
-header = "Assembler\tSpecies\tSubsample\tGenes\tStart\tEnd\n"
+header = "Species\tSubsample\tAssembler\tGenes\tStart\tEnd\n"
 Genes = open(Genes, "w")
 Genes.write(header)
 
@@ -30,14 +30,14 @@ Genes.write(header)
 
 for assembly in assemblies:
 		bed_file = open(assembly, 'r')
-		
-		assembler = assembly.split(".")[3].split("/")[0]
-		#print(assembly)
-		species = assembly.split(".")[1].split("/")[5]
+		assembler = assembly.split("/")[5].split(".")[2]
+		#print(assembler)
+		species = assembly.split("/")[5].split(".")[0]
 		#print(assembly.split("."))
 		#print(assembly.split(".")[1].split("/"))
 		#print(species)
-		subsample = assembly.split(".")[2].split("_")[0]
+		subsample = assembly.split("/")[5].split(".")[1]
+		#print(subsample)
 		for line in bed_file:
 			line = line.rstrip()
 			first = line.split('\t')[0]
@@ -55,6 +55,6 @@ for assembly in assemblies:
 				gene_start = int(gene_start) + 1 # - but if gene is reversed need to use end position plus 1
 				gene_end = line.split('\t')[1]
 		
-			Genes.write(assembler + "\t" + species + "\t" + subsample + "\t" + gene + "\t" + str(gene_start) + "\t" + str(gene_end) + "\n")
+			Genes.write(species + "\t" + subsample + "\t" + assembler + "\t" + gene + "\t" + str(gene_start) + "\t" + str(gene_end) + "\n")
 Genes.close()
 		
