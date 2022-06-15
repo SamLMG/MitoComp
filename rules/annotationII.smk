@@ -26,26 +26,17 @@ rule second_mitos:
                 exit 0
             else
                 runmitos.py -i output/{params.id}/annotation/alignment/clustalo/{params.id}.{params.sub}.{params.assembler}.rolled.*.fasta -o {params.outdir} -r dbs/mitos/mitos1-refdata -c {params.genetic_code}
-                # copy new bed files to report directory with informative name
-                #mkdir -p output/compare/report/bedfiles
-                #cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed 
                 # copy rolled + RC assemblies to report directory
-                #mkdir -p output/compare/report/assemblies
-                #cp output/compare/alignment/clustalo/{params.id}.{params.assembler}.{params.sub}*.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
                 cp output/{params.id}/annotation/alignment/clustalo/{params.id}.{params.sub}.{params.assembler}.rolled.*.fasta output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
                 fi
         else
-        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
+	        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
-        if [[ $(find output/{params.id}/annotation/mitos/{params.id}.{params.sub}.{params.assembler}/result.bed) != "" ]]; then cp output/{params.id}/annotation/mitos/{params.id}.{params.sub}.{params.assembler}/result.bed {params.outdir}/result.bed
-        awk '{{$1= "{params.id}.{params.sub}.{params.assembler}"; print $0}}' output/{params.id}/annotation/second_mitos/{params.id}.{params.sub}.{params.assembler}/result.bed > output/{params.id}/annotation/second_mitos/{params.id}.{params.sub}.{params.assembler}/tmp && mv output/{params.id}/annotation/second_mitos/{params.id}.{params.sub}.{params.assembler}/tmp output/{params.id}/annotation/second_mitos/{params.id}.{params.sub}.{params.assembler}/result.bed
-        sed -i 's/ /\t/g' output/{params.id}/annotation/second_mitos/{params.id}.{params.sub}.{params.assembler}/result.bed 
-        cp output/{params.id}/assemblies/{params.sub}/{params.assembler}/{params.id}.{params.sub}.{params.assembler}.fasta output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
-        sed -i 's#^>#>{params.id}.{params.sub}.{params.assembler}#g' output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
-        #mkdir -p output/compare/report/bedfiles
-        #cp output/compare/alignment/mitos2/{params.id}.{params.sub}.{params.assembler}/result.bed output/compare/report/bedfiles/{params.id}.{params.sub}.{params.assembler}.bed
-        #mkdir -p output/compare/report/assemblies
-        #cp output/assemblies/{params.assembler}/{params.id}/{params.sub}/{params.id}.{params.assembler}.{params.sub}.fasta output/compare/report/assemblies/{params.id}.{params.assembler}.{params.sub}.fasta
+        if [[ -f {params.outdir}/result.bed ]]
+	then
+		awk '{{$1= "{params.id}.{params.sub}.{params.assembler}"; print $0}}' {params.outdir}/result.bed > {params.outdir}/tmp && mv {params.outdir}/tmp {params.outdir}/result.bed
+		sed -i 's/ /\t/g' {params.outdir}/result.bed 
+		sed -i 's#^>#>{params.id}.{params.sub}.{params.assembler}#g' output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
         fi
         touch {output}
         """
