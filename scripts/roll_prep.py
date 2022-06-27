@@ -96,7 +96,7 @@ print("rev_stats", rev_starts_dict)
 with open(Start_pos, 'w') as starts:
 	for assembly in starts_dict.keys():
 		gene_start = starts_dict[assembly]
-		print('/'.join(assembly.split("/")[1:6]),"/", assembly.split("/")[4],".", assembly.split("/")[3],".", assembly.split("/")[5],".", "fasta	", gene_start, sep='', file = starts)
+		print("output/gathered_assemblies/", assembly.split("/")[5],".", "fasta", '\t', gene_start, sep='', file = starts)
 starts.close()
 
 #print list of files that need to be reverse complement 
@@ -105,7 +105,7 @@ with open(Reverse, 'w') as RC:
 	for rev in reverse_assemblies:
 		i += 1
 		rev_gene_start = rev_starts_dict[rev]
-		print("output/compare/alignment/", rev.split("/")[4],".", rev.split("/")[3], ".", rev.split("/")[5], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
+		print("output/", rev.split("/")[2], "/annotation/", "alignment/", rev.split("/")[5], ".rolled.", rev_gene_start, ".fasta", sep = '', file = RC)
 RC.close()
 
 #print list of files already in forward sense
@@ -114,7 +114,7 @@ with open(Forward, 'w') as FA:
 	for a in forward_assemblies:
 		i += 1
 		gene_start = starts_dict[a]
-		print("output/compare/alignment/", a.split("/")[4],".", a.split("/")[3], ".", a.split("/")[5], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
+		print("output/", a.split("/")[2], "/annotation/", "alignment/", a.split("/")[5], ".rolled.", gene_start, ".fasta", sep = '', file = FA)
 FA.close()
 
 

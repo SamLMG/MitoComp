@@ -20,7 +20,7 @@ rule get_organelle:
         r = rules.subsample.output.r
     output:
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.getorganelle.final.fasta",
-        ok = "output/assemblies/getorganelle/{id}/{sub}/getorganelle.ok"
+        ok = "output/{id}/assemblies/{sub}/getorganelle/getorganelle.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -28,7 +28,7 @@ rule get_organelle:
 #        name="getorganelle",
 #        nnode="-N 1"
     params:
-        outdir = "output/assemblies/getorganelle/{id}/{sub}/run",
+        outdir = "output/{id}/assemblies/{sub}/getorganelle/run",
         seed = get_seed,
         type = get_type,
         rounds = get_rounds
@@ -36,13 +36,14 @@ rule get_organelle:
 #    conda:
 #        "envs/getorganelle.yml"
     log:
-        stdout = "output/assemblies/getorganelle/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/getorganelle/{id}/{sub}/stderr.txt" 
-    benchmark: "output/assemblies/getorganelle/{id}/{sub}/getorganelle.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/getorganelle/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/getorganelle/stderr.txt" 
+    benchmark: "output/{id}/assemblies/{sub}/getorganelle/{id}.{sub}.getorganelle.benchmark.txt"
     threads: config["threads"]["getorganelle"] 
     shell:
         """
         # run getorganelle - capture returncode, so if it fails, the pipeline won't stop
+        if [[ ! -d output/gathered_assemblies/ ]]; then mkdir output/gathered_assemblies/; fi
         get_organelle_from_reads.py -1 {input.f} -2 {input.r} -o {params.outdir} -F {params.type} -t {threads} -R {params.rounds} -s {params.seed} 1> {log.stdout} 2> {log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
@@ -56,18 +57,15 @@ rule get_organelle:
 		final_fasta=""
 	fi
 	# check if the search returned only one file and copy if yes
-        if [ ! -z "$final_fasta" ] && [ "$(echo $final_fasta | tr ' ' '\n' | wc -l)" -eq 1 ]
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
         then
-            cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.getorganelle.{wildcards.sub}.fasta
-        else
-            touch $(pwd)/{params.outdir}/../{wildcards.id}.novoplasty.{wildcards.sub}.fasta.missing
-            if [ -z "$final_fasta" ]
-            then
-                echo -e "\\n#### [$(date)]\\tgetorganelle has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
-            elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
-            then
-                echo -e "\\n#### [$(date)]\\tgetorganelle has produced multiple incomplete assemblies - consider re-running this assembler with more rounds. This can be set by editing the 'GO_Rounds' column in the data/data.csv file"
-            fi
-        fi 
-        touch {output.ok}
+            cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+            cp $final_fasta $(pwd)/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+	elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 0 ]
+        then
+            echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
+            touch $(pwd)/{params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
+        fi
+
+	touch {output.ok}
         """

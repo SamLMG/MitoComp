@@ -5,7 +5,7 @@ rule norgal:
         r = rules.subsample.output.r
     output:
 #        outdir = directory("assemblies/{assembler}/{id}/{sub}/{id}_{assembler}"),
-        ok = "output/assemblies/norgal/{id}/{sub}/norgal.ok"
+        ok = "output/{id}/assemblies/{sub}/norgal/norgal.ok"
 #    resources:
 #        qos="normal_binf -C binf",
 #        partition="binf",
@@ -13,15 +13,16 @@ rule norgal:
 #        name="norgal",
 #        nnode="-N 1"
     params:
-        outdir = "output/assemblies/norgal/{id}/{sub}/run"
+        outdir = "output/{id}/assemblies/{sub}/norgal/run"
     log:
-        stdout = "output/assemblies/norgal/{id}/{sub}/stdout.txt",
-        stderr = "output/assemblies/norgal/{id}/{sub}/stderr.txt"
-    benchmark: "output/assemblies/norgal/{id}/{sub}/norgal.{id}.{sub}.benchmark.txt"
+        stdout = "output/{id}/assemblies/{sub}/norgal/stdout.txt",
+        stderr = "output/{id}/assemblies/{sub}/norgal/stderr.txt"
+    benchmark: "output/{id}/assemblies/{sub}/norgal/{id}.{sub}.norgal.benchmark.txt"
     threads: config["threads"]["norgal"] 
     singularity: "docker://reslp/norgal:1.0"
     shell:
         """
+        if [[ ! -d output/gathered_assemblies/ ]]; then mkdir output/gathered_assemblies/; fi
         WD=$(pwd)
         # add a directory from the container to the PATH, so norgal finds all necessary executables
         export PATH="/software/norgal/binaries/linux:$PATH"
@@ -36,14 +37,15 @@ rule norgal:
         fi
 
 	#if the expected final assembly exists, get a copy
-        if [ -f $WD/{params.outdir}/circular.candidate.fa ]
+        if [ -f $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa ]
         then
-            cp $WD/{params.outdir}/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta
-        else
+            cp $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta
+            cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.norgal.fasta
+	else
             echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 1>> $WD/{log.stdout} 
-            touch $WD/{params.outdir}/../{wildcards.id}.norgal.{wildcards.sub}.fasta.missing 
+            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta.missing 
         fi
 
-        touch {output.ok}
+	touch {output.ok}
         """
 

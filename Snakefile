@@ -4,13 +4,10 @@ import pandas as pd
 configfile: "data/config.yaml"
 sample_data = pd.read_table(config["samples"], sep=",").set_index("ID", drop=False)
 #threads = pd.read_table(config["threads"], sep="\t").set_index("threads", drop=False)
-
-
-Assembler = config["Assembler"] 
 #Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
 
 #sub = [5000000, 10000000, 20000000, "all"]
-sub = config["sub"]
+#sub = config["sub"]
 
 include: "rules/functions.smk"
 include: "rules/download.smk"
@@ -41,7 +38,7 @@ rule all:
 ####		expand(rules.CCT.output, id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CGview/{id}.{assembler}.{sub}.cgview.done", id=IDS, sub=sub, assembler=Assembler)
 ####                expand("compare/CCT/{id}.CCT.done", id=IDS) 
-		"output/compare/report/report.html"
+		"output/report/report.html"
 rule assembly_only:
 	input:
-		expand("output/assemblies/{assembler}/{id}/{sub}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)
+		expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)
