@@ -39,7 +39,7 @@ rule reverse_complement:
     shell:
         """
         mkdir -p output/{params.id}/annotation/alignment/clustalo
-        scripts/RComp.py
+        scripts/RComp.py {params.id}
         touch {output}
         """
 
