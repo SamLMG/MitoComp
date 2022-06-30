@@ -7,7 +7,7 @@ def check_ids():
 	files = glob.glob("output/gathered_assemblies/*.fasta")
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
-			if os.path.getctime(files[i]) <= os.path.getctime("output/gathered_assemblies/gather.done"):
+			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
 				print(files[i]+" is older than")
 				del(files[i])
 				continue
@@ -20,7 +20,7 @@ def check_sub():
 	files = glob.glob("output/gathered_assemblies/*.fasta")
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
-			if os.path.getctime(files[i]) <= os.path.getctime("output/gathered_assemblies/gather.done"):
+			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
 				print(files[i]+" is older than")
 				del(files[i])
 				continue
@@ -33,7 +33,7 @@ def check_assembler():
 	files = glob.glob("output/gathered_assemblies/*.fasta")
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
-			if os.path.getctime(files[i]) <= os.path.getctime("output/gathered_assemblies/gather.done"):
+			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
 				print(files[i]+" is older than")
 				del(files[i])
 				continue
