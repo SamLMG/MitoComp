@@ -80,11 +80,17 @@ rule align:
             for file in $(find *_RC.fasta); do 
 		rm -f $(echo $file | sed 's/_RC//')
 	    done
-            cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
-            clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
-            touch {params.id}.align.done
+            no_assemblies=$(find {params.id}.*.rolled*.fasta | wc -l)
+	    if [[ "$no_assemblies" -gt 1 ]]; then 
+	    	cat {params.id}*.fasta > all_{params.id}_assemblies.fasta
+            	clustalo -i all_{params.id}_assemblies.fasta -o {params.id}_alignment.fa --threads={threads}
+            	touch {params.id}.align.done
+	    else
+		echo "There is only a single assembly for this ID so cannot align"
+		touch {params.id}.align.done
+	    fi
         else
-            echo "Align could not be run because the input file is missing. This may happen when the assembler did not produce output or when MITOS did not find the most found gene in this assembly?"
+            echo "Align could not be run because the input file is missing. This may happen when the assembler did not produce output or when MITOS did not find the most found gene in this assembly. This may also occur if there is only a single assembly for this ID"
             cd ../../../../
             #touch {params.id}.align.done
             touch {output}
