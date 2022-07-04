@@ -15,9 +15,11 @@ rule roll:
 #        #start = "bin/start_positions.txt" 
     run:
         roll = "scripts/circules.py"
+        sampleid = wildcards.id 
         with open(input[0]) as file:    
             for line in file:
-#            roll = scripts/circules.py -f +line.split('\t')[0] -n +line.split('\t')[1]
+                if sampleid not in line:
+                      continue
                 line = line.strip()
                 print(line)
                 print(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
