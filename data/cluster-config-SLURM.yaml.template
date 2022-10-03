@@ -45,6 +45,7 @@ interleave:
 MITObim:
    job-name: MITOB
    mem: 20G
+   time: "24:00:00"
 roll:
    job-name: ROLL
 reverse_complement:

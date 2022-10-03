@@ -7,8 +7,8 @@ __default__:
    job-name: DEF 
    mem: 4G
    nodes: 1
-   partition: mem_0096 
-   qos: mem_0096
+   partition: skylake_0096 
+   qos: skylake_0096
    output: $(pwd)/log/slurm-%j.out
    error: $(pwd)/log/slurm-%j.err
 fastqdump:
