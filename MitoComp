@@ -73,7 +73,7 @@ if [[ ! -d .conda_pkg_tmp ]]; then mkdir .conda_pkg_tmp; fi
 if [[ $RESET == "TRUE" ]]; then
         set +e
 	if [[ $CLUSTER == "slurm" ]]; then
-		grep -o -P 'batch job\K.{1,8}' log/submission.txt > log/sub_ids.txt
+		grep -o -P 'batch job\K.[0-9]{1,8}' log/submission.txt > log/sub_ids.txt
 		cat log/sub_ids.txt | while read line; do scancel $line; done
 	elif [[ $CLUSTER == "sge" ]]; then
 		grep "^Submitted job" log/submission.txt | awk '{print $9}' > log/sub_ids.txt
