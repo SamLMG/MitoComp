@@ -56,8 +56,8 @@ rule get_organelle:
 	else
 		final_fasta=""
 	fi
-	# check if the search returned only one file and copy if yes
-        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+	# check if the search returned only one file and copy if yes -- also check only 1 sequence in final fasta
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
         then
             cp $final_fasta $(pwd)/{params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
             cp $final_fasta $(pwd)/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta

@@ -62,7 +62,7 @@ rule MITObim:
         #if the expected final assembly exists, get a copy
         final_fasta=$(find ./ -name "*noIUPAC.fasta")
 	# check if the search returned only one file and copy if yes
-        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ]
+        if [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
         then
             cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.mitobim.fasta
             cp $WD/{params.outdir}/$final_fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitobim.fasta
