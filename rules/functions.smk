@@ -8,11 +8,13 @@ def check_ids():
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
 			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
-				print(files[i]+" is older than")
+				print(files[i]+" is NOT older than")
 				del(files[i])
 				continue
+			else:
+				print(files[i]+" is older than")
 		files[i] = os.path.basename(files[i]).split(".")[0]
-		print(id)
+#		print(id)
 	print("list from ids:"+str(files))
 	return files
 
@@ -21,11 +23,11 @@ def check_sub():
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
 			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
-				print(files[i]+" is older than")
+				print(files[i]+" is NOT older than")
 				del(files[i])
 				continue
 		files[i] = os.path.basename(files[i]).split(".")[1]
-		print(id)
+#		print(id)
 	print("list from sub:"+str(files))
 	return files
 
@@ -34,11 +36,11 @@ def check_assembler():
 	for i in reversed(range(len(files))):
 		if os.path.exists("output/gathered_assemblies/gather.done"):
 			if os.path.getctime(files[i]) >= os.path.getctime("output/gathered_assemblies/gather.done"):
-				print(files[i]+" is older than")
+				print(files[i]+" is NOT older than")
 				del(files[i])
 				continue
 		files[i] = os.path.basename(files[i]).split(".")[2]
-		print(id)
+#		print(id)
 	print("list from assembler:"+str(files))
 	return files
 
