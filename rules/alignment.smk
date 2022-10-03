@@ -23,7 +23,7 @@ rule roll:
                 line = line.strip()
                 print(line)
                 print(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
-		shell(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
+                shell(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
         shell("touch {output}")
 #       shell("touch "+ output[0])  #python version of above line
 
