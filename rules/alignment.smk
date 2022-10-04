@@ -55,8 +55,8 @@ rule reverse_complement:
         RC_assemblies = "output/stats/RC_assemblies.txt"
     output:
         "output/{id}/annotation/alignment/RC.done"
-#    singularity:
-#        "docker://reslp/biopython_plus"
+    singularity:
+        "docker://python:3.7"
     params:
         id = "{id}"
     shell:
