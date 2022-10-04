@@ -6,25 +6,46 @@ rule roll:
         #fasta = expand("assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta", id=IDS, sub=sub, assembler=Assembler)
     output:
 #        "compare/{assembler}/{{id}}/{sub}/alignment/muscle/arrange.{assembler}.{{id}}.{sub}.done"
-        "output/{id}/annotation/alignment/roll.done"
+#        "output/{id}/annotation/alignment/roll.done"
 #        RC_assemblies = "compare/RC_assemblies.txt"
-    params:
-        id = "{id}"
+         "output/stats/roll.done"
+    singularity:
+        "docker://python:2.7.18-stretch"
+#    params:
+#        id = "{id}"
 #        outdir = "compare/alignment"
 #        fasta = "assemblies/{assembler}/{id}/{sub}/{id}.{assembler}.{sub}.fasta"
 #        #start = "bin/start_positions.txt" 
-    run:
-        roll = "scripts/circules.py"
-        sampleid = wildcards.id 
-        with open(input[0]) as file:    
-            for line in file:
-                if sampleid not in line:
-                      continue
-                line = line.strip()
-                print(line)
-                print(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
-                shell(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
-        shell("touch {output}")
+    shell:
+        """
+        while read first rest 
+            file=$first
+            position=$rest
+            prefix1=$(echo $first | cut -d "/" -f3 | cut -d "." -f 1)
+            prefix2=$(echo $first | cut -d "/" -f3 | cut -d "." -f 1-3)
+        do
+            if [[ $first == "" ]]; then
+                break
+            fi
+            if [[ ! -d output/$prefix1/annotation/alignment/ ]]; then
+                mkdir output/$prefix1/annotation/alignment/
+            fi
+            scripts/circules.py -f $file -n $position -p output/$prefix1/annotation/alignment/$prefix2
+        done < output/stats/start_positions.txt
+        touch {output}
+        """
+#    run:
+#        roll = "scripts/circules.py"
+#        sampleid = wildcards.id 
+#        with open(input[0]) as file:    
+#            for line in file:
+#                if sampleid not in line:
+#                      continue
+#                line = line.strip()
+#                print(line)
+#                print(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
+#                shell(roll + " -f " +line.split('\t')[0] + " -n " +line.split('\t')[1] + " -p " + "output/" + wildcards.id + "/annotation/alignment/" + line.split('\t')[0].split('/')[-1].strip(".fasta"))
+#        shell("touch {output}")
 #       shell("touch "+ output[0])  #python version of above line
 
 ###some assemblies orientated in reverse complement so should be reversed
