@@ -51,6 +51,8 @@ rule gene_positions:
     output:
         "output/{id}/annotation/compare/gene_positions.done"
         #positions = "compare/alignment/mitos2/Gene_positions.txt"
+    singularity:
+        "docker://python:3.7"
     shell:
         """
         find ./output/*/annotation/second_mitos/*/ -name "result.bed" | cat > output/stats/mitos2_paths.txt        
