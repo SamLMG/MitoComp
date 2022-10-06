@@ -74,35 +74,35 @@ rule mitos:
 	touch {output.done}
 	"""
 
-if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
-	rule annotation_stats:
-	    input:
-	        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", id=IDS, sub=sub, assembler=Assembler)
-	    output:
-	        starts = "output/stats/start_positions.txt",
-	        RC_assemblies = "output/stats/RC_assemblies.txt",
-	        done = "output/stats/annotation_stats.done",
-	    shell:
-	        """
-	        find ./output/*/assemblies/ -maxdepth 3 -name "*.fasta" | cat > output/stats/assembly_paths.txt
-	        find ./output/*/annotation/ -name "result.bed" | cat > output/stats/bed_paths.txt
-	        scripts/annotate.py output/stats/bed_paths.txt output/stats/assembly_paths.txt output/stats/Genes.txt
-	        scripts/roll_prep.py output/stats/Genes.txt output/stats/bed_paths.txt output/stats/MFG_assemblies.txt output/stats/No_MFG_assemblies.txt output/stats/start_positions.txt output/stats/RC_assemblies.txt output/stats/forward_assemblies.txt
-	        touch {output.done}
-	        """
-elif os.environ["RUNMODE"] == "annotate":
-	rule annotation_stats:
-	    input:
-	        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", zip, id=IDS, sub=sub, assembler=Assembler)
-	    output:
-	        starts = "output/stats/start_positions.txt",
-	        RC_assemblies = "output/stats/RC_assemblies.txt",
-	        done = "output/stats/annotation_stats.done",
-	    shell:
-	        """
-	        find ./output/*/assemblies/ -maxdepth 3 -name "*.fasta" | cat > output/stats/assembly_paths.txt
-	        find ./output/*/annotation/ -name "result.bed" | cat > output/stats/bed_paths.txt
-	        scripts/annotate.py output/stats/bed_paths.txt output/stats/assembly_paths.txt output/stats/Genes.txt
-	        scripts/roll_prep.py output/stats/Genes.txt output/stats/bed_paths.txt output/stats/MFG_assemblies.txt output/stats/No_MFG_assemblies.txt output/stats/start_positions.txt output/stats/RC_assemblies.txt output/stats/forward_assemblies.txt
-	        touch {output.done}
-	        """
+#if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
+rule annotation_stats:
+    input:
+        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", id=IDS, sub=sub, assembler=Assembler)
+    output:
+        starts = "output/stats/start_positions.txt",
+        RC_assemblies = "output/stats/RC_assemblies.txt",
+        done = "output/stats/annotation_stats.done",
+    shell:
+        """
+        find ./output/*/assemblies/ -maxdepth 3 -name "*.fasta" | cat > output/stats/assembly_paths.txt
+        find ./output/*/annotation/ -name "result.bed" | cat > output/stats/bed_paths.txt
+        scripts/annotate.py output/stats/bed_paths.txt output/stats/assembly_paths.txt output/stats/Genes.txt
+        scripts/roll_prep.py output/stats/Genes.txt output/stats/bed_paths.txt output/stats/MFG_assemblies.txt output/stats/No_MFG_assemblies.txt output/stats/start_positions.txt output/stats/RC_assemblies.txt output/stats/forward_assemblies.txt
+        touch {output.done}
+        """
+#elif os.environ["RUNMODE"] == "annotate":
+#	rule annotation_stats:
+#	    input:
+#	        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", zip, id=IDS, sub=sub, assembler=Assembler)
+#	    output:
+#	        starts = "output/stats/start_positions.txt",
+##	        RC_assemblies = "output/stats/RC_assemblies.txt",
+#	        done = "output/stats/annotation_stats.done",
+#	    shell:
+#	        """
+#	        find ./output/*/assemblies/ -maxdepth 3 -name "*.fasta" | cat > output/stats/assembly_paths.txt
+#	        find ./output/*/annotation/ -name "result.bed" | cat > output/stats/bed_paths.txt
+#	        scripts/annotate.py output/stats/bed_paths.txt output/stats/assembly_paths.txt output/stats/Genes.txt
+#	        scripts/roll_prep.py output/stats/Genes.txt output/stats/bed_paths.txt output/stats/MFG_assemblies.txt output/stats/No_MFG_assemblies.txt output/stats/start_positions.txt output/stats/RC_assemblies.txt output/stats/forward_assemblies.txt
+##	        touch {output.done}
+#	        """
