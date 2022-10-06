@@ -18,7 +18,6 @@ include: "rules/getorganelle.smk"
 include: "rules/mitoflex.smk"
 include: "rules/novoplasty.smk"
 include: "rules/mitobim.smk"
-include: "rules/eval.smk"
 include: "rules/annotation.smk"
 include: "rules/alignment.smk"
 include: "rules/annotationII.smk"
@@ -26,7 +25,7 @@ include: "rules/CCT.smk"
 include: "rules/report.smk"
 
 
-localrules: all, setup_mitoflex_db, NOVOconfig, quast, gene_positions, gbk_prep, CCT, annotation_stats
+localrules: all, setup_mitoflex_db, NOVOconfig, gene_positions, gbk_prep, CCT, annotation_stats
 rule all:
 	input:
 ####                expand("trimmed/trim_{id}.ok", id=IDS, sub=sub, assembler=Assembler),
