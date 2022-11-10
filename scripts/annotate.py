@@ -21,7 +21,7 @@ global_gene_list = []
 for assembly in assemblies:
 	assembly_file = open(assembly, 'r') 
 #	x += 1
-	Line = assembly_file.readline()
+	#Line = assembly_file.readline()
 	LineNumber = 0
 	for Line in assembly_file:
 		# remove line ending
@@ -47,7 +47,7 @@ output_list = []
 for assembly in assemblies:
 	assembly_file = open(assembly, 'r') 
 #	x += 1
-	Line = assembly_file.readline()
+	#Line = assembly_file.readline()
 	LineNumber = 0
 	gene_list = []
 	for Line in assembly_file:
