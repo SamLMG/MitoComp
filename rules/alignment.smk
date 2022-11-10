@@ -31,6 +31,10 @@ rule roll:
                 mkdir output/$prefix1/annotation/alignment/
             fi
             scripts/circules.py -f $file -n $position -p output/$prefix1/annotation/alignment/$prefix2
+        if [[ ! -f output/$prefix1/annotation/alignment/$prefix2 ]]
+        then
+            cp $file output/$prefix1/annotation/alignment/$prefix2.rolled.$position.fasta
+        fi
         done < output/stats/start_positions.txt
         touch {output}
         """
