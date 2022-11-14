@@ -121,6 +121,21 @@ rule report:
         assemblies=$(find ./output/*/annotation/alignment/*.final.fasta)
         mkdir -p output/report/assemblies
         cp $assemblies output/report/assemblies 2>/dev/null || :
+        while read first rest
+            file=$first
+            position=$rest
+            prefix1=$(echo $first | cut -d "/" -f3 | cut -d "." -f 1)
+            prefix2=$(echo $first | cut -d "/" -f3 | cut -d "." -f 1-3)
+        do
+        echo $prefix2
+        if [ ! -z "$prefix2" ]
+        then
+            sed -i "s#>.*#>$prefix2#g" output/report/assemblies/$prefix2.final.fasta
+        else
+            echo $prefix2
+            break 
+        fi
+        done < output/stats/start_positions.txt
         #sed -i 's/.final//g' output/report/assemblies/*
         #mv output/compare/report/assemblies/*.final.fasta mv output/compare/report/assemblies/*.fasta
 	
