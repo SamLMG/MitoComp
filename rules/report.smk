@@ -55,44 +55,6 @@
 #	files = ["output/C_spec/annotation/compare/CCT/C_spec.5000000.mitobim.CCT.done"]
 #	return files
 
-IDS = sample_data.index.values.tolist()
-Assembler = config["Assembler"] 
-sub = config["sub"]
-	
-def pick_mode(wildcards):
-    pull_list = []
-    if os.environ["RUNMODE"] == "annotate":
-        for f in glob.glob("output/gathered_assemblies/*.fasta"):
-            (i,s,a) = os.path.basename(f).split(".")[:-1]
-            pull_list.append("output/"+i+"/annotation/compare/CCT/"+i+"."+s+"."+a+".CCT.done")
-        print("Mode is annotate: ", len(pull_list), "input files.")
-        for f in pull_list:
-            print(f)
-        return pull_list
-    else:
-        pull_list = []
-        #pull_list = ["output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done"]
-        #pull_list = ["output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done".format(*i) for i in enumerate(IDS)] #, sub=sub, assembler=Assembler)]
-        for i in IDS:
-            pull_list.append("output/"+i+"/annotation/compare/CCT/"+i+".{sub}.{assembler}.CCT.done")
-            print(pull_list)
-            for s in sub:
-                pull_list.append("output/"+i+"/annotation/compare/CCT/"+i+"."+s+".{assembler}.CCT.done")
-                print(pull_list)
-                for a in Assembler:
-                    pull_list.append("output/"+i+"/annotation/compare/CCT/"+i+"."+s+"."+a+".CCT.done")
-        substring = "{"
-        PULL_LIST = [elem for elem in pull_list if substring not in elem]
-        #print(pull_list)
-        print(PULL_LIST)
-        #for i in IDS:
-        #    pull_list.format(id=IDS)
-        print("Mode is all: ", len(PULL_LIST), "input files.")
-        for f in PULL_LIST:
-            print(f)
-        return PULL_LIST 
-
-
 
 #if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
 rule report:

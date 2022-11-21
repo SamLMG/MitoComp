@@ -13,40 +13,40 @@ rule mitos_ref_db:
         touch {output}
         """
 
-if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
-	rule gather:
-		input:
-			#rules.get_organelle.output,
-			#rules.MITObim.output,
-			#rules.norgal.output,
-			#rules.NOVOplasty.output,
-			#rules.mitoflex.output,
-			expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler),
-			#gather_assemblies,
-			#expand("output/gathered_assemblies/{id}.{sub}.{assembler}.fasta", id=IDS, sub=sub, assembler=Assembler)
-		output:
-			"output/gathered_assemblies/gather.done" 
-		shell:
-			"""
-                        #cp {input} output/gathered_assemblies/
-			touch {output}
-			"""
-
-elif os.environ["RUNMODE"] == "annotate":
-	rule gather:
-		input:
-			gather_assemblies	
-		output:
-			"output/gathered_assemblies/gather.done"
-		shell:
-			"""
-			touch {output}
-			"""
+#if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
+#	rule gather:
+#		input:
+#			#rules.get_organelle.output,
+#			#rules.MITObim.output,
+#			#rules.norgal.output,
+#			#rules.NOVOplasty.output,
+#			#rules.mitoflex.output,
+#			expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler),
+#			#gather_assemblies,
+#			#expand("output/gathered_assemblies/{id}.{sub}.{assembler}.fasta", id=IDS, sub=sub, assembler=Assembler)
+#		output:
+#			"output/gathered_assemblies/gather.done" 
+#		shell:
+#			"""
+ #                       #cp {input} output/gathered_assemblies/
+#			touch {output}
+#			"""
+#elif os.environ["RUNMODE"] == "annotate":
+#	rule gather:
+#		input:
+#			expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", zip, id=IDS, sub=sub, assembler=Assembler),
+##			gather_assemblies	
+#		output:
+#			"output/gathered_assemblies/gather.done"
+#		shell:
+#			"""
+#			touch {output}
+#			"""
 
 rule mitos:
     input:
-        rules.gather.output,
-	rules.mitos_ref_db.output,
+        "output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok",
+        rules.mitos_ref_db.output
     output:
         done = "output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done"
     params:
@@ -77,7 +77,9 @@ rule mitos:
 #if os.environ["RUNMODE"] == "all" or os.environ["RUNMODE"] == "assembly":
 rule annotation_stats:
     input:
-        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", id=IDS, sub=sub, assembler=Assembler)
+        pick_stats
+#        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done")
+#        expand("output/{id}/annotation/mitos/{id}.{sub}.{assembler}.mitos.done", id=IDS, sub=sub, assembler=Assembler)
     output:
         starts = "output/stats/start_positions.txt",
         RC_assemblies = "output/stats/RC_assemblies.txt",

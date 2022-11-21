@@ -40,12 +40,13 @@ rule second_mitos:
         fi
         touch {output}
         """
-
 rule gene_positions:
     input:
         #rules.second_mitos.output
         #expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler)
-        expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", zip, id=IDS, sub=sub, assembler=Assembler) 
+        pick_mitos2
+#        expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", zip, id=IDS, sub=sub, assembler=Assembler) 
+#        expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", id=IDS, sub=sub, assembler=Assembler) 
         #"output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done"
         #"compare/alignment/mitos2/mitos2_paths.txt"
     output:
