@@ -130,9 +130,9 @@ def pick_stats(wildcards):
         for f in glob.glob("output/gathered_assemblies/*.fasta"):
             (i,s,a) = os.path.basename(f).split(".")[:-1]
             pull_list.append("output/"+i+"/annotation/mitos/"+i+"."+s+"."+a+".mitos.done")
-        print("Mode is annotate: ", len(pull_list), "input files.")
-        for f in pull_list:
-            print(f)
+        #print("Mode is annotate: ", len(pull_list), "input files.")
+        #for f in pull_list:
+        #    print(f)
         return pull_list
     else:
         pull_list = []
@@ -151,9 +151,9 @@ def pick_mitos2(wildcards):
         for f in glob.glob("output/gathered_assemblies/*.fasta"):
             (i,s,a) = os.path.basename(f).split(".")[:-1]
             pull_list.append("output/"+i+"/annotation/second_mitos/"+i+"."+s+"."+a+".second_mitos.done")
-        print("Mode is annotate: ", len(pull_list), "input files.")
-        for f in pull_list:
-            print(f)
+        #print("Mode is annotate: ", len(pull_list), "input files.")
+        #for f in pull_list:
+        #    print(f)
         return pull_list
     else:
         pull_list = []
