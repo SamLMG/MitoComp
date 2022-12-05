@@ -33,13 +33,16 @@ rule fastqdump:
 		prefetch --max-size 1024000000 {params.accession}
 		fastq-dump --split-files --gzip --defline-seq '@$ac-$sn/$ri' --defline-qual '+' {params.accession}  
 
-		# cleanup
-		rm tmp/sra/{params.accession}.sra
+#		# cleanup
+#		rm tmp/sra/{params.accession}.sra
 
 		#rename to expected output files
 		mv {params.accession}_1.fastq.gz {output.f}
 		mv {params.accession}_2.fastq.gz {output.r}
-                """
+
+		# cleanup
+		rm tmp/sra/{params.accession}.sra
+        """
 
 rule prep_local_reads:
 	input:
