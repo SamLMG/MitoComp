@@ -54,15 +54,21 @@ rule mitoflex:
             echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - moving on - for details see: {params.wd}/{log.stderr}" 1>> {params.wd}/{log.stdout}
         fi
  
-	#if the expected final assembly exists, get a copy
+    	#if the expected final assembly exists, get a copy
         if [ -f MitoFlex/MitoFlex.result/MitoFlex.picked.fa ]
         then
-            cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
-            cp {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+            if [ $(grep "^>" MitoFlex/MitoFlex.result/MitoFlex.picked.fa | wc -l) -eq 1 ]
+            then
+                cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+                cp {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+            else
+                echo -e "\\n#### [$(date)]\\tmitoflex returned mutliple assemblies - don't know which one to pick - moving on" 1>> {params.wd}/{log.stdout}
+                touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
+            fi
         else
             echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 1>> {params.wd}/{log.stdout}
             touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
         fi
 
-	touch {params.wd}/{output.ok}
+	    touch {params.wd}/{output.ok}
         """

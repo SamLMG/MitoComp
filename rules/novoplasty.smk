@@ -52,26 +52,22 @@ rule NOVOplasty:
         """
         if [[ ! -d output/gathered_assemblies/ ]]; then mkdir output/gathered_assemblies/; fi
         WD=$(pwd)
-	# if novoplasty was run before, remove the previous run
-	if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
+	    # if novoplasty was run before, remove the previous run
+	    if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
         mkdir -p {params.outdir}
         cd {params.outdir}
 
-	# run novoplasty - capture returncode, so if it fails, the pipeline won't stop
+	    # run novoplasty - capture returncode, so if it fails, the pipeline won't stop
         NOVOPlasty.pl -c $WD/{input.config} 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
-	# find the expected final assembly file
+    	# find the expected final assembly file
         final_fasta=$(find ./ -name "Circularized_assembly*")
-	# check if the search returned only one file and copy if yes
-        if [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
-        then
-            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta 
-            cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.novoplasty.fasta
-	elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -eq 0 ]
+    	# check if the variable is empty
+        if [[ -z $final_fasta ]]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
             touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
@@ -79,7 +75,11 @@ rule NOVOplasty:
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
             touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
+        elif [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
+        then
+            cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta 
+            cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.novoplasty.fasta
         fi
 
-	touch $WD/{output.ok}
+	    touch $WD/{output.ok}
         """
