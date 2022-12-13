@@ -70,7 +70,7 @@ rule MITObim:
         then
             cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.mitobim.fasta
             cp $WD/{params.outdir}/$final_fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitobim.fasta
-
+        fi
         touch $WD/{output.ok}       
         """
 
