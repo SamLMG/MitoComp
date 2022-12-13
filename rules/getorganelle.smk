@@ -48,12 +48,13 @@ rule get_organelle:
         if [ $returncode -gt 0 ]
         then
             echo -e "\\n#### [$(date)]\\tgetorganelle exited with an error - moving on - for details see: $(pwd)/{log.stderr}" 1>> {log.stdout}
+            touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
         fi
 
         #if the expected final assembly exists, get a copy
-        if [[ -d  $(pwd)/{params.outdir} ]]
+        if [[ -d $(pwd)/{params.outdir} ]]
         then #check first of folder exists in case get_organelle exits with the wrong exit code.
-		    final_fasta=$(ls $(pwd)/{params.outdir}/*.fasta)
+		    final_fasta=$(find $(pwd)/{params.outdir}/ -name "*.fasta")
 	    else
 		    final_fasta=""
 	    fi
