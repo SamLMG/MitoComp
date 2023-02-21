@@ -42,7 +42,7 @@ rule fastqdump:
 
 		# cleanup
 		rm tmp/sra/{params.accession}.sra
-        """
+		"""
 
 rule prep_local_reads:
 	input:
