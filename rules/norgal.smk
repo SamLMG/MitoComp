@@ -36,16 +36,32 @@ rule norgal:
             echo -e "\\n#### [$(date)]\\tnorgal exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
-	#if the expected final assembly exists, get a copy
-        if [ -f $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa ]
+        #if the expected final assembly exists, get a copy
+        final_fasta=$(find $(pwd)/{params.outdir}/ -name "circular.candidate.fa")
+        # check if the search returned only one file and copy if yes
+        if [[ -z $final_fasta ]]
         then
-            cp $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta
-            cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.norgal.fasta
-	else
-            echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 1>> $WD/{log.stdout} 
-            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta.missing 
+            echo -e "\\n#### [$(date)]\\tnorgal has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
+            touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta.missing
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
+        then
+            cp $final_fasta {params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta
+            cp $final_fasta output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.norgal.fasta
+        else
+            echo -e "\\n#### [$(date)]\\tnorgal seems to have produced multiple circularized assemblies or assemblies containing multiple sequences - don't know which to pick - moving on" 1>> {log.stdout}
+            touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta.missing
         fi
+        touch $WD/{output.ok}
 
-	touch {output.ok}
+	##if the expected final assembly exists, get a copy
+        #if [ -f $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa ]
+        #then
+        #    cp $WD/output/{wildcards.id}/assemblies/{wildcards.sub}/norgal/run/circular.candidate.fa $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta
+        #    cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.norgal.fasta
+	#else
+        #    echo -e "\\n#### [$(date)]\\tnorgal did not find a circular candidate assembly - moving on" 1>> $WD/{log.stdout} 
+        #    touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.norgal.fasta.missing 
+        #fi
+	#touch {output.ok}
         """
 

@@ -54,25 +54,35 @@ rule get_organelle:
         #if the expected final assembly exists, get a copy
         if [[ -d $(pwd)/{params.outdir} ]]
         then #check first of folder exists in case get_organelle exits with the wrong exit code.
-		    final_fasta=$(find $(pwd)/{params.outdir}/ -name "*.fasta")
-	    else
-		    final_fasta=""
-	    fi
-	    # check if the search returned only one file and copy if yes -- also check only 1 sequence in final fasta
+            final_fasta=$(find $(pwd)/{params.outdir}/ -maxdepth 1 -name "*.fasta")
+	    #else
+	    #final_fasta=""
+        fi
+        # check if the search returned only one file and copy if yes -- also check only 1 sequence in final fasta
         if [[ -z $final_fasta ]] 
         then
             echo -e "\\n#### [$(date)]\\tgetorganelle has not produced the final assembly - moving on" 1>> {log.stdout}
             touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
-        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -gt 1 ]
-        then 
-            echo -e "\\n#### [$(date)]\\tgetorganelle seems to have produced multiple assemblies - don't know which to pick - moving on" 1>> {log.stdout}
-            touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
+        then
+            cp $final_fasta {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+            cp $final_fasta output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta
         else
-            if [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
-            then 
-                cp $final_fasta {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
-                cp $final_fasta output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta
-            fi
+            echo -e "\\n#### [$(date)]\\tgetorganelle seems to have produced multiple assemblies or assemblies containing multiple sequences - don't know which to pick - moving on" 1>> {log.stdout}
+            touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
         fi
         touch {output.ok}
+        
+        #elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -gt 1 ]
+        #then 
+        #    echo -e "\\n#### [$(date)]\\tgetorganelle seems to have produced multiple assemblies - don't know which to pick - moving on" 1>> {log.stdout}
+        #    touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta.missing
+        #else
+        #    if [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
+        #    then 
+        #        cp $final_fasta {params.outdir}/../{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+        #        cp $final_fasta output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.getorganelle.fasta
+        #    fi
+        #fi
+        #touch {output.ok}
         """

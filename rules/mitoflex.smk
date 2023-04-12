@@ -54,21 +54,38 @@ rule mitoflex:
             echo -e "\\n#### [$(date)]\\tmitoflex exited with an error - moving on - for details see: {params.wd}/{log.stderr}" 1>> {params.wd}/{log.stdout}
         fi
  
-    	#if the expected final assembly exists, get a copy
-        if [ -f MitoFlex/MitoFlex.result/MitoFlex.picked.fa ]
+        #if the expected final assembly exists, get a copy
+        #final_fasta=$(find ./ -name "MitoFlex.picked.fa")
+        final_fasta=$(find -name "MitoFlex.picked.fa")
+        # check if the search returned only one file and copy if yes
+        if [[ -z $final_fasta ]]
         then
-            if [ $(grep "^>" MitoFlex/MitoFlex.result/MitoFlex.picked.fa | wc -l) -eq 1 ]
-            then
-                cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
-                cp {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
-            else
-                echo -e "\\n#### [$(date)]\\tmitoflex returned mutliple assemblies - don't know which one to pick - moving on" 1>> {params.wd}/{log.stdout}
-                touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
-            fi
+            echo -e "\\n#### [$(date)]\\tmitoflex has not produced a final assembly - moving on" 1>> {params.wd}/{log.stdout}
+            touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing
+        elif [ "$(echo $final_fasta | tr ' ' '\\n' | wc -l)" -eq 1 ] && [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
+        then
+            cp {params.wd}/{params.outdir}/$final_fasta {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+            cp {params.wd}/{params.outdir}/$final_fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
         else
-            echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 1>> {params.wd}/{log.stdout}
-            touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
+            echo -e "\\n#### [$(date)]\\tmitoflex seems to have produced multiple assemblies or assemblies containing multiple sequences - don't know which to pick - moving on" 1>> {params.wd}/{log.stdout}
+            touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing
         fi
+        touch {params.wd}/{output.ok}
 
-	    touch {params.wd}/{output.ok}
+    	##if the expected final assembly exists, get a copy
+        #if [ -f MitoFlex/MitoFlex.result/MitoFlex.picked.fa ]
+        #then
+        #    if [ $(grep "^>" MitoFlex/MitoFlex.result/MitoFlex.picked.fa | wc -l) -eq 1 ]
+        #    then
+        #        cp MitoFlex/MitoFlex.result/MitoFlex.picked.fa {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+        #        cp {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta {params.wd}/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.mitoflex.fasta
+        #    else
+        #        echo -e "\\n#### [$(date)]\\tmitoflex returned mutliple assemblies - don't know which one to pick - moving on" 1>> {params.wd}/{log.stdout}
+        #        touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
+        #    fi
+        #else
+        #    echo -e "\\n#### [$(date)]\\tmitoflex did not pick a final assembly - moving on" 1>> {params.wd}/{log.stdout}
+        #    touch {params.wd}/{params.outdir}/{wildcards.id}.{wildcards.sub}.mitoflex.fasta.missing 
+        #fi
+        #touch {params.wd}/{output.ok}
         """
