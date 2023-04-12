@@ -176,6 +176,16 @@ def pick_mode(wildcards):
         for f in pull_list:
             print(f)
         return pull_list
+    elif os.environ["RUNMODE"] == "assembly":
+        for i in IDS:
+            for s in sub:
+                for a in Assembler:    
+                    pull_list.append("output/"+i+"/assemblies/"+s+"/"+a+"/"+a+".ok")
+                    #pull_list.append("output/gathered_assemblies/"+i+"."+s+"."+a+".fasta")
+        print("Mode is assembly: ", len(pull_list), "input files.")
+        for f in pull_list:
+            print(f)
+        return pull_list
     else:
         pull_list = []
         #pull_list = ["output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.CCT.done"]
