@@ -1,8 +1,8 @@
 # MitoComp – A mitochondrial genome assembley, annotation and comparison pipeline.
 
-The MitoComp pipeline is designed with two distinct aims. First, to provide a robust and user-friendly approach to assembling mitochondrial genomes from short-read WGS using five third-party, command-line based assembly tools. Second, MitoComp aims to provide an objective comparison of these assembly tools and how they work with different datasets. A rulegraph outlining the steps MitoComp takes is shown below.
+The MitoComp pipeline is designed with two distinct aims. First, to provide a robust and user-friendly approach to assembling mitochondrial genomes from short-read WGS using five third-party, command-line based assembly tools. Second, MitoComp aims to provide an objective comparison of these assembly tools and how well they work with different datasets. A rulegraph outlining the steps MitoComp takes is shown below.
 
-WGS data is first provided by the user in one of two ways: i) by specifying the path to local reads in fastq.gz format or ii) providing the accession number of a short-read archive (SRA) of public data from genbank and downloading it in fastq.gz format using the fastqdump tool ([https://github.com/ncbi/sra-tools](https://github.com/ncbi/sra-tools)). MitoComp then trims ([https://github.com/timflutre/trimmomatic](https://github.com/timflutre/trimmomatic)) , subsamples ([https://github.com/lh3/seqtk](https://github.com/lh3/seqtk)), and interleaves ([https://github.com/BioInfoTools/BBMap](https://github.com/BioInfoTools/BBMap)) the datasets prior to assembling mitogenomes using:
+WGS data is first provided by the user in one of two ways: i) by specifying the path to local reads in fastq.gz format or ii) providing the accession number of a short-read archive (SRA) of public data from genbank and downloading it in fastq.gz format using the fastqdump tool ([https://github.com/ncbi/sra-tools](https://github.com/ncbi/sra-tools)). MitoComp then trims ([https://github.com/timflutre/trimmomatic](https://github.com/timflutre/trimmomatic)), subsamples ([https://github.com/lh3/seqtk](https://github.com/lh3/seqtk)), and interleaves ([https://github.com/BioInfoTools/BBMap](https://github.com/BioInfoTools/BBMap)) the datasets prior to assembling mitogenomes using the the five following assembly programs:
 
 - Mitoflex ([https://github.com/Prunoideae/MitoFlex](https://github.com/Prunoideae/MitoFlex))
 - GetOrganelle ([https://github.com/Kinggerm/GetOrganelle](https://github.com/Kinggerm/GetOrganelle))
@@ -10,11 +10,11 @@ WGS data is first provided by the user in one of two ways: i) by specifying the 
 - Norgal ([https://bitbucket.org/kosaidtu/norgal/src/master/](https://bitbucket.org/kosaidtu/norgal/src/master/))
 - MITObim ([https://github.com/chrishah/MITObim](https://github.com/chrishah/MITObim))
 
-The user may of course choose to use just one, all or any combination of these assemblers. Furthermore, the user may choose to the level to which the raw data are subsampled or instead choose to skip this step and use the entire dataset. The resulting assemblies are then annotated via MITOS ([https://gitlab.com/Bernt/MITOS](https://gitlab.com/Bernt/MITOS)) and aligned with one another for evaluation of inconsistencies between algorithms and A comparison with regards to speed, CPU usage, quality and annotation completeness is performed. MitoComp uses the pipeline management system Snakemake with all software tools containerized via Docker/Singularity.
+The user may of course choose to use just one, all or any combination of these assemblers. Furthermore, the user may choose to the level to which the raw data are subsampled or instead choose to skip this step and use the entire dataset. The resulting assemblies are then annotated via MITOS ([https://gitlab.com/Bernt/MITOS](https://gitlab.com/Bernt/MITOS)). All assemblies for a given sample-ID are then rolled to a common starting point and reverse complemented if need be. They are then aligned with one another for evaluation of inconsistencies between algorithms using Clustalo v.1.2.4 (Sievers et al., 2011). A second annotation (again using MITOS v.1.0.5) is then run on the rolled assemblies to update the annotation coordinates which are then converted to gbk format using Emboss v.6.6.0’s “seqret” module (https://www.ebi.ac.uk/Tools/sfc/emboss_seqret). CGView Comparison Tool (CCT) v.1.0.1 (https://github.com/paulstothard/cgview_comparison_tool) is used to plot annotated assemblies and compare regions of similarity and difference between different assemblies. Finally, all assemblies, annotation files and maps  are gathered into a html report, generated with R Markdown v.4.0.3 (Baumer & Udwin, 2015). MitoComp uses the pipeline management system Snakemake with all software tools containerized via Docker/Singularity.
 
 ## Obtaining and running MitoComp
 
-MitoComp is primarily designed to run on HPC clusters using either a SGE or SLURM job scheduling system. It may also be run on a desktop computer using Linux but due to the computationally intensive nature of many of the steps involved, this is not optimal. Other than this MitoComp&#39;s only prerequisites are:
+MitoComp is primarily designed to run on HPC clusters using a TORQUE, SGE or SLURM job scheduling system. It may also be run on a desktop computer using Linux but due to the computationally intensive nature of many of the steps involved, this is not optimal. Other than this MitoComp&#39;s only prerequisites are:
 
 1. A singularity installation (tested with singularity version 3.5.2)
 2. A snakemake installation (tested with snakemake 6.0.2; snakemake can be installed through conda using the following commands)
@@ -22,7 +22,7 @@ MitoComp is primarily designed to run on HPC clusters using either a SGE or SLUR
 ```
 conda install -c conda-forge mamba
 
-mamba create -c conda-forge -c bioconda -n snakemake snakemake
+mamba create -c conda-forge -c bioconda -n snakemake snakemake=6.0.2
 ```
 ```
 conda activate snakemake
@@ -56,7 +56,7 @@ ID,forward,reverse,seed,SRA,Clade,Code,novoplasty_kmer,Read_length,Adapter,Type,
 
 - ID: This column refers to the name of the sample and may be freely completed by the user but we advise against the use of most special characters including &quot;.&quot; and instead advise users to use &quot;_&quot;
 - forward, reverse: If the user wishes to provide their own WGS data, the paths to both forward and reverse reads should be provided in the corresponding columns. These reads should be in fastq format and gzipped.
-- seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the coxI gene is used. The path to this seed should be specified in the seed column. This may be done using entrez-direct (which may be installed via conda) and executing the following command where the -query corresponds to the sequence's accession number and filename is defined by the user.
+- seed: For the assemeblers MITObim, NOVOplasty and GetOrganelle a seed sequence from the species in question is required. This may be any mitochondrial sequence but in most cases the i*coxI* gene is used. The path to this seed should be specified in the seed column. This may be done using entrez-direct (which may be installed via conda) and executing the following command where the -query corresponds to the sequence's accession number and filename is defined by the user.
 
 ```
 esearch -db nucleotide -query "MF420392.1" | efetch -format fasta > seeds/D.rerio_coxI.fasta
@@ -134,6 +134,14 @@ Finally, it may occur that one step of the pipeline fails causing subsequent job
 
 ```
 ./MitoComp --reset -t slurm
+```
+
+Please note this command also requires the relevant submission system to be set via the "-t" flag.
+
+Finally, for users working with their own raw read data, it is important to ensure Singularity has access to the directory where these files are saved. There are two solutions to this. One may saved the reads within the working directory (i.e. after cloning the repository save the files within the directory MitoComp/). Alternatively one may set the bind point for singularity in the submission command to a directory upstream of where the files are located. This may be done using the flag "-i" to pass arguments to singularity, then " "-B" /bind/point/" to set the bind point using an absolute path. An example of this submission command would be:  
+
+```
+./MitoComp -t sge -m all -c data/cluster-config-SGE.yaml.template -i "-B /bind/point/upstream/"
 ```
 
 A rulegraph showing the order in which jobs will run is shown below:
