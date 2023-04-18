@@ -49,7 +49,7 @@ overview_data <- overview_data[order(overview_data$Species), ]
 overview_data <- cbind("Genome Map" = "map", overview_data)
 overview_data <- cbind("Bed file" = "bed", overview_data)
 overview_data <- cbind("assembly" = "assembly", overview_data)
-write.csv(file="test", overview_data)
+#write.csv(file="test", overview_data)
 
 #kable(overview_data, caption = "Overview of run", booktabs=T)%>% row_spec(0,bold=TRUE, angle=0) %>% kable_styling(latex_options = c("HOLD_position", "repeat_header", "striped"), font_size=7, full_width = F)
 
