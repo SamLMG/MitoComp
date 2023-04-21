@@ -86,7 +86,8 @@ rule CCT:
 	set +o pipefail;
 	#set +u;
         length=$(awk -F'\t' '{{if ($1 == "{params.id}" && $2 == "{params.sub}" && $3 == "{params.assembler}" && $4 > 1000){{print $4;}}}}' output/stats/Genes.txt)
-        if [ -f output/{params.id}/annotation/compare/CCT/{params.id}.{params.sub}.{params.assembler}.genbank ] && [ $length > 1000 ]
+        #echo "Length is" $length
+        if [ -f output/{params.id}/annotation/compare/CCT/{params.id}.{params.sub}.{params.assembler}.genbank ] && [ $length -gt 1000 ]
         then
         	cd {params.outdir}
 		build_blast_atlas.sh -i {params.id}.{params.sub}.{params.assembler}.genbank && returncode=$? || returncode=$? #> /dev/null 2>&1 
