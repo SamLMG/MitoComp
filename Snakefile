@@ -25,7 +25,6 @@ include: "rules/CCT.smk"
 include: "rules/report.smk"
 
 
-localrules: all, setup_mitoflex_db, NOVOconfig, gene_positions, gbk_prep, CCT, annotation_stats
 rule all:
 	input:
 ####                expand("trimmed/trim_{id}.ok", id=IDS, sub=sub, assembler=Assembler),
