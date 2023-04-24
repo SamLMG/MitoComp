@@ -3,11 +3,6 @@ import pandas as pd
 
 configfile: "data/config.yaml"
 sample_data = pd.read_table(config["samples"], sep=",").set_index("ID", drop=False)
-#threads = pd.read_table(config["threads"], sep="\t").set_index("threads", drop=False)
-#Assembler = ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"] 
-
-#sub = [5000000, 10000000, 20000000, "all"]
-#sub = config["sub"]
 
 include: "rules/functions.smk"
 include: "rules/download.smk"
@@ -26,17 +21,8 @@ include: "rules/report.smk"
 
 
 rule all:
-	input:
-####                expand("trimmed/trim_{id}.ok", id=IDS, sub=sub, assembler=Assembler),
-####                expand("assemblies/{assembler}/{id}/{sub}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler),
-####		expand(rules.annotation_stats.output, id=IDS, sub=sub, assembler=Assembler),
-####		expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler),
-####                expand(rules.align.output, id=IDS, sub=sub, assembler=Assembler),
-####                "compare/alignment/mitos2/gene_positions.done",
-####		expand(rules.CCT.output, id=IDS, sub=sub, assembler=Assembler)
-####                expand("compare/CGview/{id}.{assembler}.{sub}.cgview.done", id=IDS, sub=sub, assembler=Assembler)
-####                expand("compare/CCT/{id}.CCT.done", id=IDS) 
-		"output/report/report.html"
+    input:
+        "output/report/report.html"
 rule assembly_only:
-	input:
-		expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)
+    input:
+        expand("output/{id}/assemblies/{sub}/{assembler}/{assembler}.ok", id=IDS, sub=sub, assembler=Assembler)

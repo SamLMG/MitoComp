@@ -29,18 +29,15 @@ with open("output/stats/RC_assemblies.txt", 'r') as RC_file:
                 with open(fasta, 'r') as fasta_file:
                         with open(f"{fasta_prefix}_RC.fasta", 'w') as out_file:
                                for seq in fasta_file:
-                                #print(rev_comp(seq))
                                     print(rev_comp(seq), file=out_file)
-        #for fasta in RC_file:
 
 with open("output/stats/forward_assemblies.txt", 'r') as FA_file:
-	for fline in FA_file:
-		if sampleid not in fline:
+        for fline in FA_file:
+                if sampleid not in fline:
                       print(sampleid, "was not found in line of forward assemblies. Will skip this line")
                       continue
-		ffasta = fline.rstrip()
-		dest_ffasta = ffasta.split("/")[4]
-		x = ("output", ffasta.split("/")[1], "annotation/alignment/clustalo")
-		dest_dir = '/'.join(x)
-		shutil.copy(ffasta, f"{dest_dir}/{dest_ffasta}")
-		#shutil.copy(ffasta, f"output/", ffasta.split("/")[2], "annotation/alignment/clustalo/{dest_ffasta}")
+                ffasta = fline.rstrip()
+                dest_ffasta = ffasta.split("/")[4]
+                x = ("output", ffasta.split("/")[1], "annotation/alignment/clustalo")
+                dest_dir = '/'.join(x)
+                shutil.copy(ffasta, f"{dest_dir}/{dest_ffasta}")

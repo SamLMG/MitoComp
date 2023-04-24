@@ -7,9 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#knitr::opts_knit$set(echo = TRUE)
-#require("knitr")
-#knitr::opts_knit$set(root.dir = '/binfl/lv71312/leeming/MitoComp')
 library(kableExtra)
 library(magrittr)
 ```
@@ -32,16 +29,11 @@ $(document).ready(function(){
 ## Overview
 
 ```{r, echo=F}
-#print(getwd())
 wd <- getwd()
-#print(wd)
 prefix <- paste0(wd, "/../output/report/")
-#setwd(paste(wd,"/../output/report", sep=""))
-#print(wd)
 
 options(scipen=999)
 
-#overview_data_file <- "/output/compare/report/Genes.txt"
 overview_data_file <- paste0(prefix,"Genes.txt")
 
 overview_data <- read.csv(overview_data_file, sep="\t", header=T, row.names = NULL)
@@ -49,9 +41,7 @@ overview_data <- overview_data[order(overview_data$Species), ]
 overview_data <- cbind("Genome Map" = "map", overview_data)
 overview_data <- cbind("Bed file" = "bed", overview_data)
 overview_data <- cbind("assembly" = "assembly", overview_data)
-#write.csv(file="test", overview_data)
 
-#kable(overview_data, caption = "Overview of run", booktabs=T)%>% row_spec(0,bold=TRUE, angle=0) %>% kable_styling(latex_options = c("HOLD_position", "repeat_header", "striped"), font_size=7, full_width = F)
 
 paint <- function(y) {
   cols <- c()
@@ -100,7 +90,6 @@ get_map_path <- function(x) {
       paths <- c(paths,"map not found")
     }
   }
-  #print(paths)
   return(paths)
 }
 
@@ -120,7 +109,6 @@ get_map_path_link <- function(x) {
       paths <- c(paths,"")
     }
   }
-  #print(paths)
   return(paths)
 }
 
@@ -135,7 +123,6 @@ get_assembly_path <- function(x) {
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
     
   }
-  #print(paths)
   return(paths)
 }
 
@@ -150,7 +137,6 @@ get_assembly_path_hover <- function(x) {
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"assembly not found")}
     
   }
-  #print(paths)
   return(paths)
 }
 
@@ -164,7 +150,6 @@ get_bed_path <- function(x) {
     filep <- paste("bedfiles/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths,"")}
   }
-  #print(paths)
   return(paths)
 }
 
@@ -178,27 +163,15 @@ get_bed_path_hover <- function(x) {
     filep <- paste("bedfiles/", filep, sep="")
     if (file.exists(paste0(prefix,filep)) ==T){ paths <- c(paths, filep)} else { paths <- c(paths," bedfile not found")}
   }
-  #print(paths)
   return(paths)
 }
 
 
 
 overview_data[3] <- lapply(overview_data[3], function(x) { text_spec(x,bold=T, underline = T, popover = spec_popover(get_map_path(x), trigger="hover"), link=get_map_path_link(x))})
-#overview_data[3] <- lapply(overview_data[3], function(x) { cell_spec(get_new_popover(x)) })
 overview_data[1] <- lapply(overview_data[1], function(x) { cell_spec(x,bold=T, underline =T, popover= get_assembly_path_hover(x), link = get_assembly_path(x)) })
 overview_data[2] <- lapply(overview_data[2], function(x) { cell_spec(x,bold=T, underline=T, link = get_bed_path(x), popover=get_bed_path_hover(x)) })
 kbl(overview_data, escape=F, self_contained = T) %>% kable_paper("hover", full_width = F, position="left")
-
-#%>% scroll_box(width = "1000px", height = "900px")
-
-#?kable_paper()
-#spec_popover
-#%>%row_spec(0, angle = -45)
-
-#?row_spec()
-#%>% column_spec(7:10,bold = T, color="white", background=spec_color(overview_data[,1:8]))
-#cell_spec
 
 ```
 

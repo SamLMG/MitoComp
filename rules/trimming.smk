@@ -1,29 +1,21 @@
 def trimin_forward(wildcards):
-	if sample_data.loc[(wildcards.id), ["SRA"]].any():
-		return "output/{id}/reads/downloaded_reads/"+wildcards.id+"_1.fastq.gz"
-	else:
-		return "output/{id}/reads/local_reads/"+wildcards.id+"_1.fastq.gz"
+        if sample_data.loc[(wildcards.id), ["SRA"]].any():
+            return "output/{id}/reads/downloaded_reads/"+wildcards.id+"_1.fastq.gz"
+        else:
+            return "output/{id}/reads/local_reads/"+wildcards.id+"_1.fastq.gz"
 def trimin_reverse(wildcards):
-	if sample_data.loc[(wildcards.id), ["SRA"]].any():
-		return "output/{id}/reads/downloaded_reads/"+wildcards.id+"_2.fastq.gz"
-	else:
-		return "output/{id}/reads/local_reads/"+wildcards.id+"_2.fastq.gz"
+        if sample_data.loc[(wildcards.id), ["SRA"]].any():
+            return "output/{id}/reads/downloaded_reads/"+wildcards.id+"_2.fastq.gz"
+        else:
+            return "output/{id}/reads/local_reads/"+wildcards.id+"_2.fastq.gz"
 
-	
+        
 
 
 rule trimmomatic:
     input:
         f = trimin_forward,
         r = trimin_reverse
-#        f = rules.fastqdump.output.f,
-#        r = rules.fastqdump.output.r
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        name="trimmomatic",
-#        nnode="-N 1"
     output:
         fout = "output/{id}/reads/trimmed/{id}_1P_trim.fastq.gz",
         funp = "output/{id}/reads/trimmed/{id}_1P_unpaired.fastq.gz",
@@ -45,10 +37,10 @@ rule trimmomatic:
         "docker://reslp/trimmomatic:0.38"
     shell:
         """
-	if [[ ! -f {params.adapter} ]]; then
-		echo "Adpater file not found. Please check your config files." >&2
-		exit 1
-	fi
+        if [[ ! -f {params.adapter} ]]; then
+            echo "Adpater file not found. Please check your config files." >&2
+            exit 1
+        fi
         trimmomatic PE -threads {threads} {input.f} {input.r} {output.fout} {output.funp} {output.rout} {output.runp} ILLUMINACLIP:{params.adapter}:{params.seed_mismatches}:{params.palindrome_clip}:{params.simple_clip} LEADING:{params.quality} TRAILING:{params.quality} SLIDINGWINDOW:{params.windowsize}:{params.required_quality} MINLEN:{params.minlength}
         touch {output.ok}
         """

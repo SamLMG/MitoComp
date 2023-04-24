@@ -3,12 +3,6 @@ rule interleave:
         ok = rules.subsample.output.ok,
         f = rules.subsample.output.f,
         r = rules.subsample.output.r
-#    resources:
-#        qos="normal_0064",
-#        partition="mem_0064",
-#        mem="10G",
-#        name="interleave",
-#        nnode="-N 1"
     threads: config["threads"]["interleave"]
     output:
         "output/{id}/reads/interleave/{sub}/{id}_{sub}_interleaved.fastq"
@@ -16,21 +10,14 @@ rule interleave:
         "docker://reslp/bbmap:38.90"
     shell:
         """
-	reformat.sh in1={input.f} in2={input.r} out={output}
-	"""
+        reformat.sh in1={input.f} in2={input.r} out={output}
+        """
 
 rule MITObim:
     input:
         rules.interleave.output
     output:
-#        fasta = "assemblies/mitobim/{id}/{sub}/{id}.mitobim.{sub}.fasta",
         ok = "output/{id}/assemblies/{sub}/mitobim/mitobim.ok"
-#    resources:
-#        qos="normal_0128",
-#        partition="mem_0128",
-#        mem="60G",
-#        name="MITObim",
-#        nnode="-N 1"
     params:
         id = "{id}",
         seed = get_seed,
@@ -42,7 +29,6 @@ rule MITObim:
     benchmark: "output/{id}/assemblies/{sub}/mitobim/{id}.{sub}.mitobim.benchmark.txt"
     singularity:
         "docker://chrishah/mitobim:v.1.9.1"
-#    shadow: "shallow"
     threads: config["threads"]["mitobim"] 
     shell:
         """
@@ -51,7 +37,7 @@ rule MITObim:
         if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
         mkdir -p {params.outdir}
         cd {params.outdir}
-	
+        
         # run mitobim - capture returncode, so if it fails, the pipeline won't stop
         MITObim.pl -sample {params.id} -ref seed -readpool $WD/{input} --quick $WD/{params.seed} -end 100 --paired --clean --NFS_warn_only 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
@@ -61,7 +47,7 @@ rule MITObim:
 
         #if the expected final assembly exists, get a copy
         final_fasta=$(find ./ -name "*noIUPAC.fasta")
-	# check if the search returned only one file and copy if yes
+        # check if the search returned only one file and copy if yes
         if [[ -z $final_fasta ]]
         then
             echo -e "\\n#### [$(date)]\\tmitobim has not produced a final assembly - moving on" 1>> $WD/{log.stdout}

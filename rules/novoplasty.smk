@@ -29,44 +29,33 @@ rule NOVOplasty:
         config = rules.NOVOconfig.output,
         ok = rules.subsample.output.ok
     output: 
-#       fasta = "assemblies/{assembler}/{id}/{sub}/Circularized_assembly_1_{id}_{sub}_novoplasty.fasta",
         ok = "output/{id}/assemblies/{sub}/novoplasty/novoplasty.ok"
     params:
         outdir = "output/{id}/assemblies/{sub}/novoplasty/run"
-#    resources:
-#        qos="normal_binf -C binf",
-#        partition="binf",
-#        mem="100G",
-#        name="NOVOplasty",
-#        nnode="-N 1"
     log:
         stdout = "output/{id}/assemblies/{sub}/novoplasty/stdout.txt",
         stderr = "output/{id}/assemblies/{sub}/novoplasty/stderr.txt"
     benchmark: "output/{id}/assemblies/{sub}/novoplasty/{id}.{sub}.novoplasty.benchmark.txt"
     threads: config["threads"]["novoplasty"] 
-#    shadow: "shallow"
-#    conda:
-#       "envs/novoplasty.yml"
     singularity: "docker://reslp/novoplasty:4.2"
     shell:
         """
         if [[ ! -d output/gathered_assemblies/ ]]; then mkdir output/gathered_assemblies/; fi
         WD=$(pwd)
-	    # if novoplasty was run before, remove the previous run
-	    if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
+            # if novoplasty was run before, remove the previous run
+            if [ -d {params.outdir} ]; then rm -rf {params.outdir}; fi
         mkdir -p {params.outdir}
         cd {params.outdir}
 
-	    # run novoplasty - capture returncode, so if it fails, the pipeline won't stop
         NOVOPlasty.pl -c $WD/{input.config} 1> $WD/{log.stdout} 2> $WD/{log.stderr} && returncode=$? || returncode=$?
         if [ $returncode -gt 0 ]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty exited with an error - moving on - for details see: $WD/{log.stderr}" 1>> $WD/{log.stdout}
         fi
 
-    	# find the expected final assembly file
+        # find the expected final assembly file
         final_fasta=$(find ./ -name "Circularized_assembly*")
-    	# check if the variable is empty
+        # check if the variable is empty
         if [[ -z $final_fasta ]]
         then
             echo -e "\\n#### [$(date)]\\tnovoplasty has not produced a circularized assembly - moving on" 1>> $WD/{log.stdout}
@@ -80,14 +69,4 @@ rule NOVOplasty:
             touch {params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
         fi
         touch $WD/{output.ok}
-        #elif [ "$(echo $final_fasta | tr ' ' '\\n' | grep -v "^$" | wc -l)" -gt 1 ]
-        #then
-        #    echo -e "\\n#### [$(date)]\\tnovoplasty seems to have produced multiple circularized assemblies - don't know which to pick - moving on" 1>> $WD/{log.stdout}
-        #    touch $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta.missing
-        #elif [ $(grep "^>" $final_fasta | wc -l) -eq 1 ]
-        #then
-        #    cp $WD/{params.outdir}/$final_fasta $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta 
-        #    cp $WD/{params.outdir}/../{wildcards.id}.{wildcards.sub}.novoplasty.fasta $WD/output/gathered_assemblies/{wildcards.id}.{wildcards.sub}.novoplasty.fasta
-        #fi
-        #touch $WD/{output.ok}
         """

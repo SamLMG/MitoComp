@@ -30,28 +30,22 @@ rule second_mitos:
                 cp output/{params.id}/annotation/alignment/clustalo/{params.id}.{params.sub}.{params.assembler}.rolled.*.fasta output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
                 fi
         else
-	        echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
+            echo "Mitos could not be run because the input file is missing. Maybe the assembler did not produce output?" >> {log.stderr}
         fi
         if [[ -f {params.outdir}/result.bed ]]
-	then
-		awk '{{$1= "{params.id}.{params.sub}.{params.assembler}"; print $0}}' {params.outdir}/result.bed > {params.outdir}/tmp && mv {params.outdir}/tmp {params.outdir}/result.bed
-		sed -i 's/ /\t/g' {params.outdir}/result.bed 
-		sed -i 's#^>#>{params.id}.{params.sub}.{params.assembler}#g' output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
+        then
+            awk '{{$1= "{params.id}.{params.sub}.{params.assembler}"; print $0}}' {params.outdir}/result.bed > {params.outdir}/tmp && mv {params.outdir}/tmp {params.outdir}/result.bed
+            sed -i 's/ /\t/g' {params.outdir}/result.bed 
+            sed -i 's#^>#>{params.id}.{params.sub}.{params.assembler}#g' output/{params.id}/annotation/alignment/{params.id}.{params.sub}.{params.assembler}.final.fasta
         fi
         touch {output}
         """
+
 rule gene_positions:
     input:
-        #rules.second_mitos.output
-        #expand(rules.second_mitos.output, id=IDS, sub=sub, assembler=Assembler)
         pick_mitos2
-#        expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", zip, id=IDS, sub=sub, assembler=Assembler) 
-#        expand("output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done", id=IDS, sub=sub, assembler=Assembler) 
-        #"output/{id}/annotation/second_mitos/{id}.{sub}.{assembler}.second_mitos.done"
-        #"compare/alignment/mitos2/mitos2_paths.txt"
     output:
         "output/{id}/annotation/compare/gene_positions.done"
-        #positions = "compare/alignment/mitos2/Gene_positions.txt"
     singularity:
         "docker://python:3.7"
     shell:

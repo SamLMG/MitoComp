@@ -1,7 +1,7 @@
 samples: "data/data.csv"
 
 Assembler: ["norgal", "getorganelle", "mitoflex", "novoplasty", "mitobim"]
-sub: ["5000000", "10000000"] #, "20000000", "all"]
+sub: ["5000000", "10000000", "20000000", "all"]
 
 threads:
     download: 2
