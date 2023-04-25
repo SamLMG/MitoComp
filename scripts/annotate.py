@@ -106,15 +106,15 @@ for assembly in assemblies:
 #get seq length from fasta - remove newline character present in some assemblies
     with open (Assembly_paths, 'r') as assembly_paths:
         seq_length = 0
-            for ap in assembly_paths:
-                ap = ap.strip("\n")
-                if assembly.split("/")[5] in ap:
-                    fasta = open(ap, 'r')
-                    for line in fasta:
-                        if line.startswith(">"):
-                            continue
-                        else:
-                            seq_length += len(line.strip("\n"))
+        for ap in assembly_paths:
+            ap = ap.strip("\n")
+            if assembly.split("/")[5] in ap:
+                fasta = open(ap, 'r')
+                for line in fasta:
+                    if line.startswith(">"):
+                        continue
+                    else:
+                        seq_length += len(line.strip("\n"))
 
     output_list.append(["\t".join(assembly.split("/")[5].split(".")), str(seq_length), str(len(found_genes)) + "/MAXGENECOUNT", str(len(found_rrnas)) + "/MAXRRNACOUNT", str(len(found_trnas)) + "/MAXTRNACOUNT", str(gene_counts).lstrip()])
 
