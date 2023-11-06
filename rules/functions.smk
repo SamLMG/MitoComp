@@ -11,12 +11,12 @@ def get_accession(wildcards):
 
 def get_seed(wildcards):
         seedfile = sample_data.loc[(wildcards.id), ["seed"]].values[0]
-        print(seedfile)
+        #now we make sure that seedfile string to avoid problems with nan
+        seedfile = str(seedfile)
         if os.path.exists(seedfile):
-            print("Found the file")
             return seedfile
         else:
-            print("The assemblers GetOrganelle, Novoplasty and Mitobim require a valid seed file. You don't seem to be providing one for sample: "+wildcards.id+".")
+            print("The assemblers GetOrganelle, Novoplasty and Mitobim require a valid seed file. You don't seem to be providing one ('"+seedfile+"') for sample: "+wildcards.id+". Please doublecheck the column 'seed' in your "+config["samples"]+".")
             os._exit(1)
 
 def get_clade(wildcards):
@@ -119,9 +119,6 @@ def pick_mode(wildcards):
                 for a in Assembler:
                     pull_list.append("output/"+i+"/annotation/compare/CCT/"+i+"."+s+"."+a+".CCT.done")
         PULL_LIST = pull_list
-        print(PULL_LIST)
         print("Mode is all: ", len(PULL_LIST), "input files.")
-        for f in PULL_LIST:
-            print(f)
         return PULL_LIST 
 
