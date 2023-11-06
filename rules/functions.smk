@@ -10,7 +10,14 @@ def get_accession(wildcards):
         return sample_data.loc[(wildcards.id), ["SRA"]].values[0]
 
 def get_seed(wildcards):
-        return sample_data.loc[(wildcards.id), ["seed"]].dropna().values[0]
+        seedfile = sample_data.loc[(wildcards.id), ["seed"]].values[0]
+        print(seedfile)
+        if os.path.exists(seedfile):
+            print("Found the file")
+            return seedfile
+        else:
+            print("The assemblers GetOrganelle, Novoplasty and Mitobim require a valid seed file. You don't seem to be providing one for sample: "+wildcards.id+".")
+            os._exit(1)
 
 def get_clade(wildcards):
         return sample_data.loc[(wildcards.id), ["Clade"]].dropna().values[0]
