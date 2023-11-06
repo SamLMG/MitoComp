@@ -1,6 +1,19 @@
-rule report:
+rule annotation_statsII:
     input:
         pick_mode
+    output:
+        done = "output/stats/annotation_statsII.done",
+    shell:
+        """
+        find ./output/*/annotation/alignment/clustalo/ -name "*.fasta" | cat > output/stats/assembly_pathsII.txt
+        find ./output/*/annotation/second_mitos/ -name "result.bed" | cat > output/stats/bed_pathsII.txt
+        scripts/annotate.py output/stats/bed_pathsII.txt output/stats/assembly_pathsII.txt output/stats/GenesII.txt
+        touch {output.done}
+        """
+
+rule report:
+    input:
+        rules.annotation_statsII.output
     output:
         "output/report/report.html"
     params:
@@ -43,7 +56,7 @@ rule report:
         cp $maps output/report/maps 2>/dev/null || :
                 
         # copy genes file
-        cp output/stats/Genes.txt output/report/Genes.txt
+        cp output/stats/GenesII.txt output/report/GenesII.txt
                         
         # create report
         Rscript -e 'rmarkdown::render("./scripts/report.Rmd")'

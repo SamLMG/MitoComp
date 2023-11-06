@@ -1,6 +1,6 @@
 rule gbk_prep:
     input:
-        rules.gene_positions.output
+        pick_mitos2
     output:
         "output/{id}/annotation/compare/CCT/{id}.{sub}.{assembler}.gbk.done"
     params:
