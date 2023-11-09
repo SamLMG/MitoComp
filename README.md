@@ -86,9 +86,8 @@ sub: ["all"]
 Or they may wish to run their datasets with all data and a subsample of 5 million reads.
 
 ```
-sub: ["all"]
+sub: ["all", "5000000"]
 ```
-
 
 The number of threads given to each rule can be set by the user in the config file. For instance,
 
@@ -122,7 +121,7 @@ ID,forward,reverse,SRA,seed,Clade,Code,novoplasty_kmer,Read_length,Adapter,Type,
 - Code: Some of the assemblers and MITOS require the genetic code of the chosen species which should be entered in the clade column. A list of genetic codes may be found here [https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c)
 - novoplasty_kmer: Novoplasty requires a k-mer length for assembly. Provide an uneven number here.
 - Read_length: Length of the provided reads. This is used for trimming.
-- Adapter: To perform adapter trimming, a relative path to a file with known adapter sequences should be provided here. These may be downloaded from [https://github.com/usadellab/Trimmomatic/tree/main/adapters]
+- Adapter: To perform adapter trimming, a relative path to a file with known adapter sequences should be provided here. These may be downloaded from https://github.com/usadellab/Trimmomatic/tree/main/adapters
 - Type: For GetOrganelle it is necessary to provide a database type here. Possible values are: 'embplant_pt', 'other_pt', 'embplant_mt', 'embplant_nr', 'animal_mt', 'fungus_mt', 'anonym'. 
 - GO_Rounds: This indicates the number of rounds of extension GetOrganelle will complete in order to recruit target-associated reads from the dataset. We recommend using 10 but this figure may need to be raised for lower coverage datasets. 
 
