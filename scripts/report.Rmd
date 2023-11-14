@@ -34,7 +34,7 @@ prefix <- paste0(wd, "/../output/report/")
 
 options(scipen=999)
 
-overview_data_file <- paste0(prefix,"Genes.txt")
+overview_data_file <- paste0(prefix,"GenesII.txt")
 
 overview_data <- read.csv(overview_data_file, sep="\t", header=T, row.names = NULL)
 overview_data <- overview_data[order(overview_data$Species), ]
