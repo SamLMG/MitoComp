@@ -41,16 +41,3 @@ rule second_mitos:
         touch {output}
         """
 
-#rule gene_positions:
-#    input:
-#        rules.annotation_statsII.output,
-#        pick_mitos2
-#    output:
-#        "output/{id}/annotation/compare/gene_positions.done"
-#    singularity:
-#        "docker://python:3.7"
-#    shell:
-#        """
-#        scripts/gene_positions.py output/stats/bed_pathsII.txt output/stats/Gene_positions.txt
-#        touch {output}
-#        """
